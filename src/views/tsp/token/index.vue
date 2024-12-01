@@ -34,7 +34,25 @@
           />
         </el-select>
       </el-form-item>
-      <el-form-item label="最后登录时间">
+      <el-form-item label="车架号" prop="vin">
+        <el-input
+          v-model="queryParams.vin"
+          placeholder="请输入车架号"
+          clearable
+          style="width: 180px"
+          @keyup.enter.native="handleQuery"
+        />
+      </el-form-item>
+      <el-form-item label="访问令牌" prop="accessToken">
+        <el-input
+          v-model="queryParams.accessToken"
+          placeholder="请输入访问令牌"
+          clearable
+          style="width: 540px"
+          @keyup.enter.native="handleQuery"
+        />
+      </el-form-item>
+      <el-form-item label="发行时间">
         <el-date-picker
           v-model="dateRange"
           style="width: 240px"
@@ -60,7 +78,7 @@
           icon="el-icon-plus"
           size="mini"
           @click="handleAdd"
-          v-hasPermi="['tsp:client:add']"
+          v-hasPermi="['tsp:token:add']"
         >新增
         </el-button>
       </el-col>
@@ -74,7 +92,7 @@
           size="mini"
           :disabled="single"
           @click="handleUpdate"
-          v-hasPermi="['tsp:client:edit']"
+          v-hasPermi="['tsp:token:edit']"
         >修改
         </el-button>
       </el-col>
@@ -88,7 +106,7 @@
           size="mini"
           :disabled="multiple"
           @click="handleDelete"
-          v-hasPermi="['tsp:client:remove']"
+          v-hasPermi="['tsp:token:remove']"
         >删除
         </el-button>
       </el-col>
@@ -100,27 +118,27 @@
           icon="el-icon-download"
           size="mini"
           @click="handleExport"
-          v-hasPermi="['tsp:client:export']"
+          v-hasPermi="['tsp:token:export']"
         >导出
         </el-button>
       </el-col>
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
-    <el-table v-loading="loading" :data="clientList" @selection-change="handleSelectionChange">
+    <el-table v-loading="loading" :data="tokenList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center"/>
-      <el-table-column label="账号ID" prop="accountId" width="200"/>
-      <el-table-column label="客户端ID" prop="clientId" width="300"/>
-      <el-table-column label="推送注册ID" prop="pushRegId" width="150"/>
+      <el-table-column label="账号ID" prop="accountId" width="120"/>
+      <el-table-column label="客户端ID" prop="clientId" width="160"/>
       <el-table-column label="客户端类型" prop="clientType" width="100">
         <template slot-scope="scope">
           <span>{{ getClientTypeLabel(scope.row.clientType) }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="最后登录IP" prop="ip" width="150"/>
-      <el-table-column label="最后登录时间" align="center" prop="loginTime" width="180">
+      <el-table-column label="车架号" prop="vin" width="150"/>
+      <el-table-column label="访问令牌" prop="accessToken" width="300"/>
+      <el-table-column label="发行时间" align="center" prop="issueTime" width="180">
         <template slot-scope="scope">
-          <span>{{ parseTime(scope.row.loginTime) }}</span>
+          <span>{{ parseTime(scope.row.issueTime) }}</span>
         </template>
       </el-table-column>
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
@@ -131,7 +149,7 @@
             type="text"
             icon="el-icon-edit"
             @click="handleUpdate(scope.row)"
-            v-hasPermi="['tsp:client:edit']"
+            v-hasPermi="['tsp:token:edit']"
           >修改
           </el-button>
           -->
@@ -141,17 +159,17 @@
             type="text"
             icon="el-icon-delete"
             @click="handleDelete(scope.row)"
-            v-hasPermi="['tsp:client:remove']"
+            v-hasPermi="['tsp:token:remove']"
           >删除
           </el-button>
           -->
           <!--
           <el-dropdown size="mini" @command="(command) => handleCommand(command, scope.row)"
-                       v-hasPermi="['tsp:account:edit']">
+                       v-hasPermi="['tsp:token:edit']">
             <el-button size="mini" type="text" icon="el-icon-d-arrow-right">更多</el-button>
             <el-dropdown-menu slot="dropdown">
               <el-dropdown-item command="handleDataScope" icon="el-icon-circle-check"
-                                v-hasPermi="['tsp:client:edit']">数据权限
+                                v-hasPermi="['tsp:account:edit']">数据权限
               </el-dropdown-item>
             </el-dropdown-menu>
           </el-dropdown>
@@ -202,10 +220,6 @@
         </el-form-item>
         <el-form-item label="菜单权限">
           <el-checkbox v-model="menuExpand" @change="handleCheckedTreeExpand($event, 'menu')">展开/折叠</el-checkbox>
-          <el-checkbox v-model="menuNodeAll" @change="handleCheckedTreeNodeAll($event, 'menu')">全选/全不选
-          </el-checkbox>
-          <el-checkbox v-model="form.menuCheckStrictly" @change="handleCheckedTreeConnect($event, 'menu')">父子联动
-          </el-checkbox>
           <el-tree
             class="tree-border"
             :data="menuOptions"
@@ -236,22 +250,8 @@
         <el-form-item label="权限字符">
           <el-input v-model="form.roleKey" :disabled="true"/>
         </el-form-item>
-        <el-form-item label="权限范围">
-          <el-select v-model="form.dataScope" @change="dataScopeSelectChange">
-            <el-option
-              v-for="item in dataScopeOptions"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
-            ></el-option>
-          </el-select>
-        </el-form-item>
         <el-form-item label="数据权限" v-show="form.dataScope == 2">
           <el-checkbox v-model="deptExpand" @change="handleCheckedTreeExpand($event, 'dept')">展开/折叠</el-checkbox>
-          <el-checkbox v-model="deptNodeAll" @change="handleCheckedTreeNodeAll($event, 'dept')">全选/全不选
-          </el-checkbox>
-          <el-checkbox v-model="form.deptCheckStrictly" @change="handleCheckedTreeConnect($event, 'dept')">父子联动
-          </el-checkbox>
           <el-tree
             class="tree-border"
             :data="deptOptions"
@@ -281,13 +281,13 @@ import {
   delRole,
   deptTreeSelect,
   getRole,
-  listClient,
+  listToken,
   updateRole
-} from "@/api/tsp/client";
+} from "@/api/tsp/token";
 import {roleMenuTreeselect, treeselect as menuTreeselect} from "@/api/system/menu";
 
 export default {
-  name: "Client",
+  name: "Token",
   dicts: ['iov_client_type'],
   data() {
     return {
@@ -304,7 +304,7 @@ export default {
       // 总条数
       total: 0,
       // 账号表格数据
-      clientList: [],
+      tokenList: [],
       // 弹出层标题
       title: "",
       // 是否显示弹出层
@@ -350,7 +350,9 @@ export default {
         pageSize: 10,
         accountId: undefined,
         clientId: undefined,
-        clientType: undefined
+        clientType: undefined,
+        vin: undefined,
+        accessToken: undefined
       },
       // 表单参数
       form: {},
@@ -376,11 +378,11 @@ export default {
     this.getList();
   },
   methods: {
-    /** 查询客户端列表 */
+    /** 查询账号列表 */
     getList() {
       this.loading = true;
-      listClient(this.addDateRange(this.queryParams, this.dateRange)).then(response => {
-          this.clientList = response.rows;
+      listToken(this.addDateRange(this.queryParams, this.dateRange)).then(response => {
+          this.tokenList = response.rows;
           this.total = response.total;
           this.loading = false;
         }
@@ -395,6 +397,17 @@ export default {
         dict => dict.value === clientType
       )
       return item ? item.label : genclientTypeder
+    },
+    // 账号状态修改
+    handleStatusChange(row) {
+      let text = row.enable === true ? "启用" : "停用";
+      this.$modal.confirm('确认要"' + text + '""' + row.mobile + '"账号吗？').then(function () {
+        return changeRoleStatus(row.roleId, row.status);
+      }).then(() => {
+        this.$modal.msgSuccess(text + "成功");
+      }).catch(function () {
+        row.enable = row.enable !== true;
+      });
     },
     // 取消按钮
     cancel() {
@@ -417,8 +430,9 @@ export default {
         this.deptNodeAll = false,
         this.form = {
           accountId: undefined,
-          clientId: undefined,
-          clientType: undefined
+          mobile: undefined,
+          regSource: undefined,
+          enable: undefined
         };
       this.resetForm("form");
     },
@@ -466,22 +480,6 @@ export default {
         }
       }
     },
-    // 树权限（全选/全不选）
-    handleCheckedTreeNodeAll(value, type) {
-      if (type == 'menu') {
-        this.$refs.menu.setCheckedNodes(value ? this.menuOptions : []);
-      } else if (type == 'dept') {
-        this.$refs.dept.setCheckedNodes(value ? this.deptOptions : []);
-      }
-    },
-    // 树权限（父子联动）
-    handleCheckedTreeConnect(value, type) {
-      if (type == 'menu') {
-        this.form.menuCheckStrictly = value ? true : false;
-      } else if (type == 'dept') {
-        this.form.deptCheckStrictly = value ? true : false;
-      }
-    },
     /** 新增按钮操作 */
     handleAdd() {
       this.reset();
@@ -507,12 +505,6 @@ export default {
         });
       });
       this.title = "修改角色";
-    },
-    /** 选择角色权限范围触发 */
-    dataScopeSelectChange(value) {
-      if (value !== '2') {
-        this.$refs.dept.setCheckedKeys([]);
-      }
     },
     /** 分配数据权限操作 */
     handleDataScope(row) {
@@ -576,9 +568,9 @@ export default {
     },
     /** 导出按钮操作 */
     handleExport() {
-      this.download('tsp-account/mpt/client/export', {
+      this.download('tsp-account/mpt/token/export', {
         ...this.queryParams
-      }, `client_${new Date().getTime()}.xlsx`)
+      }, `token_${new Date().getTime()}.xlsx`)
     }
   }
 };
