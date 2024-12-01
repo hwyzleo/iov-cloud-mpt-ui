@@ -6,10 +6,10 @@
 
 <script>
 export default {
-  name: 'RuoYiGit',
+  name: 'OpenIOV',
   data() {
     return {
-      url: 'https://gitee.com/y_project/RuoYi-Cloud'
+      url: 'https://github.com/hwyzleo'
     }
   },
   methods: {
