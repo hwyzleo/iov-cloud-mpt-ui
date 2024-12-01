@@ -60,7 +60,7 @@
           icon="el-icon-plus"
           size="mini"
           @click="handleAdd"
-          v-hasPermi="['tsp:account:add']"
+          v-hasPermi="['tsp:client:add']"
         >新增
         </el-button>
       </el-col>
@@ -74,7 +74,7 @@
           size="mini"
           :disabled="single"
           @click="handleUpdate"
-          v-hasPermi="['tsp:account:edit']"
+          v-hasPermi="['tsp:client:edit']"
         >修改
         </el-button>
       </el-col>
@@ -88,7 +88,7 @@
           size="mini"
           :disabled="multiple"
           @click="handleDelete"
-          v-hasPermi="['tsp:account:remove']"
+          v-hasPermi="['tsp:client:remove']"
         >删除
         </el-button>
       </el-col>
@@ -100,7 +100,7 @@
           icon="el-icon-download"
           size="mini"
           @click="handleExport"
-          v-hasPermi="['tsp:account:export']"
+          v-hasPermi="['tsp:client:export']"
         >导出
         </el-button>
       </el-col>
@@ -131,7 +131,7 @@
             type="text"
             icon="el-icon-edit"
             @click="handleUpdate(scope.row)"
-            v-hasPermi="['tsp:account:edit']"
+            v-hasPermi="['tsp:client:edit']"
           >修改
           </el-button>
           -->
@@ -141,7 +141,7 @@
             type="text"
             icon="el-icon-delete"
             @click="handleDelete(scope.row)"
-            v-hasPermi="['tsp:account:remove']"
+            v-hasPermi="['tsp:client:remove']"
           >删除
           </el-button>
           -->
@@ -151,7 +151,7 @@
             <el-button size="mini" type="text" icon="el-icon-d-arrow-right">更多</el-button>
             <el-dropdown-menu slot="dropdown">
               <el-dropdown-item command="handleDataScope" icon="el-icon-circle-check"
-                                v-hasPermi="['tsp:account:edit']">数据权限
+                                v-hasPermi="['tsp:client:edit']">数据权限
               </el-dropdown-item>
             </el-dropdown-menu>
           </el-dropdown>
@@ -287,7 +287,7 @@ import {
 import {roleMenuTreeselect, treeselect as menuTreeselect} from "@/api/system/menu";
 
 export default {
-  name: "Role",
+  name: "Client",
   dicts: ['iov_client_type'],
   data() {
     return {
@@ -348,7 +348,9 @@ export default {
       queryParams: {
         pageNum: 1,
         pageSize: 10,
-        mobile: undefined
+        accountId: undefined,
+        clientId: undefined,
+        clientType: undefined
       },
       // 表单参数
       form: {},
@@ -384,38 +386,6 @@ export default {
         }
       );
     },
-    // 所有菜单节点数据
-    getMenuAllCheckedKeys() {
-      // 目前被选中的菜单节点
-      let checkedKeys = this.$refs.menu.getCheckedKeys();
-      // 半选中的菜单节点
-      let halfCheckedKeys = this.$refs.menu.getHalfCheckedKeys();
-      checkedKeys.unshift.apply(checkedKeys, halfCheckedKeys);
-      return checkedKeys;
-    },
-    // 所有部门节点数据
-    getDeptAllCheckedKeys() {
-      // 目前被选中的部门节点
-      let checkedKeys = this.$refs.dept.getCheckedKeys();
-      // 半选中的部门节点
-      let halfCheckedKeys = this.$refs.dept.getHalfCheckedKeys();
-      checkedKeys.unshift.apply(checkedKeys, halfCheckedKeys);
-      return checkedKeys;
-    },
-    /** 根据角色ID查询菜单树结构 */
-    getRoleMenuTreeselect(roleId) {
-      return roleMenuTreeselect(roleId).then(response => {
-        this.menuOptions = response.menus;
-        return response;
-      });
-    },
-    /** 根据角色ID查询部门树结构 */
-    getDeptTree(roleId) {
-      return deptTreeSelect(roleId).then(response => {
-        this.deptOptions = response.depts;
-        return response;
-      });
-    },
     // 获取客户端类型
     getClientTypeLabel(clientType) {
       if (!this.dict || !this.dict.type || !this.dict.type.iov_client_type) {
@@ -425,17 +395,6 @@ export default {
         dict => dict.value === clientType
       )
       return item ? item.label : genclientTypeder
-    },
-    // 账号状态修改
-    handleStatusChange(row) {
-      let text = row.enable === true ? "启用" : "停用";
-      this.$modal.confirm('确认要"' + text + '""' + row.mobile + '"账号吗？').then(function () {
-        return changeRoleStatus(row.roleId, row.status);
-      }).then(() => {
-        this.$modal.msgSuccess(text + "成功");
-      }).catch(function () {
-        row.enable = row.enable !== true;
-      });
     },
     // 取消按钮
     cancel() {
@@ -458,14 +417,8 @@ export default {
         this.deptNodeAll = false,
         this.form = {
           accountId: undefined,
-          mobile: undefined,
-          roleSort: 0,
-          status: "0",
-          menuIds: [],
-          deptIds: [],
-          menuCheckStrictly: true,
-          deptCheckStrictly: true,
-          remark: undefined
+          clientId: undefined,
+          clientType: undefined
         };
       this.resetForm("form");
     },
@@ -539,7 +492,6 @@ export default {
     handleUpdate(row) {
       this.reset();
       const roleId = row.roleId || this.ids
-      const roleMenu = this.getRoleMenuTreeselect(roleId);
       getRole(roleId).then(response => {
         this.form = response.data;
         this.open = true;
@@ -565,7 +517,6 @@ export default {
     /** 分配数据权限操作 */
     handleDataScope(row) {
       this.reset();
-      const deptTreeSelect = this.getDeptTree(row.roleId);
       getRole(row.roleId).then(response => {
         this.form = response.data;
         this.openDataScope = true;
@@ -587,14 +538,12 @@ export default {
       this.$refs["form"].validate(valid => {
         if (valid) {
           if (this.form.roleId != undefined) {
-            this.form.menuIds = this.getMenuAllCheckedKeys();
             updateRole(this.form).then(response => {
               this.$modal.msgSuccess("修改成功");
               this.open = false;
               this.getList();
             });
           } else {
-            this.form.menuIds = this.getMenuAllCheckedKeys();
             addRole(this.form).then(response => {
               this.$modal.msgSuccess("新增成功");
               this.open = false;
@@ -607,7 +556,6 @@ export default {
     /** 提交按钮（数据权限） */
     submitDataScope: function () {
       if (this.form.roleId != undefined) {
-        this.form.deptIds = this.getDeptAllCheckedKeys();
         dataScope(this.form).then(response => {
           this.$modal.msgSuccess("修改成功");
           this.openDataScope = false;

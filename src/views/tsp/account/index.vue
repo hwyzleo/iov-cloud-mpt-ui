@@ -227,10 +227,6 @@
         </el-form-item>
         <el-form-item label="菜单权限">
           <el-checkbox v-model="menuExpand" @change="handleCheckedTreeExpand($event, 'menu')">展开/折叠</el-checkbox>
-          <el-checkbox v-model="menuNodeAll" @change="handleCheckedTreeNodeAll($event, 'menu')">全选/全不选
-          </el-checkbox>
-          <el-checkbox v-model="form.menuCheckStrictly" @change="handleCheckedTreeConnect($event, 'menu')">父子联动
-          </el-checkbox>
           <el-tree
             class="tree-border"
             :data="menuOptions"
@@ -261,22 +257,8 @@
         <el-form-item label="权限字符">
           <el-input v-model="form.roleKey" :disabled="true"/>
         </el-form-item>
-        <el-form-item label="权限范围">
-          <el-select v-model="form.dataScope" @change="dataScopeSelectChange">
-            <el-option
-              v-for="item in dataScopeOptions"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
-            ></el-option>
-          </el-select>
-        </el-form-item>
         <el-form-item label="数据权限" v-show="form.dataScope == 2">
           <el-checkbox v-model="deptExpand" @change="handleCheckedTreeExpand($event, 'dept')">展开/折叠</el-checkbox>
-          <el-checkbox v-model="deptNodeAll" @change="handleCheckedTreeNodeAll($event, 'dept')">全选/全不选
-          </el-checkbox>
-          <el-checkbox v-model="form.deptCheckStrictly" @change="handleCheckedTreeConnect($event, 'dept')">父子联动
-          </el-checkbox>
           <el-tree
             class="tree-border"
             :data="deptOptions"
@@ -312,7 +294,7 @@ import {
 import {roleMenuTreeselect, treeselect as menuTreeselect} from "@/api/system/menu";
 
 export default {
-  name: "Role",
+  name: "Account",
   dicts: ['iov_user_gender','iov_reg_source'],
   data() {
     return {
@@ -373,7 +355,10 @@ export default {
       queryParams: {
         pageNum: 1,
         pageSize: 10,
-        mobile: undefined
+        accountId: undefined,
+        mobile: undefined,
+        regSource: undefined,
+        enable: undefined
       },
       // 表单参数
       form: {},
@@ -408,38 +393,6 @@ export default {
           this.loading = false;
         }
       );
-    },
-    // 所有菜单节点数据
-    getMenuAllCheckedKeys() {
-      // 目前被选中的菜单节点
-      let checkedKeys = this.$refs.menu.getCheckedKeys();
-      // 半选中的菜单节点
-      let halfCheckedKeys = this.$refs.menu.getHalfCheckedKeys();
-      checkedKeys.unshift.apply(checkedKeys, halfCheckedKeys);
-      return checkedKeys;
-    },
-    // 所有部门节点数据
-    getDeptAllCheckedKeys() {
-      // 目前被选中的部门节点
-      let checkedKeys = this.$refs.dept.getCheckedKeys();
-      // 半选中的部门节点
-      let halfCheckedKeys = this.$refs.dept.getHalfCheckedKeys();
-      checkedKeys.unshift.apply(checkedKeys, halfCheckedKeys);
-      return checkedKeys;
-    },
-    /** 根据角色ID查询菜单树结构 */
-    getRoleMenuTreeselect(roleId) {
-      return roleMenuTreeselect(roleId).then(response => {
-        this.menuOptions = response.menus;
-        return response;
-      });
-    },
-    /** 根据角色ID查询部门树结构 */
-    getDeptTree(roleId) {
-      return deptTreeSelect(roleId).then(response => {
-        this.deptOptions = response.depts;
-        return response;
-      });
     },
     // 获取性别
     getGenderLabel(gender) {
@@ -494,13 +447,8 @@ export default {
         this.form = {
           accountId: undefined,
           mobile: undefined,
-          roleSort: 0,
-          status: "0",
-          menuIds: [],
-          deptIds: [],
-          menuCheckStrictly: true,
-          deptCheckStrictly: true,
-          remark: undefined
+          regSource: undefined,
+          enable: undefined
         };
       this.resetForm("form");
     },
@@ -548,22 +496,6 @@ export default {
         }
       }
     },
-    // 树权限（全选/全不选）
-    handleCheckedTreeNodeAll(value, type) {
-      if (type == 'menu') {
-        this.$refs.menu.setCheckedNodes(value ? this.menuOptions : []);
-      } else if (type == 'dept') {
-        this.$refs.dept.setCheckedNodes(value ? this.deptOptions : []);
-      }
-    },
-    // 树权限（父子联动）
-    handleCheckedTreeConnect(value, type) {
-      if (type == 'menu') {
-        this.form.menuCheckStrictly = value ? true : false;
-      } else if (type == 'dept') {
-        this.form.deptCheckStrictly = value ? true : false;
-      }
-    },
     /** 新增按钮操作 */
     handleAdd() {
       this.reset();
@@ -574,7 +506,6 @@ export default {
     handleUpdate(row) {
       this.reset();
       const roleId = row.roleId || this.ids
-      const roleMenu = this.getRoleMenuTreeselect(roleId);
       getRole(roleId).then(response => {
         this.form = response.data;
         this.open = true;
@@ -591,16 +522,9 @@ export default {
       });
       this.title = "修改角色";
     },
-    /** 选择角色权限范围触发 */
-    dataScopeSelectChange(value) {
-      if (value !== '2') {
-        this.$refs.dept.setCheckedKeys([]);
-      }
-    },
     /** 分配数据权限操作 */
     handleDataScope(row) {
       this.reset();
-      const deptTreeSelect = this.getDeptTree(row.roleId);
       getRole(row.roleId).then(response => {
         this.form = response.data;
         this.openDataScope = true;
@@ -622,14 +546,12 @@ export default {
       this.$refs["form"].validate(valid => {
         if (valid) {
           if (this.form.roleId != undefined) {
-            this.form.menuIds = this.getMenuAllCheckedKeys();
             updateRole(this.form).then(response => {
               this.$modal.msgSuccess("修改成功");
               this.open = false;
               this.getList();
             });
           } else {
-            this.form.menuIds = this.getMenuAllCheckedKeys();
             addRole(this.form).then(response => {
               this.$modal.msgSuccess("新增成功");
               this.open = false;
@@ -642,7 +564,6 @@ export default {
     /** 提交按钮（数据权限） */
     submitDataScope: function () {
       if (this.form.roleId != undefined) {
-        this.form.deptIds = this.getDeptAllCheckedKeys();
         dataScope(this.form).then(response => {
           this.$modal.msgSuccess("修改成功");
           this.openDataScope = false;
