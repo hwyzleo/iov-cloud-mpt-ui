@@ -17,6 +17,22 @@ export function getSaleModel(saleModelId) {
   })
 }
 
+// 查询销售车型配置列表
+export function listSaleModelConfig(saleModelId) {
+  return request({
+    url: '/otd-vso/mpt/saleModel/' + saleModelId + '/config',
+    method: 'get'
+  })
+}
+
+// 查询销售车型配置详细
+export function getSaleModelConfig(saleModelId, saleModelConfigId) {
+  return request({
+    url: '/otd-vso/mpt/saleModel/' + saleModelId + '/config/' + saleModelConfigId,
+    method: 'get'
+  })
+}
+
 // 新增销售车型
 export function addSaleModel(data) {
   return request({
@@ -44,10 +60,36 @@ export function updateSaleModelImages(data) {
   })
 }
 
+// 新增销售车型配置
+export function addSaleModelConfig(saleModelId, data) {
+  return request({
+    url: '/otd-vso/mpt/saleModel/' + saleModelId + '/config',
+    method: 'post',
+    data: data
+  })
+}
+
+// 修改销售车型配置
+export function updateSaleModelConfig(saleModelId, data) {
+  return request({
+    url: '/otd-vso/mpt/saleModel/' + saleModelId + '/config',
+    method: 'put',
+    data: data
+  })
+}
+
 // 删除销售车型
 export function delSaleModel(saleModelId) {
   return request({
     url: '/otd-vso/mpt/saleModel/' + saleModelId,
+    method: 'delete'
+  })
+}
+
+// 删除销售车型配置
+export function delSaleModelConfig(saleModelId, saleModelConfigId) {
+  return request({
+    url: '/otd-vso/mpt/saleModel/' + saleModelId + '/config/' + saleModelConfigId,
     method: 'delete'
   })
 }
