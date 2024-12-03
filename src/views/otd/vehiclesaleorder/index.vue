@@ -1,25 +1,31 @@
 <template>
   <div class="app-container">
     <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch">
-      <el-form-item label="销售代码" prop="saleCode">
+      <el-form-item label="订单号" prop="orderNum">
         <el-input
-          v-model="queryParams.saleCode"
-          placeholder="请输入销售代码"
+          v-model="queryParams.orderNum"
+          placeholder="请输入订单号"
           clearable
           style="width: 150px"
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="销售车型名称" prop="modelName">
-        <el-input
-          v-model="queryParams.modelName"
-          placeholder="请输入销售车型名称"
+      <el-form-item label="订单状态" prop="orderState">
+        <el-select
+          v-model="queryParams.orderState"
+          placeholder="订单状态"
           clearable
-          style="width: 200px"
-          @keyup.enter.native="handleQuery"
-        />
+          style="width: 120px"
+        >
+          <el-option
+            v-for="dict in dict.type.iov_vehicle_sale_order_state"
+            :key="dict.value"
+            :label="dict.label"
+            :value="dict.value"
+          />
+        </el-select>
       </el-form-item>
-      <el-form-item label="创建时间">
+      <el-form-item label="订单状态时间">
         <el-date-picker
           v-model="dateRange"
           style="width: 240px"
@@ -44,10 +50,11 @@
           icon="el-icon-plus"
           size="mini"
           @click="handleAdd"
-          v-hasPermi="['otd:saleModel:add']"
+          v-hasPermi="['otd:vehicleSaleOrder:add']"
         >新增
         </el-button>
       </el-col>
+      <!--
       <el-col :span="1.5">
         <el-button
           type="success"
@@ -56,10 +63,12 @@
           size="mini"
           :disabled="single"
           @click="handleUpdate"
-          v-hasPermi="['otd:saleModel:edit']"
+          v-hasPermi="['otd:vehicleSaleOrder:edit']"
         >修改
         </el-button>
       </el-col>
+      -->
+      <!--
       <el-col :span="1.5">
         <el-button
           type="danger"
@@ -68,10 +77,11 @@
           size="mini"
           :disabled="multiple"
           @click="handleDelete"
-          v-hasPermi="['otd:saleModel:remove']"
+          v-hasPermi="['otd:vehicleSaleOrder:remove']"
         >删除
         </el-button>
       </el-col>
+      -->
       <el-col :span="1.5">
         <el-button
           type="warning"
@@ -79,60 +89,44 @@
           icon="el-icon-download"
           size="mini"
           @click="handleExport"
-          v-hasPermi="['otd:saleModel:export']"
+          v-hasPermi="['otd:vehicleSaleOrder:export']"
         >导出
         </el-button>
       </el-col>
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
-    <el-table v-loading="loading" :data="saleModelList" @selection-change="handleSelectionChange">
+    <el-table v-loading="loading" :data="vehicleSaleOrderList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center"/>
-      <el-table-column label="销售代码" prop="saleCode" width="100"/>
-      <el-table-column label="销售车型名称" prop="modelName"/>
-      <el-table-column label="图片数量" align="center" width="120">
+      <el-table-column label="订单号" prop="orderNum" fixed="left" width="150"/>
+      <el-table-column label="下单人电话" align="center" prop="orderPersonPhone" width="110"/>
+      <el-table-column label="下单时间" align="center" prop="orderTime" width="160">
         <template slot-scope="scope">
-          <span>{{ scope.row.images.length }}</span>
+          <span>{{ parseTime(scope.row.orderTime) }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="是否允许意向金" align="center" width="120">
+      <el-table-column label="销售代码" align="center" width="80">
         <template slot-scope="scope">
-          <el-switch
-            v-model="scope.row.earnestMoney"
-            :active-value="true"
-            :inactive-value="false"
-            disabled
-          ></el-switch>
+          <el-link
+            type="primary"
+            @click="openSaleModelTab(scope.row.saleCode)"
+          >{{ scope.row.saleCode }}</el-link>
         </template>
       </el-table-column>
-      <el-table-column label="是否允许定金" align="center" width="120">
+      <el-table-column label="车型配置代码" align="center" prop="modelConfigCode" width="140"/>
+      <el-table-column label="订单状态" align="center" width="120">
         <template slot-scope="scope">
-          <el-switch
-            v-model="scope.row.downPayment"
-            :active-value="true"
-            :inactive-value="false"
-            disabled
-          ></el-switch>
+          <span>{{ getVehicleSaleOrderStateLabel(scope.row.orderState) }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="启用状态" align="center" width="100">
+      <el-table-column label="状态时间" align="center" prop="orderStateTime" width="160">
         <template slot-scope="scope">
-          <el-switch
-            v-model="scope.row.enable"
-            :active-value="true"
-            :inactive-value="false"
-            disabled
-          ></el-switch>
+          <span>{{ parseTime(scope.row.orderStateTime) }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="排序" prop="sort" align="center" width="60"/>
-      <el-table-column label="创建时间" align="center" prop="createTime" width="180">
+      <el-table-column label="操作" width="240" align="center" fixed="right" class-name="small-padding fixed-width">
         <template slot-scope="scope">
-          <span>{{ parseTime(scope.row.createTime) }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="操作" align="center" width="250" class-name="small-padding fixed-width">
-        <template slot-scope="scope">
+          <!--
           <el-button
             size="mini"
             type="text"
@@ -141,13 +135,14 @@
             v-hasPermi="['otd:vso:edit']"
           >修改
           </el-button>
+          -->
           <el-button
             size="mini"
             type="text"
-            icon="el-icon-picture"
+            icon="el-icon-view"
             @click="handleImages(scope.row)"
             v-hasPermi="['otd:vso:edit']"
-          >维护图片
+          >详细
           </el-button>
           <el-button
             size="mini"
@@ -157,6 +152,7 @@
             v-hasPermi="['otd:vso:edit']"
           >车型配置
           </el-button>
+          <!--
           <el-button
             size="mini"
             type="text"
@@ -165,6 +161,7 @@
             v-hasPermi="['otd:vso:remove']"
           >删除
           </el-button>
+          -->
         </template>
       </el-table-column>
     </el-table>
@@ -416,16 +413,16 @@ import {
   delSaleModelConfig,
   getSaleModel,
   getSaleModelConfig,
-  listSaleModel,
+  listVehicleSaleOrder,
   listSaleModelConfig,
   updateSaleModel,
-  updateSaleModelConfig,
-  updateSaleModelImages
-} from "@/api/otd/saleModel";
+  updateSaleModelImages,
+  updateSaleModelConfig
+} from "@/api/otd/vehicleSaleOrder";
 
 export default {
-  name: "SaleModel",
-  dicts: ['iov_sale_model_config_type'],
+  name: "VehicleSaleOrder",
+  dicts: ['iov_vehicle_sale_order_state'],
   data() {
     return {
       // 遮罩层
@@ -442,8 +439,8 @@ export default {
       showSearch: true,
       // 总条数
       total: 0,
-      // 销售车型表格数据
-      saleModelList: [],
+      // 车辆销售订单表格数据
+      vehicleSaleOrderList: [],
       // 销售车型配置表格数据
       saleModelConfigList: [],
       // 弹出层标题
@@ -506,19 +503,33 @@ export default {
     };
   },
   created() {
-    this.queryParams.saleCode = this.$route.query.saleCode;
     this.getList();
   },
   methods: {
-    /** 查询销售车型列表 */
+    /** 查询车辆销售订单列表 */
     getList() {
       this.loading = true;
-      listSaleModel(this.addDateRange(this.queryParams, this.dateRange)).then(response => {
-          this.saleModelList = response.rows;
+      listVehicleSaleOrder(this.addDateRange(this.queryParams, this.dateRange)).then(response => {
+          this.vehicleSaleOrderList = response.rows;
           this.total = response.total;
           this.loading = false;
         }
       );
+    },
+    /** 获取车辆销售订单状态标签 */
+    getVehicleSaleOrderStateLabel(vehicleSaleOrderState) {
+      if (!this.dict || !this.dict.type || !this.dict.type.iov_vehicle_sale_order_state) {
+        return vehicleSaleOrderState;
+      }
+      const item = this.dict.type.iov_vehicle_sale_order_state.find(
+        dict => dict.value == vehicleSaleOrderState
+      )
+      return item ? item.label : vehicleSaleOrderState
+    },
+    /** 跳转销售车型页 */
+    openSaleModelTab(saleCode) {
+      const params = { saleCode: saleCode};
+      this.$tab.openPage("销售车型管理", "/otd/saleModel", params);
     },
     /** 查询销售车型配置列表 */
     getListConfig(saleModelId) {
