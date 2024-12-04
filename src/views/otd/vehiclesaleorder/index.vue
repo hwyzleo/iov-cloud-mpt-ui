@@ -99,13 +99,13 @@
     <el-table v-loading="loading" :data="vehicleSaleOrderList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center"/>
       <el-table-column label="订单号" prop="orderNum" fixed="left" width="150"/>
-      <el-table-column label="下单人电话" align="center" prop="orderPersonPhone" width="110"/>
+      <el-table-column label="下单人电话" prop="orderPersonPhone"/>
       <el-table-column label="下单时间" align="center" prop="orderTime" width="160">
         <template slot-scope="scope">
           <span>{{ parseTime(scope.row.orderTime) }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="销售代码" align="center" width="80">
+      <el-table-column label="销售代码" align="center" width="100">
         <template slot-scope="scope">
           <el-link
             type="primary"
@@ -113,8 +113,8 @@
           >{{ scope.row.saleCode }}</el-link>
         </template>
       </el-table-column>
-      <el-table-column label="车型配置代码" align="center" prop="modelConfigCode" width="140"/>
-      <el-table-column label="订单状态" align="center" width="120">
+      <el-table-column label="车型配置代码" align="center" prop="modelConfigCode" width="180"/>
+      <el-table-column label="订单状态" align="center" width="150">
         <template slot-scope="scope">
           <span>{{ getVehicleSaleOrderStateLabel(scope.row.orderState) }}</span>
         </template>
