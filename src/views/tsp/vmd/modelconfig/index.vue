@@ -120,11 +120,6 @@
       <el-table-column label="车型代码" prop="modelCode" width="80"/>
       <el-table-column label="车型配置代码" prop="code" width="150"/>
       <el-table-column label="车型配置名称" prop="name" />
-      <el-table-column label="外饰代码" prop="exteriorCode" width="80"/>
-      <el-table-column label="内饰代码" prop="interiorCode" width="80"/>
-      <el-table-column label="车轮代码" prop="wheelCode" width="80"/>
-      <el-table-column label="备胎代码" prop="spareTireCode" width="80"/>
-      <el-table-column label="智驾代码" prop="adasCode" width="80"/>
       <el-table-column label="是否启用" align="center" width="100">
         <template slot-scope="scope">
           <el-switch
