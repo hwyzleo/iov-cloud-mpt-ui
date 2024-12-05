@@ -1,19 +1,28 @@
 <template>
   <div class="app-container">
     <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch">
-      <el-form-item label="平台代码" prop="code">
+      <el-form-item label="平台代码" prop="platformCode">
         <el-input
-          v-model="queryParams.code"
+          v-model="queryParams.platformCode"
           placeholder="请输入平台代码"
           clearable
           style="width: 150px"
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="平台名称" prop="name">
+      <el-form-item label="车系代码" prop="code">
+        <el-input
+          v-model="queryParams.code"
+          placeholder="请输入车系代码"
+          clearable
+          style="width: 150px"
+          @keyup.enter.native="handleQuery"
+        />
+      </el-form-item>
+      <el-form-item label="车系名称" prop="name">
         <el-input
           v-model="queryParams.name"
-          placeholder="请输入平台名称"
+          placeholder="请输入车系名称"
           clearable
           style="width: 200px"
           @keyup.enter.native="handleQuery"
@@ -44,7 +53,7 @@
           icon="el-icon-plus"
           size="mini"
           @click="handleAdd"
-          v-hasPermi="['tsp:vmd:platform:add']"
+          v-hasPermi="['tsp:vmd:series:add']"
         >新增
         </el-button>
       </el-col>
@@ -56,7 +65,7 @@
           size="mini"
           :disabled="single"
           @click="handleUpdate"
-          v-hasPermi="['tsp:vmd:platform:edit']"
+          v-hasPermi="['tsp:vmd:series:edit']"
         >修改
         </el-button>
       </el-col>
@@ -68,7 +77,7 @@
           size="mini"
           :disabled="multiple"
           @click="handleDelete"
-          v-hasPermi="['tsp:vmd:platform:remove']"
+          v-hasPermi="['tsp:vmd:series:remove']"
         >删除
         </el-button>
       </el-col>
@@ -79,18 +88,19 @@
           icon="el-icon-download"
           size="mini"
           @click="handleExport"
-          v-hasPermi="['tsp:vmd:platform:export']"
+          v-hasPermi="['tsp:vmd:series:export']"
         >导出
         </el-button>
       </el-col>
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
-    <el-table v-loading="loading" :data="platformList" @selection-change="handleSelectionChange">
+    <el-table v-loading="loading" :data="seriesList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center"/>
-      <el-table-column label="平台代码" prop="code" width="150"/>
-      <el-table-column label="平台名称" prop="name" />
-      <el-table-column label="平台英文名称" prop="nameEn" width="200"/>
+      <el-table-column label="平台代码" prop="platformCode" width="150"/>
+      <el-table-column label="车系代码" prop="code" width="150"/>
+      <el-table-column label="车系名称" prop="name" />
+      <el-table-column label="车系英文名称" prop="nameEn" width="200"/>
       <el-table-column label="是否启用" align="center" width="100">
         <template slot-scope="scope">
           <el-switch
@@ -113,7 +123,7 @@
             type="text"
             icon="el-icon-edit"
             @click="handleUpdate(scope.row)"
-            v-hasPermi="['tsp:vmd:platform:edit']"
+            v-hasPermi="['tsp:vmd:series:edit']"
           >修改
           </el-button>
           <el-button
@@ -121,7 +131,7 @@
             type="text"
             icon="el-icon-delete"
             @click="handleDelete(scope.row)"
-            v-hasPermi="['tsp:vmd:platform:remove']"
+            v-hasPermi="['tsp:vmd:series:remove']"
           >删除
           </el-button>
         </template>
@@ -136,17 +146,20 @@
       @pagination="getList"
     />
 
-    <!-- 添加或修改平台配置对话框 -->
+    <!-- 添加或修改车系配置对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="120px">
-        <el-form-item label="平台代码" prop="code">
-          <el-input v-model="form.code" placeholder="请输入平台代码"/>
+        <el-form-item label="平台代码" prop="platformCode">
+          <el-input v-model="form.platformCode" placeholder="请输入平台代码"/>
         </el-form-item>
-        <el-form-item label="平台名称" prop="name">
-          <el-input v-model="form.name" placeholder="请输入平台名称"/>
+        <el-form-item label="车系代码" prop="code">
+          <el-input v-model="form.code" placeholder="请输入车系代码"/>
         </el-form-item>
-        <el-form-item label="平台英文名称" prop="nameEn">
-          <el-input v-model="form.nameEn" placeholder="请输入平台英文名称"/>
+        <el-form-item label="车系名称" prop="name">
+          <el-input v-model="form.name" placeholder="请输入车系名称"/>
+        </el-form-item>
+        <el-form-item label="车系英文名称" prop="nameEn">
+          <el-input v-model="form.nameEn" placeholder="请输入车系英文名称"/>
         </el-form-item>
         <el-form-item label="状态">
           <el-radio-group v-model="form.enable">
@@ -177,15 +190,15 @@
 
 <script>
 import {
-  addPlatform,
-  delPlatform,
-  getPlatform,
-  listPlatform,
-  updatePlatform
-} from "@/api/tsp/vmd/platform";
+  addSeries,
+  delSeries,
+  getSeries,
+  listSeries,
+  updateSeries
+} from "@/api/tsp/vmd/series";
 
 export default {
-  name: "Platform",
+  name: "Series",
   dicts: [],
   data() {
     return {
@@ -201,8 +214,8 @@ export default {
       showSearch: true,
       // 总条数
       total: 0,
-      // 车辆平台表格数据
-      platformList: [],
+      // 车系表格数据
+      seriesList: [],
       // 弹出层标题
       title: "",
       // 是否显示弹出层
@@ -217,6 +230,7 @@ export default {
       queryParams: {
         pageNum: 1,
         pageSize: 10,
+        platformCode: undefined,
         code: undefined,
         name: undefined
       },
@@ -228,11 +242,14 @@ export default {
       },
       // 路由表单校验
       rules: {
-        code: [
+        platformCode: [
           {required: true, message: "车辆平台代码不能为空", trigger: "blur"}
         ],
+        code: [
+          {required: true, message: "车系代码不能为空", trigger: "blur"}
+        ],
         name: [
-          {required: true, message: "车辆平台名称不能为空", trigger: "blur"}
+          {required: true, message: "车系名称不能为空", trigger: "blur"}
         ],
         sort: [
           {required: true, message: "排序不能为空", trigger: "blur"}
@@ -244,11 +261,11 @@ export default {
     this.getList();
   },
   methods: {
-    /** 查询车辆平台列表 */
+    /** 查询车系列表 */
     getList() {
       this.loading = true;
-      listPlatform(this.addDateRange(this.queryParams, this.dateRange)).then(response => {
-          this.platformList = response.rows;
+      listSeries(this.addDateRange(this.queryParams, this.dateRange)).then(response => {
+          this.seriesList = response.rows;
           this.total = response.total;
           this.loading = false;
         }
@@ -269,6 +286,7 @@ export default {
       this.deptExpand = true,
       this.deptNodeAll = false,
       this.form = {
+        platformCode: undefined,
         code: undefined,
         name: undefined,
         nameEn: undefined,
@@ -298,7 +316,7 @@ export default {
     handleAdd() {
       this.reset();
       this.open = true;
-      this.title = "添加车辆平台";
+      this.title = "添加车系";
       this.form = {
         enable: true,
         sort: 99
@@ -307,25 +325,25 @@ export default {
     /** 修改按钮操作 */
     handleUpdate(row) {
       this.reset();
-      const platformId = row.id || this.ids
-      getPlatform(platformId).then(response => {
+      const seriesId = row.id || this.ids
+      getSeries(seriesId).then(response => {
         this.form = response.data;
         this.open = true;
       });
-      this.title = "修改车辆平台";
+      this.title = "修改车系";
     },
     /** 提交按钮 */
     submitForm: function () {
       this.$refs["form"].validate(valid => {
         if (valid) {
           if (this.form.id !== undefined) {
-            updatePlatform(this.form).then(response => {
+            updateSeries(this.form).then(response => {
               this.$modal.msgSuccess("修改成功");
               this.open = false;
               this.getList();
             });
           } else {
-            addPlatform(this.form).then(response => {
+            addSeries(this.form).then(response => {
               this.$modal.msgSuccess("新增成功");
               this.open = false;
               this.getList();
@@ -336,9 +354,9 @@ export default {
     },
     /** 删除按钮操作 */
     handleDelete(row) {
-      const platformIds = row.id || this.ids;
-      this.$modal.confirm('是否确认删除车辆平台ID为"' + platformIds + '"的数据项？').then(function () {
-        return delPlatform(platformIds);
+      const seriesIds = row.id || this.ids;
+      this.$modal.confirm('是否确认删除车系ID为"' + seriesIds + '"的数据项？').then(function () {
+        return delSeries(seriesIds);
       }).then(() => {
         this.getList();
         this.$modal.msgSuccess("删除成功");
@@ -347,9 +365,9 @@ export default {
     },
     /** 导出按钮操作 */
     handleExport() {
-      this.download('tsp-vmd/mpt/platform/export', {
+      this.download('tsp-vmd/mpt/series/export', {
         ...this.queryParams
-      }, `platform_${new Date().getTime()}.xlsx`)
+      }, `series_${new Date().getTime()}.xlsx`)
     }
   }
 };
