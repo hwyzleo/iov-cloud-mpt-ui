@@ -1,37 +1,19 @@
 <template>
   <div class="app-container">
     <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch">
-      <el-form-item label="匹配规则" prop="predicates">
+      <el-form-item label="平台代码" prop="code">
         <el-input
-          v-model="queryParams.predicates"
-          placeholder="请输入匹配规则"
+          v-model="queryParams.code"
+          placeholder="请输入平台代码"
           clearable
           style="width: 150px"
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="过滤器" prop="filters">
+      <el-form-item label="平台名称" prop="name">
         <el-input
-          v-model="queryParams.filters"
-          placeholder="请输入过滤器"
-          clearable
-          style="width: 200px"
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="目标类型" prop="targetType">
-        <el-input
-          v-model="queryParams.targetType"
-          placeholder="请输入目标类型"
-          clearable
-          style="width: 200px"
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="目标URI" prop="targetUri">
-        <el-input
-          v-model="queryParams.targetUri"
-          placeholder="请输入目标URI"
+          v-model="queryParams.name"
+          placeholder="请输入平台名称"
           clearable
           style="width: 200px"
           @keyup.enter.native="handleQuery"
@@ -62,7 +44,7 @@
           icon="el-icon-plus"
           size="mini"
           @click="handleAdd"
-          v-hasPermi="['tsp:sgw:route:add']"
+          v-hasPermi="['tsp:vmd:platform:add']"
         >新增
         </el-button>
       </el-col>
@@ -74,7 +56,7 @@
           size="mini"
           :disabled="single"
           @click="handleUpdate"
-          v-hasPermi="['tsp:sgw:route:edit']"
+          v-hasPermi="['tsp:vmd:platform:edit']"
         >修改
         </el-button>
       </el-col>
@@ -86,7 +68,7 @@
           size="mini"
           :disabled="multiple"
           @click="handleDelete"
-          v-hasPermi="['tsp:sgw:route:remove']"
+          v-hasPermi="['tsp:vmd:platform:remove']"
         >删除
         </el-button>
       </el-col>
@@ -97,19 +79,28 @@
           icon="el-icon-download"
           size="mini"
           @click="handleExport"
-          v-hasPermi="['tsp:sgw:route:export']"
+          v-hasPermi="['tsp:vmd:platform:export']"
         >导出
         </el-button>
       </el-col>
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
-    <el-table v-loading="loading" :data="routeList" @selection-change="handleSelectionChange">
+    <el-table v-loading="loading" :data="platformList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center"/>
-      <el-table-column label="路由地址" prop="predicates"/>
-      <el-table-column label="过滤器" prop="filters" width="200"/>
-      <el-table-column label="目标类型" prop="targetType" width="100"/>
-      <el-table-column label="目标URI" prop="targetUri" width="150"/>
+      <el-table-column label="平台代码" prop="code" width="150"/>
+      <el-table-column label="平台名称" prop="name" />
+      <el-table-column label="平台英文名称" prop="nameEn" width="200"/>
+      <el-table-column label="是否启用" align="center" width="100">
+        <template slot-scope="scope">
+          <el-switch
+            v-model="scope.row.enable"
+            :active-value="true"
+            :inactive-value="false"
+            @change="handleStatusChange(scope.row)"
+          ></el-switch>
+        </template>
+      </el-table-column>
       <el-table-column label="排序" prop="sort" align="center" width="60"/>
       <el-table-column label="创建时间" align="center" prop="createTime" width="180">
         <template slot-scope="scope">
@@ -123,7 +114,7 @@
             type="text"
             icon="el-icon-edit"
             @click="handleUpdate(scope.row)"
-            v-hasPermi="['tsp:sgw:route:edit']"
+            v-hasPermi="['tsp:vmd:platform:edit']"
           >修改
           </el-button>
           <el-button
@@ -131,7 +122,7 @@
             type="text"
             icon="el-icon-delete"
             @click="handleDelete(scope.row)"
-            v-hasPermi="['tsp:sgw:route:remove']"
+            v-hasPermi="['tsp:vmd:platform:remove']"
           >删除
           </el-button>
         </template>
@@ -146,20 +137,29 @@
       @pagination="getList"
     />
 
-    <!-- 添加或修改路由配置对话框 -->
+    <!-- 添加或修改平台配置对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="120px">
-        <el-form-item label="路由断言" prop="predicates">
-          <el-input v-model="form.predicates" placeholder="请输入路由断言"/>
+        <el-form-item label="平台代码" prop="code">
+          <el-input v-model="form.code" placeholder="请输入平台代码"/>
         </el-form-item>
-        <el-form-item label="过滤器集合" prop="filters">
-          <el-input v-model="form.filters" placeholder="请输入过滤器集合"/>
+        <el-form-item label="平台名称" prop="name">
+          <el-input v-model="form.name" placeholder="请输入平台名称"/>
         </el-form-item>
-        <el-form-item label="目标类型" prop="targetType">
-          <el-input v-model="form.targetType" placeholder="请输入目标类型"/>
+        <el-form-item label="平台英文名称" prop="nameEn">
+          <el-input v-model="form.nameEn" placeholder="请输入平台英文名称"/>
         </el-form-item>
-        <el-form-item label="目标类型" prop="targetUri">
-          <el-input v-model="form.targetUri" placeholder="请输入目标URI"/>
+        <el-form-item label="状态">
+          <el-radio-group v-model="form.enable">
+            <el-radio
+              :label="true"
+            >启用
+            </el-radio>
+            <el-radio
+              :label="false"
+            >停用
+            </el-radio>
+          </el-radio-group>
         </el-form-item>
         <el-form-item label="排序" prop="sort">
           <el-input-number v-model="form.sort" controls-position="right" :min="0"/>
@@ -178,15 +178,15 @@
 
 <script>
 import {
-  addRoute,
-  delRoute,
-  getRoute,
-  listRoute,
-  updateRoute
-} from "@/api/tsp/sgw/route";
+  addPlatform,
+  delPlatform,
+  getPlatform,
+  listPlatform,
+  updatePlatform
+} from "@/api/tsp/vmd/platform";
 
 export default {
-  name: "TspSgwRoute",
+  name: "Platform",
   dicts: [],
   data() {
     return {
@@ -202,8 +202,8 @@ export default {
       showSearch: true,
       // 总条数
       total: 0,
-      // 路由表格数据
-      routeList: [],
+      // 车辆平台表格数据
+      platformList: [],
       // 弹出层标题
       title: "",
       // 是否显示弹出层
@@ -218,8 +218,8 @@ export default {
       queryParams: {
         pageNum: 1,
         pageSize: 10,
-        predicates: undefined,
-        filters: undefined
+        code: undefined,
+        name: undefined
       },
       // 路由表单参数
       form: {},
@@ -229,17 +229,11 @@ export default {
       },
       // 路由表单校验
       rules: {
-        predicates: [
-          {required: true, message: "路由断言不能为空", trigger: "blur"}
+        code: [
+          {required: true, message: "车辆平台代码不能为空", trigger: "blur"}
         ],
-        filters: [
-          {required: true, message: "过滤器不能为空", trigger: "blur"}
-        ],
-        targetType: [
-          {required: true, message: "目标类型不能为空", trigger: "blur"}
-        ],
-        targetUri: [
-          {required: true, message: "目标URI不能为空", trigger: "blur"}
+        name: [
+          {required: true, message: "车辆平台名称不能为空", trigger: "blur"}
         ],
         sort: [
           {required: true, message: "排序不能为空", trigger: "blur"}
@@ -251,11 +245,11 @@ export default {
     this.getList();
   },
   methods: {
-    /** 查询路由列表 */
+    /** 查询车辆平台列表 */
     getList() {
       this.loading = true;
-      listRoute(this.addDateRange(this.queryParams, this.dateRange)).then(response => {
-          this.routeList = response.rows;
+      listPlatform(this.addDateRange(this.queryParams, this.dateRange)).then(response => {
+          this.platformList = response.rows;
           this.total = response.total;
           this.loading = false;
         }
@@ -276,10 +270,10 @@ export default {
       this.deptExpand = true,
       this.deptNodeAll = false,
       this.form = {
-        predicates: undefined,
-        filters: undefined,
-        targetType: true,
-        targetUri: undefined,
+        code: undefined,
+        name: undefined,
+        nameEn: true,
+        enable: 1,
         sort: 99
       };
       this.resetForm("form");
@@ -305,37 +299,34 @@ export default {
     handleAdd() {
       this.reset();
       this.open = true;
-      this.title = "添加路由";
+      this.title = "添加车辆平台";
       this.form = {
-        predicates: "{\"Path\": {\"pattern\": \"\"}}",
-        filters: "{\"Authentication\": {}}",
-        targetType: "LB",
-        targetUri: undefined,
+        enable: true,
         sort: 99
       };
     },
     /** 修改按钮操作 */
     handleUpdate(row) {
       this.reset();
-      const routeId = row.id || this.ids
-      getRoute(routeId).then(response => {
+      const platformId = row.id || this.ids
+      getPlatform(platformId).then(response => {
         this.form = response.data;
         this.open = true;
       });
-      this.title = "修改路由";
+      this.title = "修改车辆平台";
     },
     /** 提交按钮 */
     submitForm: function () {
       this.$refs["form"].validate(valid => {
         if (valid) {
           if (this.form.id !== undefined) {
-            updateRoute(this.form).then(response => {
+            updatePlatform(this.form).then(response => {
               this.$modal.msgSuccess("修改成功");
               this.open = false;
               this.getList();
             });
           } else {
-            addRoute(this.form).then(response => {
+            addPlatform(this.form).then(response => {
               this.$modal.msgSuccess("新增成功");
               this.open = false;
               this.getList();
@@ -346,9 +337,9 @@ export default {
     },
     /** 删除按钮操作 */
     handleDelete(row) {
-      const routeIds = row.id || this.ids;
-      this.$modal.confirm('是否确认删除路由ID为"' + routeIds + '"的数据项？').then(function () {
-        return delRoute(routeIds);
+      const platformIds = row.id || this.ids;
+      this.$modal.confirm('是否确认删除车辆平台ID为"' + platformIds + '"的数据项？').then(function () {
+        return delPlatform(platformIds);
       }).then(() => {
         this.getList();
         this.$modal.msgSuccess("删除成功");
@@ -357,9 +348,9 @@ export default {
     },
     /** 导出按钮操作 */
     handleExport() {
-      this.download('tsp-sgw/route/export', {
+      this.download('tsp-vmd/mpt/platform/export', {
         ...this.queryParams
-      }, `tsp_sgw_route_${new Date().getTime()}.xlsx`)
+      }, `platform_${new Date().getTime()}.xlsx`)
     }
   }
 };
