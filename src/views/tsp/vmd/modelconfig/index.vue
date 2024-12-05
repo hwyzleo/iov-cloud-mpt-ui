@@ -19,19 +19,28 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="车型代码" prop="code">
+      <el-form-item label="车型代码" prop="modelCode">
         <el-input
-          v-model="queryParams.code"
+          v-model="queryParams.modelCode"
           placeholder="请输入车型代码"
           clearable
           style="width: 150px"
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="车型名称" prop="name">
+      <el-form-item label="车型配置代码" prop="code">
+        <el-input
+          v-model="queryParams.code"
+          placeholder="请输入车型配置代码"
+          clearable
+          style="width: 150px"
+          @keyup.enter.native="handleQuery"
+        />
+      </el-form-item>
+      <el-form-item label="车型配置名称" prop="name">
         <el-input
           v-model="queryParams.name"
-          placeholder="请输入车型名称"
+          placeholder="请输入车型配置名称"
           clearable
           style="width: 200px"
           @keyup.enter.native="handleQuery"
@@ -62,7 +71,7 @@
           icon="el-icon-plus"
           size="mini"
           @click="handleAdd"
-          v-hasPermi="['tsp:vmd:model:add']"
+          v-hasPermi="['tsp:vmd:modelConfig:add']"
         >新增
         </el-button>
       </el-col>
@@ -74,7 +83,7 @@
           size="mini"
           :disabled="single"
           @click="handleUpdate"
-          v-hasPermi="['tsp:vmd:model:edit']"
+          v-hasPermi="['tsp:vmd:modelConfig:edit']"
         >修改
         </el-button>
       </el-col>
@@ -86,7 +95,7 @@
           size="mini"
           :disabled="multiple"
           @click="handleDelete"
-          v-hasPermi="['tsp:vmd:model:remove']"
+          v-hasPermi="['tsp:vmd:modelConfig:remove']"
         >删除
         </el-button>
       </el-col>
@@ -97,20 +106,25 @@
           icon="el-icon-download"
           size="mini"
           @click="handleExport"
-          v-hasPermi="['tsp:vmd:model:export']"
+          v-hasPermi="['tsp:vmd:modelConfig:export']"
         >导出
         </el-button>
       </el-col>
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
-    <el-table v-loading="loading" :data="modelList" @selection-change="handleSelectionChange">
+    <el-table v-loading="loading" :data="modelConfigList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center"/>
-      <el-table-column label="平台代码" prop="platformCode" width="150"/>
-      <el-table-column label="车系代码" prop="seriesCode" width="150"/>
-      <el-table-column label="车型代码" prop="code" width="150"/>
-      <el-table-column label="车型名称" prop="name" />
-      <el-table-column label="车型英文名称" prop="nameEn" width="200"/>
+      <el-table-column label="平台代码" prop="platformCode" width="80"/>
+      <el-table-column label="车系代码" prop="seriesCode" width="80"/>
+      <el-table-column label="车型代码" prop="modelCode" width="80"/>
+      <el-table-column label="车型配置代码" prop="code" width="150"/>
+      <el-table-column label="车型配置名称" prop="name" />
+      <el-table-column label="外饰代码" prop="exteriorCode" width="80"/>
+      <el-table-column label="内饰代码" prop="interiorCode" width="80"/>
+      <el-table-column label="车轮代码" prop="wheelCode" width="80"/>
+      <el-table-column label="备胎代码" prop="spareTireCode" width="80"/>
+      <el-table-column label="智驾代码" prop="adasCode" width="80"/>
       <el-table-column label="是否启用" align="center" width="100">
         <template slot-scope="scope">
           <el-switch
@@ -126,14 +140,14 @@
           <span>{{ parseTime(scope.row.createTime) }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="操作" align="center" width="200" class-name="small-padding fixed-width">
+      <el-table-column label="操作" align="center" width="120" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
             size="mini"
             type="text"
             icon="el-icon-edit"
             @click="handleUpdate(scope.row)"
-            v-hasPermi="['tsp:vmd:model:edit']"
+            v-hasPermi="['tsp:vmd:modelConfig:edit']"
           >修改
           </el-button>
           <el-button
@@ -141,7 +155,7 @@
             type="text"
             icon="el-icon-delete"
             @click="handleDelete(scope.row)"
-            v-hasPermi="['tsp:vmd:model:remove']"
+            v-hasPermi="['tsp:vmd:modelConfig:remove']"
           >删除
           </el-button>
         </template>
@@ -157,22 +171,40 @@
     />
 
     <!-- 添加或修改车型配置对话框 -->
-    <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
-      <el-form ref="form" :model="form" :rules="rules" label-width="120px">
+    <el-dialog :title="title" :visible.sync="open" width="700px" append-to-body>
+      <el-form ref="form" :model="form" :rules="rules" label-width="130px">
         <el-form-item label="平台代码" prop="platformCode">
           <el-input v-model="form.platformCode" placeholder="请输入平台代码"/>
         </el-form-item>
         <el-form-item label="车系代码" prop="seriesCode">
           <el-input v-model="form.seriesCode" placeholder="请输入车系代码"/>
         </el-form-item>
-        <el-form-item label="车型代码" prop="code">
-          <el-input v-model="form.code" placeholder="请输入车型代码"/>
+        <el-form-item label="车型代码" prop="modelCode">
+          <el-input v-model="form.modelCode" placeholder="请输入车型代码"/>
         </el-form-item>
-        <el-form-item label="车型名称" prop="name">
-          <el-input v-model="form.name" placeholder="请输入车型名称"/>
+        <el-form-item label="车型配置代码" prop="code">
+          <el-input v-model="form.code" placeholder="请输入车型配置代码"/>
         </el-form-item>
-        <el-form-item label="车型英文名称" prop="nameEn">
-          <el-input v-model="form.nameEn" placeholder="请输入车型英文名称"/>
+        <el-form-item label="车型配置名称" prop="name">
+          <el-input v-model="form.name" placeholder="请输入车型配置名称"/>
+        </el-form-item>
+        <el-form-item label="车型配置英文名称" prop="nameEn">
+          <el-input v-model="form.nameEn" placeholder="请输入车型配置英文名称"/>
+        </el-form-item>
+        <el-form-item label="外饰代码" prop="exteriorCode">
+          <el-input v-model="form.exteriorCode" placeholder="请输入外饰代码"/>
+        </el-form-item>
+        <el-form-item label="内饰代码" prop="interiorCode">
+          <el-input v-model="form.interiorCode" placeholder="请输入内饰代码"/>
+        </el-form-item>
+        <el-form-item label="车轮代码" prop="wheelCode">
+          <el-input v-model="form.wheelCode" placeholder="请输入车轮代码"/>
+        </el-form-item>
+        <el-form-item label="备胎代码" prop="spareTireCode">
+          <el-input v-model="form.spareTireCode" placeholder="请输入备胎代码"/>
+        </el-form-item>
+        <el-form-item label="智驾代码" prop="adasCode">
+          <el-input v-model="form.adasCode" placeholder="请输入智驾代码"/>
         </el-form-item>
         <el-form-item label="状态">
           <el-radio-group v-model="form.enable">
@@ -203,15 +235,15 @@
 
 <script>
 import {
-  addModel,
-  delModel,
-  getModel,
-  listModel,
-  updateModel
-} from "@/api/tsp/vmd/model";
+  addModelConfig,
+  delModelConfig,
+  getModelConfig,
+  listModelConfig,
+  updateModelConfig
+} from "@/api/tsp/vmd/modelconfig";
 
 export default {
-  name: "Model",
+  name: "ModelConfig",
   dicts: [],
   data() {
     return {
@@ -227,8 +259,8 @@ export default {
       showSearch: true,
       // 总条数
       total: 0,
-      // 车型表格数据
-      modelList: [],
+      // 车型配置表格数据
+      modelConfigList: [],
       // 弹出层标题
       title: "",
       // 是否显示弹出层
@@ -245,6 +277,7 @@ export default {
         pageSize: 10,
         platformCode: undefined,
         seriesCode: undefined,
+        modelCode: undefined,
         code: undefined,
         name: undefined
       },
@@ -262,11 +295,14 @@ export default {
         seriesCode: [
           {required: true, message: "车系代码不能为空", trigger: "blur"}
         ],
-        code: [
+        modelCode: [
           {required: true, message: "车型代码不能为空", trigger: "blur"}
         ],
+        code: [
+          {required: true, message: "车型配置代码不能为空", trigger: "blur"}
+        ],
         name: [
-          {required: true, message: "车型名称不能为空", trigger: "blur"}
+          {required: true, message: "车型配置名称不能为空", trigger: "blur"}
         ],
         sort: [
           {required: true, message: "排序不能为空", trigger: "blur"}
@@ -278,11 +314,11 @@ export default {
     this.getList();
   },
   methods: {
-    /** 查询车型列表 */
+    /** 查询车型配置列表 */
     getList() {
       this.loading = true;
-      listModel(this.addDateRange(this.queryParams, this.dateRange)).then(response => {
-          this.modelList = response.rows;
+      listModelConfig(this.addDateRange(this.queryParams, this.dateRange)).then(response => {
+          this.modelConfigList = response.rows;
           this.total = response.total;
           this.loading = false;
         }
@@ -305,6 +341,7 @@ export default {
       this.form = {
         platformCode: undefined,
         seriesCode: undefined,
+        modelCode: undefined,
         code: undefined,
         name: undefined,
         nameEn: undefined,
@@ -334,7 +371,7 @@ export default {
     handleAdd() {
       this.reset();
       this.open = true;
-      this.title = "添加车型";
+      this.title = "添加车型配置";
       this.form = {
         enable: true,
         sort: 99
@@ -343,25 +380,25 @@ export default {
     /** 修改按钮操作 */
     handleUpdate(row) {
       this.reset();
-      const modelId = row.id || this.ids
-      getModel(modelId).then(response => {
+      const modelConfigId = row.id || this.ids
+      getModelConfig(modelConfigId).then(response => {
         this.form = response.data;
         this.open = true;
       });
-      this.title = "修改车型";
+      this.title = "修改车型配置";
     },
     /** 提交按钮 */
     submitForm: function () {
       this.$refs["form"].validate(valid => {
         if (valid) {
           if (this.form.id !== undefined) {
-            updateModel(this.form).then(response => {
+            updateModelConfig(this.form).then(response => {
               this.$modal.msgSuccess("修改成功");
               this.open = false;
               this.getList();
             });
           } else {
-            addModel(this.form).then(response => {
+            addModelConfig(this.form).then(response => {
               this.$modal.msgSuccess("新增成功");
               this.open = false;
               this.getList();
@@ -372,9 +409,9 @@ export default {
     },
     /** 删除按钮操作 */
     handleDelete(row) {
-      const modelIds = row.id || this.ids;
-      this.$modal.confirm('是否确认删除车型ID为"' + modelIds + '"的数据项？').then(function () {
-        return delModel(modelIds);
+      const modelConfigIds = row.id || this.ids;
+      this.$modal.confirm('是否确认删除车型配置ID为"' + modelConfigIds + '"的数据项？').then(function () {
+        return delModelConfig(modelConfigIds);
       }).then(() => {
         this.getList();
         this.$modal.msgSuccess("删除成功");
@@ -383,9 +420,9 @@ export default {
     },
     /** 导出按钮操作 */
     handleExport() {
-      this.download('tsp-vmd/mpt/model/export', {
+      this.download('tsp-vmd/mpt/modelConfig/export', {
         ...this.queryParams
-      }, `model_${new Date().getTime()}.xlsx`)
+      }, `model_config_${new Date().getTime()}.xlsx`)
     }
   }
 };
