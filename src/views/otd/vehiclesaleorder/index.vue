@@ -99,7 +99,7 @@
     <el-table v-loading="loading" :data="vehicleSaleOrderList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center"/>
       <el-table-column label="订单号" prop="orderNum" fixed="left" width="150"/>
-      <el-table-column label="下单用户" fixed="left" width="220">
+      <el-table-column label="下单用户" width="220">
         <template slot-scope="scope">
           <el-link
             type="primary"
@@ -107,7 +107,7 @@
           >{{ scope.row.orderPersonId }}</el-link>
         </template>
       </el-table-column>
-      <el-table-column label="下单人电话" prop="orderPersonPhone"/>
+      <el-table-column label="下单人电话" prop="orderPersonPhone" width="120"/>
       <el-table-column label="下单时间" align="center" prop="orderTime" width="160">
         <template slot-scope="scope">
           <span>{{ parseTime(scope.row.orderTime) }}</span>
