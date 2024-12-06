@@ -121,7 +121,14 @@
           >{{ scope.row.saleCode }}</el-link>
         </template>
       </el-table-column>
-      <el-table-column label="车型配置代码" align="center" prop="modelConfigCode" width="180"/>
+      <el-table-column label="车型配置代码" align="center" width="180">
+        <template slot-scope="scope">
+          <el-link
+            type="primary"
+            @click="openModelConfigTab(scope.row.modelConfigCode)"
+          >{{ scope.row.modelConfigCode }}</el-link>
+        </template>
+      </el-table-column>
       <el-table-column label="订单状态" align="center" width="150">
         <template slot-scope="scope">
           <span>{{ getVehicleSaleOrderStateLabel(scope.row.orderState) }}</span>
@@ -543,6 +550,11 @@ export default {
     openSaleModelTab(saleCode) {
       const params = { saleCode: saleCode};
       this.$tab.openPage("销售车型管理", "/otd/saleModel", params);
+    },
+    /** 跳转车型配置页 */
+    openModelConfigTab(modelConfigCode) {
+      const params = { modelConfigCode: modelConfigCode};
+      this.$tab.openPage("车型配置管理", "/tsp/vmd/modelConfig", params);
     },
     /** 查询销售车型配置列表 */
     getListConfig(saleModelId) {

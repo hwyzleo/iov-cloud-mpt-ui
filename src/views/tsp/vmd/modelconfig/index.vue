@@ -33,7 +33,7 @@
           v-model="queryParams.code"
           placeholder="请输入车型配置代码"
           clearable
-          style="width: 150px"
+          style="width: 160px"
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
@@ -306,6 +306,7 @@ export default {
     };
   },
   created() {
+    this.queryParams.code = this.$route.query.modelConfigCode;
     this.getList();
   },
   methods: {
