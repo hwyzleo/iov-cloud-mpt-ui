@@ -381,6 +381,7 @@ export default {
     };
   },
   created() {
+    this.queryParams.accountId = this.$route.query.accountId;
     this.getList();
   },
   methods: {

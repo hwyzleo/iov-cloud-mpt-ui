@@ -99,6 +99,14 @@
     <el-table v-loading="loading" :data="vehicleSaleOrderList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center"/>
       <el-table-column label="订单号" prop="orderNum" fixed="left" width="150"/>
+      <el-table-column label="下单用户" fixed="left" width="220">
+        <template slot-scope="scope">
+          <el-link
+            type="primary"
+            @click="openAccountTab(scope.row.orderPersonId)"
+          >{{ scope.row.orderPersonId }}</el-link>
+        </template>
+      </el-table-column>
       <el-table-column label="下单人电话" prop="orderPersonPhone"/>
       <el-table-column label="下单时间" align="center" prop="orderTime" width="160">
         <template slot-scope="scope">
@@ -158,7 +166,7 @@
             type="text"
             icon="el-icon-delete"
             @click="handleDelete(scope.row)"
-            v-hasPermi="['otd:vso:remove']"
+            v-hasPermi="['otd:vehicleSaleOrder:remove']"
           >删除
           </el-button>
           -->
@@ -409,7 +417,7 @@
 import {
   addSaleModel,
   addSaleModelConfig,
-  delSaleModel,
+  delVehicleSaleOrder,
   delSaleModelConfig,
   getSaleModel,
   getSaleModelConfig,
@@ -525,6 +533,11 @@ export default {
         dict => dict.value == vehicleSaleOrderState
       )
       return item ? item.label : vehicleSaleOrderState
+    },
+    /** 跳转账号页 */
+    openAccountTab(accountId) {
+      const params = { accountId: accountId};
+      this.$tab.openPage("账号管理", "/tsp/account", params);
     },
     /** 跳转销售车型页 */
     openSaleModelTab(saleCode) {
@@ -782,9 +795,9 @@ export default {
     },
     /** 删除按钮操作 */
     handleDelete(row) {
-      const saleModelIds = row.id || this.ids;
-      this.$modal.confirm('是否确认删除销售车型ID为"' + saleModelIds + '"的数据项？').then(function () {
-        return delSaleModel(saleModelIds);
+      const vehicleSaleOrderIds = row.id || this.ids;
+      this.$modal.confirm('是否确认删除车辆销售订单ID为"' + vehicleSaleOrderIds + '"的数据项？').then(function () {
+        return delVehicleSaleOrder(vehicleSaleOrderIds);
       }).then(() => {
         this.getList();
         this.$modal.msgSuccess("删除成功");

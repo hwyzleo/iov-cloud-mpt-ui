@@ -78,10 +78,10 @@ export function updateSaleModelConfig(saleModelId, data) {
   })
 }
 
-// 删除销售车型
-export function delSaleModel(saleModelId) {
+// 删除车辆销售订单
+export function delVehicleSaleOrder(vehicleSaleOrderId) {
   return request({
-    url: '/otd-vso/mpt/saleModel/' + saleModelId,
+    url: '/otd-vso/mpt/vehicleSaleOrder/' + vehicleSaleOrderId,
     method: 'delete'
   })
 }
