@@ -119,6 +119,25 @@
           </el-tooltip>
         </template>
       </el-table-column>
+      <el-table-column label="意向金支付时间" align="center" prop="earnestMoneyTime" width="160">
+        <template slot-scope="scope">
+          <el-tooltip :content="parseTime(scope.row.earnestMoneyAmount)" placement="top">
+            <span>{{ parseTime(scope.row.earnestMoneyTime) }}</span>
+          </el-tooltip>
+        </template>
+      </el-table-column>
+      <el-table-column label="定金支付时间" align="center" prop="downPaymentTime" width="160">
+        <template slot-scope="scope">
+          <el-tooltip :content="parseTime(scope.row.downPaymentAmount)" placement="top">
+            <span>{{ parseTime(scope.row.downPaymentTime) }}</span>
+          </el-tooltip>
+        </template>
+      </el-table-column>
+      <el-table-column label="锁单时间" align="center" prop="lockTime" width="160">
+        <template slot-scope="scope">
+          <span>{{ parseTime(scope.row.lockTime) }}</span>
+        </template>
+      </el-table-column>
       <el-table-column label="销售代码" align="center" width="100">
         <template slot-scope="scope">
           <el-link
