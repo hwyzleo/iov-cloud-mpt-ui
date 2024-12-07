@@ -121,14 +121,14 @@
       </el-table-column>
       <el-table-column label="意向金支付时间" align="center" prop="earnestMoneyTime" width="160">
         <template slot-scope="scope">
-          <el-tooltip :content="parseTime(scope.row.earnestMoneyAmount)" placement="top">
+          <el-tooltip :content="scope.row.earnestMoneyAmount" placement="top">
             <span>{{ parseTime(scope.row.earnestMoneyTime) }}</span>
           </el-tooltip>
         </template>
       </el-table-column>
       <el-table-column label="定金支付时间" align="center" prop="downPaymentTime" width="160">
         <template slot-scope="scope">
-          <el-tooltip :content="parseTime(scope.row.downPaymentAmount)" placement="top">
+          <el-tooltip :content="scope.row.downPaymentAmount" placement="top">
             <span>{{ parseTime(scope.row.downPaymentTime) }}</span>
           </el-tooltip>
         </template>
