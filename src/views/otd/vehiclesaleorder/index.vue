@@ -109,7 +109,14 @@
       </el-table-column>
       <el-table-column label="下单时间" align="center" prop="orderTime" width="160">
         <template slot-scope="scope">
-          <span>{{ parseTime(scope.row.orderTime) }}</span>
+            <span>{{ parseTime(scope.row.orderTime) }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="订单状态" align="center" width="150">
+        <template slot-scope="scope">
+          <el-tooltip :content="parseTime(scope.row.orderStateTime)" placement="top">
+            <span>{{ getVehicleSaleOrderStateLabel(scope.row.orderState) }}</span>
+          </el-tooltip>
         </template>
       </el-table-column>
       <el-table-column label="销售代码" align="center" width="100">
@@ -126,16 +133,6 @@
             type="primary"
             @click="openModelConfigTab(scope.row.modelConfigCode)"
           >{{ scope.row.modelConfigCode }}</el-link>
-        </template>
-      </el-table-column>
-      <el-table-column label="订单状态" align="center" width="150">
-        <template slot-scope="scope">
-          <span>{{ getVehicleSaleOrderStateLabel(scope.row.orderState) }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="状态时间" align="center" prop="orderStateTime" width="160">
-        <template slot-scope="scope">
-          <span>{{ parseTime(scope.row.orderStateTime) }}</span>
         </template>
       </el-table-column>
       <el-table-column label="操作" width="240" align="center" fixed="right" class-name="small-padding fixed-width">
