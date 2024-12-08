@@ -6,7 +6,7 @@
           v-model="queryParams.code"
           placeholder="请输入品牌代码"
           clearable
-          style="width: 150px"
+          style="width: 140px"
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
@@ -44,7 +44,7 @@
           icon="el-icon-plus"
           size="mini"
           @click="handleAdd"
-          v-hasPermi="['tsp:vmd:brand:add']"
+          v-hasPermi="['vehicle:product:brand:add']"
         >新增
         </el-button>
       </el-col>
@@ -56,7 +56,7 @@
           size="mini"
           :disabled="single"
           @click="handleUpdate"
-          v-hasPermi="['tsp:vmd:brand:edit']"
+          v-hasPermi="['vehicle:product:brand:edit']"
         >修改
         </el-button>
       </el-col>
@@ -68,7 +68,7 @@
           size="mini"
           :disabled="multiple"
           @click="handleDelete"
-          v-hasPermi="['tsp:vmd:brand:remove']"
+          v-hasPermi="['vehicle:product:brand:remove']"
         >删除
         </el-button>
       </el-col>
@@ -79,7 +79,7 @@
           icon="el-icon-download"
           size="mini"
           @click="handleExport"
-          v-hasPermi="['tsp:vmd:brand:export']"
+          v-hasPermi="['vehicle:product:brand:export']"
         >导出
         </el-button>
       </el-col>
@@ -113,7 +113,7 @@
             type="text"
             icon="el-icon-edit"
             @click="handleUpdate(scope.row)"
-            v-hasPermi="['tsp:vmd:brand:edit']"
+            v-hasPermi="['vehicle:product:brand:edit']"
           >修改
           </el-button>
           <el-button
@@ -121,7 +121,7 @@
             type="text"
             icon="el-icon-delete"
             @click="handleDelete(scope.row)"
-            v-hasPermi="['tsp:vmd:brand:remove']"
+            v-hasPermi="['vehicle:product:brand:remove']"
           >删除
           </el-button>
         </template>
@@ -177,12 +177,12 @@
 
 <script>
 import {
-  addBrand,
-  delBrand,
-  getBrand,
   listBrand,
-  updateBrand
-} from "@/api/tsp/vmd/brand";
+  getBrand,
+  addBrand,
+  updateBrand,
+  delBrand
+} from "@/api/vehicle/product/brand";
 
 export default {
   name: "Brand",
@@ -207,24 +207,15 @@ export default {
       title: "",
       // 是否显示弹出层
       open: false,
-      menuExpand: false,
-      menuNodeAll: false,
       // 日期范围
       dateRange: [],
-      // 菜单列表
-      menuOptions: [],
       // 查询参数
       queryParams: {
         pageNum: 1,
-        pageSize: 10,
-        vin: undefined
+        pageSize: 10
       },
       // 路由表单参数
       form: {},
-      defaultProps: {
-        children: "children",
-        label: "label"
-      },
       // 路由表单校验
       rules: {
         code: [
@@ -257,13 +248,6 @@ export default {
     },
     /** 表单重置 */
     reset() {
-      if (this.$refs.menu != undefined) {
-        this.$refs.menu.setCheckedKeys([]);
-      }
-      this.menuExpand = false,
-      this.menuNodeAll = false,
-      this.deptExpand = true,
-      this.deptNodeAll = false,
       this.form = {
         code: undefined,
         name: undefined,
@@ -296,6 +280,8 @@ export default {
       this.open = true;
       this.title = "添加品牌";
       this.form = {
+        enable: true,
+        sort: 99
       };
     },
     /** 修改按钮操作 */

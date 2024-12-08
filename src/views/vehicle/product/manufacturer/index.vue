@@ -209,8 +209,6 @@ export default {
       open: false,
       // 日期范围
       dateRange: [],
-      // 菜单列表
-      menuOptions: [],
       // 查询参数
       queryParams: {
         pageNum: 1,
