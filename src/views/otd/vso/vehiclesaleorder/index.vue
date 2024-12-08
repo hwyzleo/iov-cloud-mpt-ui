@@ -448,7 +448,7 @@ import {
   updateSaleModel,
   updateSaleModelImages,
   updateSaleModelConfig
-} from "@/api/otd/vehicleSaleOrder";
+} from "@/api/otd/vso/vehicleSaleOrder";
 
 export default {
   name: "VehicleSaleOrder",
