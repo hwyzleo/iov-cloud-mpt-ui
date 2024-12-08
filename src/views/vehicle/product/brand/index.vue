@@ -140,7 +140,7 @@
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="120px">
         <el-form-item label="品牌代码" prop="code">
-          <el-input v-model="form.code" placeholder="请输入品牌代码"/>
+          <el-input v-model="form.code" :readonly="form.id !== undefined" placeholder="请输入品牌代码"/>
         </el-form-item>
         <el-form-item label="品牌名称" prop="name">
           <el-input v-model="form.name" placeholder="请输入品牌名称"/>

@@ -88,7 +88,7 @@
 
     <el-table v-loading="loading" :data="manufacturerList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center"/>
-      <el-table-column label="工厂代码" prop="code"  width="100"/>
+      <el-table-column label="工厂代码" prop="code" width="100"/>
       <el-table-column label="工厂名称" prop="name"/>
       <el-table-column label="工厂英文名称" prop="nameEn"/>
       <el-table-column label="是否启用" align="center" width="100">
@@ -140,7 +140,7 @@
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="120px">
         <el-form-item label="工厂代码" prop="code">
-          <el-input v-model="form.code" placeholder="请输入工厂代码"/>
+          <el-input v-model="form.code" :readonly="form.id !== undefined" placeholder="请输入工厂代码"/>
         </el-form-item>
         <el-form-item label="工厂名称" prop="name">
           <el-input v-model="form.name" placeholder="请输入工厂名称"/>
