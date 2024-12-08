@@ -36,7 +36,7 @@ pipeline {
                script {
                    sh '''
                        echo '============================== 构建镜像 =============================='
-                       docker build -t ${IMAGE_NAME} -f ../DockerfileVue .
+                       docker build --no-cache -t ${IMAGE_NAME} -f ../DockerfileVue .
                    '''
                }
            }
