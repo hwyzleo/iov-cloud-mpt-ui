@@ -214,9 +214,9 @@ export default {
         pageNum: 1,
         pageSize: 10
       },
-      // 路由表单参数
+      // 表单参数
       form: {},
-      // 路由表单校验
+      // 表单校验
       rules: {
         code: [
           {required: true, message: "工厂代码不能为空", trigger: "blur"}

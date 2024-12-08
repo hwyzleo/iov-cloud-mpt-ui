@@ -9,6 +9,14 @@ export function listPlatform(query) {
   })
 }
 
+// 查询所有车辆平台列表
+export function listAllPlatform() {
+  return request({
+    url: '/tsp-vmd/mpt/platform/listAll',
+    method: 'get'
+  })
+}
+
 // 查询车辆平台详细
 export function getPlatform(platformId) {
   return request({

@@ -6,7 +6,7 @@
           v-model="queryParams.platformCode"
           placeholder="请输入平台代码"
           clearable
-          style="width: 150px"
+          style="width: 140px"
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
@@ -15,7 +15,7 @@
           v-model="queryParams.code"
           placeholder="请输入车系代码"
           clearable
-          style="width: 150px"
+          style="width: 140px"
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
@@ -53,7 +53,7 @@
           icon="el-icon-plus"
           size="mini"
           @click="handleAdd"
-          v-hasPermi="['tsp:vmd:series:add']"
+          v-hasPermi="['vehicle:product:series:add']"
         >新增
         </el-button>
       </el-col>
@@ -65,7 +65,7 @@
           size="mini"
           :disabled="single"
           @click="handleUpdate"
-          v-hasPermi="['tsp:vmd:series:edit']"
+          v-hasPermi="['vehicle:product:series:edit']"
         >修改
         </el-button>
       </el-col>
@@ -77,7 +77,7 @@
           size="mini"
           :disabled="multiple"
           @click="handleDelete"
-          v-hasPermi="['tsp:vmd:series:remove']"
+          v-hasPermi="['vehicle:product:series:remove']"
         >删除
         </el-button>
       </el-col>
@@ -88,7 +88,7 @@
           icon="el-icon-download"
           size="mini"
           @click="handleExport"
-          v-hasPermi="['tsp:vmd:series:export']"
+          v-hasPermi="['vehicle:product:series:export']"
         >导出
         </el-button>
       </el-col>
@@ -99,7 +99,7 @@
       <el-table-column type="selection" width="55" align="center"/>
       <el-table-column label="平台代码" prop="platformCode" width="150"/>
       <el-table-column label="车系代码" prop="code" width="150"/>
-      <el-table-column label="车系名称" prop="name" />
+      <el-table-column label="车系名称" prop="name"/>
       <el-table-column label="车系英文名称" prop="nameEn" width="200"/>
       <el-table-column label="是否启用" align="center" width="100">
         <template slot-scope="scope">
@@ -116,14 +116,14 @@
           <span>{{ parseTime(scope.row.createTime) }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="操作" align="center" width="200" class-name="small-padding fixed-width">
+      <el-table-column label="操作" align="center" width="180" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
             size="mini"
             type="text"
             icon="el-icon-edit"
             @click="handleUpdate(scope.row)"
-            v-hasPermi="['tsp:vmd:series:edit']"
+            v-hasPermi="['vehicle:product:series:edit']"
           >修改
           </el-button>
           <el-button
@@ -131,7 +131,7 @@
             type="text"
             icon="el-icon-delete"
             @click="handleDelete(scope.row)"
-            v-hasPermi="['tsp:vmd:series:remove']"
+            v-hasPermi="['vehicle:product:series:remove']"
           >删除
           </el-button>
         </template>
@@ -150,10 +150,22 @@
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="120px">
         <el-form-item label="平台代码" prop="platformCode">
-          <el-input v-model="form.platformCode" placeholder="请输入平台代码"/>
+          <el-select
+            v-model="form.platformCode"
+            placeholder="车辆平台"
+            clearable
+            :disabled="form.id !== undefined"
+          >
+            <el-option
+              v-for="platform in platformList"
+              :key="platform.code"
+              :label="platform.name"
+              :value="platform.code"
+            />
+          </el-select>
         </el-form-item>
         <el-form-item label="车系代码" prop="code">
-          <el-input v-model="form.code" placeholder="请输入车系代码"/>
+          <el-input v-model="form.code" :readonly="form.id !== undefined" placeholder="请输入车系代码"/>
         </el-form-item>
         <el-form-item label="车系名称" prop="name">
           <el-input v-model="form.name" placeholder="请输入车系名称"/>
@@ -190,12 +202,15 @@
 
 <script>
 import {
-  addSeries,
-  delSeries,
-  getSeries,
   listSeries,
-  updateSeries
-} from "@/api/tsp/vmd/series";
+  getSeries,
+  addSeries,
+  updateSeries,
+  delSeries
+} from "@/api/vehicle/product/series";
+import {
+  listAllPlatform
+} from "@/api/vehicle/product/platform";
 
 export default {
   name: "Series",
@@ -216,31 +231,22 @@ export default {
       total: 0,
       // 车系表格数据
       seriesList: [],
+      // 车辆平台列表
+      platformList: [],
       // 弹出层标题
       title: "",
       // 是否显示弹出层
       open: false,
-      menuExpand: false,
-      menuNodeAll: false,
       // 日期范围
       dateRange: [],
-      // 菜单列表
-      menuOptions: [],
       // 查询参数
       queryParams: {
         pageNum: 1,
-        pageSize: 10,
-        platformCode: undefined,
-        code: undefined,
-        name: undefined
+        pageSize: 10
       },
-      // 路由表单参数
+      // 表单参数
       form: {},
-      defaultProps: {
-        children: "children",
-        label: "label"
-      },
-      // 路由表单校验
+      // 表单校验
       rules: {
         platformCode: [
           {required: true, message: "车辆平台代码不能为空", trigger: "blur"}
@@ -278,13 +284,6 @@ export default {
     },
     /** 表单重置 */
     reset() {
-      if (this.$refs.menu != undefined) {
-        this.$refs.menu.setCheckedKeys([]);
-      }
-      this.menuExpand = false,
-      this.menuNodeAll = false,
-      this.deptExpand = true,
-      this.deptNodeAll = false,
       this.form = {
         platformCode: undefined,
         code: undefined,
@@ -315,7 +314,10 @@ export default {
     /** 新增按钮操作 */
     handleAdd() {
       this.reset();
-      this.open = true;
+      listAllPlatform().then(response => {
+        this.platformList = response;
+        this.open = true;
+      });
       this.title = "添加车系";
       this.form = {
         enable: true,
@@ -326,6 +328,9 @@ export default {
     handleUpdate(row) {
       this.reset();
       const seriesId = row.id || this.ids
+      listAllPlatform().then(response => {
+        this.platformList = response;
+      });
       getSeries(seriesId).then(response => {
         this.form = response.data;
         this.open = true;
