@@ -191,7 +191,7 @@
           </el-select>
         </el-form-item>
         <el-form-item label="车型代码" prop="code">
-          <el-input v-model="form.code" placeholder="请输入车型代码"/>
+          <el-input v-model="form.code" :readonly="form.id !== undefined" placeholder="请输入车型代码"/>
         </el-form-item>
         <el-form-item label="车型名称" prop="name">
           <el-input v-model="form.name" placeholder="请输入车型名称"/>
@@ -348,9 +348,11 @@ export default {
     },
     /** 车辆平台下拉选择操作 */
     handlePlatformChange(value) {
-      listSeriesByPlatformCode(value).then(response => {
-        this.seriesList = response;
-      });
+      if(value !== undefined && value !== null && value !== "") {
+        listSeriesByPlatformCode(value).then(response => {
+          this.seriesList = response;
+        });
+      }
     },
     /** 新增按钮操作 */
     handleAdd() {
@@ -369,9 +371,15 @@ export default {
     handleUpdate(row) {
       this.reset();
       const modelId = row.id || this.ids
+      listAllPlatform().then(response => {
+        this.platformList = response;
+      });
       getModel(modelId).then(response => {
         this.form = response.data;
-        this.open = true;
+        listSeriesByPlatformCode(this.form.platformCode).then(response => {
+          this.seriesList = response;
+          this.open = true;
+        });
       });
       this.title = "修改车型";
     },

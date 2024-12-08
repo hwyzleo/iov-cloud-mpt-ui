@@ -9,6 +9,19 @@ export function listModel(query) {
   })
 }
 
+// 查询车型平台下车系列表
+export function listModelByPlatformCodeAndSeriesCode(platformCode, seriesCode) {
+  const params = {
+    platformCode: platformCode,
+    seriesCode: seriesCode
+  }
+  return request({
+    url: '/tsp-vmd/mpt/model/listByPlatformCodeAndSeriesCode',
+    method: 'get',
+    params: params
+  })
+}
+
 // 查询车型详细
 export function getModel(modelId) {
   return request({

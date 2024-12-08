@@ -6,7 +6,7 @@
           v-model="queryParams.platformCode"
           placeholder="请输入平台代码"
           clearable
-          style="width: 150px"
+          style="width: 140px"
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
@@ -15,7 +15,7 @@
           v-model="queryParams.seriesCode"
           placeholder="请输入车系代码"
           clearable
-          style="width: 150px"
+          style="width: 140px"
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
@@ -24,7 +24,7 @@
           v-model="queryParams.modelCode"
           placeholder="请输入车型代码"
           clearable
-          style="width: 150px"
+          style="width: 140px"
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
@@ -33,7 +33,7 @@
           v-model="queryParams.code"
           placeholder="请输入车型配置代码"
           clearable
-          style="width: 160px"
+          style="width: 170px"
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
@@ -42,7 +42,7 @@
           v-model="queryParams.name"
           placeholder="请输入车型配置名称"
           clearable
-          style="width: 200px"
+          style="width: 220px"
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
@@ -71,7 +71,7 @@
           icon="el-icon-plus"
           size="mini"
           @click="handleAdd"
-          v-hasPermi="['tsp:vmd:modelConfig:add']"
+          v-hasPermi="['vehicle:product:modelConfig:add']"
         >新增
         </el-button>
       </el-col>
@@ -83,7 +83,7 @@
           size="mini"
           :disabled="single"
           @click="handleUpdate"
-          v-hasPermi="['tsp:vmd:modelConfig:edit']"
+          v-hasPermi="['vehicle:product:modelConfig:edit']"
         >修改
         </el-button>
       </el-col>
@@ -95,7 +95,7 @@
           size="mini"
           :disabled="multiple"
           @click="handleDelete"
-          v-hasPermi="['tsp:vmd:modelConfig:remove']"
+          v-hasPermi="['vehicle:product:modelConfig:remove']"
         >删除
         </el-button>
       </el-col>
@@ -106,7 +106,7 @@
           icon="el-icon-download"
           size="mini"
           @click="handleExport"
-          v-hasPermi="['tsp:vmd:modelConfig:export']"
+          v-hasPermi="['vehicle:product:modelConfig:export']"
         >导出
         </el-button>
       </el-col>
@@ -119,7 +119,7 @@
       <el-table-column label="车系代码" prop="seriesCode" width="80"/>
       <el-table-column label="车型代码" prop="modelCode" width="80"/>
       <el-table-column label="车型配置代码" prop="code" width="150"/>
-      <el-table-column label="车型配置名称" prop="name" />
+      <el-table-column label="车型配置名称" prop="name"/>
       <el-table-column label="是否启用" align="center" width="100">
         <template slot-scope="scope">
           <el-switch
@@ -142,7 +142,7 @@
             type="text"
             icon="el-icon-edit"
             @click="handleUpdate(scope.row)"
-            v-hasPermi="['tsp:vmd:modelConfig:edit']"
+            v-hasPermi="['vehicle:product:modelConfig:edit']"
           >修改
           </el-button>
           <el-button
@@ -150,7 +150,7 @@
             type="text"
             icon="el-icon-delete"
             @click="handleDelete(scope.row)"
-            v-hasPermi="['tsp:vmd:modelConfig:remove']"
+            v-hasPermi="['vehicle:product:modelConfig:remove']"
           >删除
           </el-button>
         </template>
@@ -168,17 +168,55 @@
     <!-- 添加或修改车型配置对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="700px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="130px">
-        <el-form-item label="平台代码" prop="platformCode">
-          <el-input v-model="form.platformCode" placeholder="请输入平台代码"/>
+        <el-form-item label="车辆平台" prop="platformCode">
+          <el-select
+            v-model="form.platformCode"
+            placeholder="车辆平台"
+            clearable
+            :disabled="form.id !== undefined"
+            @change="handlePlatformChange"
+          >
+            <el-option
+              v-for="platform in platformList"
+              :key="platform.code"
+              :label="platform.name"
+              :value="platform.code"
+            />
+          </el-select>
         </el-form-item>
-        <el-form-item label="车系代码" prop="seriesCode">
-          <el-input v-model="form.seriesCode" placeholder="请输入车系代码"/>
+        <el-form-item label="车系" prop="seriesCode">
+          <el-select
+            v-model="form.seriesCode"
+            placeholder="车系"
+            clearable
+            :disabled="form.id !== undefined"
+            @change="handleSeriesChange"
+          >
+            <el-option
+              v-for="series in seriesList"
+              :key="series.code"
+              :label="series.name"
+              :value="series.code"
+            />
+          </el-select>
         </el-form-item>
-        <el-form-item label="车型代码" prop="modelCode">
-          <el-input v-model="form.modelCode" placeholder="请输入车型代码"/>
+        <el-form-item label="车型" prop="modelCode">
+          <el-select
+            v-model="form.modelCode"
+            placeholder="车型"
+            clearable
+            :disabled="form.id !== undefined"
+          >
+            <el-option
+              v-for="model in modelList"
+              :key="model.code"
+              :label="model.name"
+              :value="model.code"
+            />
+          </el-select>
         </el-form-item>
         <el-form-item label="车型配置代码" prop="code">
-          <el-input v-model="form.code" placeholder="请输入车型配置代码"/>
+          <el-input v-model="form.code" :readonly="form.id !== undefined" placeholder="请输入车型配置代码"/>
         </el-form-item>
         <el-form-item label="车型配置名称" prop="name">
           <el-input v-model="form.name" placeholder="请输入车型配置名称"/>
@@ -230,12 +268,21 @@
 
 <script>
 import {
-  addModelConfig,
-  delModelConfig,
-  getModelConfig,
   listModelConfig,
-  updateModelConfig
-} from "@/api/tsp/vmd/modelconfig";
+  getModelConfig,
+  addModelConfig,
+  updateModelConfig,
+  delModelConfig
+} from "@/api/vehicle/product/modelconfig";
+import {
+  listAllPlatform
+} from "@/api/vehicle/product/platform";
+import {
+  listSeriesByPlatformCode
+} from "@/api/vehicle/product/series";
+import {
+  listModelByPlatformCodeAndSeriesCode
+} from "@/api/vehicle/product/model";
 
 export default {
   name: "ModelConfig",
@@ -256,33 +303,26 @@ export default {
       total: 0,
       // 车型配置表格数据
       modelConfigList: [],
+      // 车辆平台列表
+      platformList: [],
+      // 车系列表
+      seriesList: [],
+      // 车型列表
+      modelList: [],
       // 弹出层标题
       title: "",
       // 是否显示弹出层
       open: false,
-      menuExpand: false,
-      menuNodeAll: false,
       // 日期范围
       dateRange: [],
-      // 菜单列表
-      menuOptions: [],
       // 查询参数
       queryParams: {
         pageNum: 1,
-        pageSize: 10,
-        platformCode: undefined,
-        seriesCode: undefined,
-        modelCode: undefined,
-        code: undefined,
-        name: undefined
+        pageSize: 10
       },
-      // 路由表单参数
+      // 表单参数
       form: {},
-      defaultProps: {
-        children: "children",
-        label: "label"
-      },
-      // 路由表单校验
+      // 表单校验
       rules: {
         platformCode: [
           {required: true, message: "车辆平台代码不能为空", trigger: "blur"}
@@ -327,13 +367,6 @@ export default {
     },
     /** 表单重置 */
     reset() {
-      if (this.$refs.menu != undefined) {
-        this.$refs.menu.setCheckedKeys([]);
-      }
-      this.menuExpand = false,
-      this.menuNodeAll = false,
-      this.deptExpand = true,
-      this.deptNodeAll = false,
       this.form = {
         platformCode: undefined,
         seriesCode: undefined,
@@ -363,10 +396,29 @@ export default {
       this.single = selection.length != 1
       this.multiple = !selection.length
     },
+    /** 车辆平台下拉选择操作 */
+    handlePlatformChange(value) {
+      if (value !== undefined && value !== null && value !== "") {
+        listSeriesByPlatformCode(value).then(response => {
+          this.seriesList = response;
+        });
+      }
+    },
+    /** 车系下拉选择操作 */
+    handleSeriesChange(value) {
+      if (value !== undefined && value !== null && value !== "") {
+        listModelByPlatformCodeAndSeriesCode(this.form.platformCode, value).then(response => {
+          this.modelList = response;
+        });
+      }
+    },
     /** 新增按钮操作 */
     handleAdd() {
       this.reset();
-      this.open = true;
+      listAllPlatform().then(response => {
+        this.platformList = response;
+        this.open = true;
+      });
       this.title = "添加车型配置";
       this.form = {
         enable: true,
