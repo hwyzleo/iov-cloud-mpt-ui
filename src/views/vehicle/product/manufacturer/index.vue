@@ -6,7 +6,7 @@
           v-model="queryParams.code"
           placeholder="请输入工厂代码"
           clearable
-          style="width: 150px"
+          style="width: 140px"
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
@@ -15,7 +15,7 @@
           v-model="queryParams.name"
           placeholder="请输入工厂名称"
           clearable
-          style="width: 150px"
+          style="width: 200px"
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
@@ -44,7 +44,7 @@
           icon="el-icon-plus"
           size="mini"
           @click="handleAdd"
-          v-hasPermi="['tsp:vmd:manufacturer:add']"
+          v-hasPermi="['vehicle:product:manufacturer:add']"
         >新增
         </el-button>
       </el-col>
@@ -56,7 +56,7 @@
           size="mini"
           :disabled="single"
           @click="handleUpdate"
-          v-hasPermi="['tsp:vmd:manufacturer:edit']"
+          v-hasPermi="['vehicle:product:manufacturer:edit']"
         >修改
         </el-button>
       </el-col>
@@ -68,7 +68,7 @@
           size="mini"
           :disabled="multiple"
           @click="handleDelete"
-          v-hasPermi="['tsp:vmd:manufacturer:remove']"
+          v-hasPermi="['vehicle:product:manufacturer:remove']"
         >删除
         </el-button>
       </el-col>
@@ -79,7 +79,7 @@
           icon="el-icon-download"
           size="mini"
           @click="handleExport"
-          v-hasPermi="['tsp:vmd:manufacturer:export']"
+          v-hasPermi="['vehicle:product:manufacturer:export']"
         >导出
         </el-button>
       </el-col>
@@ -101,19 +101,19 @@
         </template>
       </el-table-column>
       <el-table-column label="排序" prop="sort" align="center" width="60"/>
-      <el-table-column label="创建时间" align="center" prop="createTime" width="180">
+      <el-table-column label="创建时间" align="center" prop="createTime" width="160">
         <template slot-scope="scope">
           <span>{{ parseTime(scope.row.createTime) }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="操作" align="center" width="200" class-name="small-padding fixed-width">
+      <el-table-column label="操作" align="center" width="150" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
             size="mini"
             type="text"
             icon="el-icon-edit"
             @click="handleUpdate(scope.row)"
-            v-hasPermi="['tsp:vmd:manufacturer:edit']"
+            v-hasPermi="['vehicle:product:manufacturer:edit']"
           >修改
           </el-button>
           <el-button
@@ -121,7 +121,7 @@
             type="text"
             icon="el-icon-delete"
             @click="handleDelete(scope.row)"
-            v-hasPermi="['tsp:vmd:manufacturer:remove']"
+            v-hasPermi="['vehicle:product:manufacturer:remove']"
           >删除
           </el-button>
         </template>
@@ -136,7 +136,7 @@
       @pagination="getList"
     />
 
-    <!-- 添加或修改路由配置对话框 -->
+    <!-- 添加或修改工厂配置对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="120px">
         <el-form-item label="工厂代码" prop="code">
@@ -177,12 +177,12 @@
 
 <script>
 import {
-  addManufacturer,
-  delManufacturer,
-  getManufacturer,
   listManufacturer,
-  updateManufacturer
-} from "@/api/tsp/vmd/manufacturer";
+  getManufacturer,
+  addManufacturer,
+  updateManufacturer,
+  delManufacturer
+} from "@/api/vehicle/product/manufacturer";
 
 export default {
   name: "Manufacturer",
@@ -207,8 +207,6 @@ export default {
       title: "",
       // 是否显示弹出层
       open: false,
-      menuExpand: false,
-      menuNodeAll: false,
       // 日期范围
       dateRange: [],
       // 菜单列表
@@ -216,15 +214,10 @@ export default {
       // 查询参数
       queryParams: {
         pageNum: 1,
-        pageSize: 10,
-        vin: undefined
+        pageSize: 10
       },
       // 路由表单参数
       form: {},
-      defaultProps: {
-        children: "children",
-        label: "label"
-      },
       // 路由表单校验
       rules: {
         code: [
@@ -240,7 +233,7 @@ export default {
     this.getList();
   },
   methods: {
-    /** 查询车辆列表 */
+    /** 查询工厂列表 */
     getList() {
       this.loading = true;
       listManufacturer(this.addDateRange(this.queryParams, this.dateRange)).then(response => {
@@ -257,13 +250,6 @@ export default {
     },
     /** 表单重置 */
     reset() {
-      if (this.$refs.menu != undefined) {
-        this.$refs.menu.setCheckedKeys([]);
-      }
-      this.menuExpand = false,
-      this.menuNodeAll = false,
-      this.deptExpand = true,
-      this.deptNodeAll = false,
       this.form = {
         code: undefined,
         name: undefined,
@@ -296,6 +282,8 @@ export default {
       this.open = true;
       this.title = "添加工厂";
       this.form = {
+        enable: true,
+        sort: 99
       };
     },
     /** 修改按钮操作 */
