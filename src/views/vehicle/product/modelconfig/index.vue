@@ -429,9 +429,18 @@ export default {
     handleUpdate(row) {
       this.reset();
       const modelConfigId = row.id || this.ids
+      listAllPlatform().then(response => {
+        this.platformList = response;
+      });
       getModelConfig(modelConfigId).then(response => {
         this.form = response.data;
-        this.open = true;
+        listSeriesByPlatformCode(this.form.platformCode).then(response => {
+          this.seriesList = response;
+          listModelByPlatformCodeAndSeriesCode(this.form.platformCode, this.form.seriesCode).then(response => {
+            this.modelList = response;
+            this.open = true;
+          });
+        });
       });
       this.title = "修改车型配置";
     },
