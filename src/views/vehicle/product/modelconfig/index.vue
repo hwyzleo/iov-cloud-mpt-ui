@@ -129,7 +129,7 @@
           ></el-switch>
         </template>
       </el-table-column>
-      <el-table-column label="排序" prop="sort" align="center" width="80"/>
+      <el-table-column label="排序" prop="sort" align="center" width="90"/>
       <el-table-column label="创建时间" align="center" prop="createTime" width="180">
         <template slot-scope="scope">
           <span>{{ parseTime(scope.row.createTime) }}</span>
