@@ -44,7 +44,7 @@
           icon="el-icon-plus"
           size="mini"
           @click="handleAdd"
-          v-hasPermi="['otd:saleModel:add']"
+          v-hasPermi="['vehicle:product:saleModel:add']"
         >新增
         </el-button>
       </el-col>
@@ -56,7 +56,7 @@
           size="mini"
           :disabled="single"
           @click="handleUpdate"
-          v-hasPermi="['otd:saleModel:edit']"
+          v-hasPermi="['vehicle:product:saleModel:edit']"
         >修改
         </el-button>
       </el-col>
@@ -68,7 +68,7 @@
           size="mini"
           :disabled="multiple"
           @click="handleDelete"
-          v-hasPermi="['otd:saleModel:remove']"
+          v-hasPermi="['vehicle:product:saleModel:remove']"
         >删除
         </el-button>
       </el-col>
@@ -79,7 +79,7 @@
           icon="el-icon-download"
           size="mini"
           @click="handleExport"
-          v-hasPermi="['otd:saleModel:export']"
+          v-hasPermi="['vehicle:product:saleModel:export']"
         >导出
         </el-button>
       </el-col>
@@ -138,7 +138,7 @@
             type="text"
             icon="el-icon-edit"
             @click="handleUpdate(scope.row)"
-            v-hasPermi="['otd:vso:edit']"
+            v-hasPermi="['vehicle:product:vso:edit']"
           >修改
           </el-button>
           <el-button
@@ -146,7 +146,7 @@
             type="text"
             icon="el-icon-picture"
             @click="handleImages(scope.row)"
-            v-hasPermi="['otd:vso:edit']"
+            v-hasPermi="['vehicle:product:vso:edit']"
           >维护图片
           </el-button>
           <el-button
@@ -154,7 +154,7 @@
             type="text"
             icon="el-icon-setting"
             @click="handleConfig(scope.row)"
-            v-hasPermi="['otd:vso:edit']"
+            v-hasPermi="['vehicle:product:vso:edit']"
           >车型配置
           </el-button>
           <el-button
@@ -162,7 +162,7 @@
             type="text"
             icon="el-icon-delete"
             @click="handleDelete(scope.row)"
-            v-hasPermi="['otd:vso:remove']"
+            v-hasPermi="['vehicle:product:vso:remove']"
           >删除
           </el-button>
         </template>
@@ -410,18 +410,18 @@
 
 <script>
 import {
-  addSaleModel,
-  addSaleModelConfig,
-  delSaleModel,
-  delSaleModelConfig,
-  getSaleModel,
-  getSaleModelConfig,
   listSaleModel,
   listSaleModelConfig,
+  getSaleModel,
+  getSaleModelConfig,
+  addSaleModel,
+  addSaleModelConfig,
   updateSaleModel,
   updateSaleModelConfig,
-  updateSaleModelImages
-} from "@/api/otd/saleModel";
+  updateSaleModelImages,
+  delSaleModel,
+  delSaleModelConfig
+} from "@/api/vehicle/product/salemodel";
 
 export default {
   name: "SaleModel",
@@ -458,27 +458,17 @@ export default {
       openConfigList: false,
       // 是否显示弹出层（车型配置）
       openConfig: false,
-      menuExpand: false,
-      menuNodeAll: false,
       // 日期范围
       dateRange: [],
-      // 菜单列表
-      menuOptions: [],
       // 查询参数
       queryParams: {
         pageNum: 1,
-        pageSize: 10,
-        saleCode: undefined,
-        modelName: undefined
+        pageSize: 10
       },
       // 销售车型表单参数
       form: {},
       // 销售车型配置表单参数
       formConfig: {},
-      defaultProps: {
-        children: "children",
-        label: "label"
-      },
       // 销售车型表单校验
       rules: {
         saleCode: [
@@ -551,24 +541,17 @@ export default {
     },
     /** 表单重置 */
     reset() {
-      if (this.$refs.menu != undefined) {
-        this.$refs.menu.setCheckedKeys([]);
-      }
-      this.menuExpand = false,
-        this.menuNodeAll = false,
-        this.deptExpand = true,
-        this.deptNodeAll = false,
-        this.form = {
-          saleCode: undefined,
-          modelName: undefined,
-          earnestMoney: true,
-          earnestMoneyPrice: undefined,
-          downPayment: true,
-          downPaymentPrice: undefined,
-          enable: true,
-          sort: 99,
-          images: ['']
-        };
+      this.form = {
+        saleCode: undefined,
+        modelName: undefined,
+        earnestMoney: true,
+        earnestMoneyPrice: undefined,
+        downPayment: true,
+        downPaymentPrice: undefined,
+        enable: true,
+        sort: 99,
+        images: ['']
+      };
       this.resetForm("form");
     },
     /** 表单重置 */
