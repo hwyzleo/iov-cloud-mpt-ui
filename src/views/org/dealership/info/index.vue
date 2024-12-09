@@ -44,7 +44,7 @@
           icon="el-icon-plus"
           size="mini"
           @click="handleAdd"
-          v-hasPermi="['dms:org:dealership:add']"
+          v-hasPermi="['org:dealership:info:add']"
         >新增
         </el-button>
       </el-col>
@@ -56,7 +56,7 @@
           size="mini"
           :disabled="single"
           @click="handleUpdate"
-          v-hasPermi="['dms:org:dealership:edit']"
+          v-hasPermi="['org:dealership:info:edit']"
         >修改
         </el-button>
       </el-col>
@@ -68,7 +68,7 @@
           size="mini"
           :disabled="multiple"
           @click="handleDelete"
-          v-hasPermi="['dms:org:dealership:remove']"
+          v-hasPermi="['org:dealership:info:remove']"
         >删除
         </el-button>
       </el-col>
@@ -79,7 +79,7 @@
           icon="el-icon-download"
           size="mini"
           @click="handleExport"
-          v-hasPermi="['dms:org:dealership:export']"
+          v-hasPermi="['org:dealership:info:export']"
         >导出
         </el-button>
       </el-col>
@@ -104,7 +104,7 @@
             type="text"
             icon="el-icon-edit"
             @click="handleUpdate(scope.row)"
-            v-hasPermi="['dms:org:dealership:edit']"
+            v-hasPermi="['org:dealership:info:edit']"
           >修改
           </el-button>
           <el-button
@@ -112,7 +112,7 @@
             type="text"
             icon="el-icon-delete"
             @click="handleDelete(scope.row)"
-            v-hasPermi="['dms:org:dealership:remove']"
+            v-hasPermi="['org:dealership:info:remove']"
           >删除
           </el-button>
         </template>
@@ -165,12 +165,12 @@
 
 <script>
 import {
-  addDealership,
-  delDealership,
-  getDealership,
   listDealership,
-  updateDealership
-} from "@/api/dms/org/dealership";
+  getDealership,
+  addDealership,
+  updateDealership,
+  delDealership
+} from "@/api/org/dealership/info";
 
 export default {
   name: "Dealership",
@@ -195,26 +195,16 @@ export default {
       title: "",
       // 是否显示弹出层
       open: false,
-      menuExpand: false,
-      menuNodeAll: false,
       // 日期范围
       dateRange: [],
-      // 菜单列表
-      menuOptions: [],
       // 查询参数
       queryParams: {
         pageNum: 1,
-        pageSize: 10,
-        code: undefined,
-        name: undefined
+        pageSize: 10
       },
-      // 路由表单参数
+      // 表单参数
       form: {},
-      defaultProps: {
-        children: "children",
-        label: "label"
-      },
-      // 路由表单校验
+      // 表单校验
       rules: {
         code: [
           {required: true, message: "门店代码不能为空", trigger: "blur"}
@@ -249,13 +239,6 @@ export default {
     },
     /** 表单重置 */
     reset() {
-      if (this.$refs.menu != undefined) {
-        this.$refs.menu.setCheckedKeys([]);
-      }
-      this.menuExpand = false,
-      this.menuNodeAll = false,
-      this.deptExpand = true,
-      this.deptNodeAll = false,
       this.form = {
         code: undefined,
         name: undefined,
@@ -289,8 +272,7 @@ export default {
       this.reset();
       this.open = true;
       this.title = "添加门店";
-      this.form = {
-      };
+      this.form = {};
     },
     /** 修改按钮操作 */
     handleUpdate(row) {
