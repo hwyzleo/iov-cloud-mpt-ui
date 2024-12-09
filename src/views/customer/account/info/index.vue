@@ -210,7 +210,7 @@ import {
   addAccount,
   updateAccount,
   delAccount
-} from "@/api/customer/account/operation";
+} from "@/api/customer/account/info";
 import {getBrand} from "@/api/completevehicle/product/brand";
 
 export default {

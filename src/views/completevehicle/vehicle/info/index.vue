@@ -248,7 +248,7 @@ import {
   updateVehicleLifecycle,
   delVehicle,
   delVehicleLifecycle
-} from "@/api/completevehicle/vehicle/operation";
+} from "@/api/completevehicle/vehicle/info";
 
 export default {
   name: "Vehicle",

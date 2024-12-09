@@ -254,7 +254,7 @@ import {
   addOrder,
   updateOrder,
   delOrder,
-} from "@/api/completevehicle/order/operation";
+} from "@/api/completevehicle/order/info";
 
 export default {
   name: "VehicleSaleOrder",
