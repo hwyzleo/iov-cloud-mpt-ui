@@ -10,42 +10,31 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="手机号" prop="mobile">
+      <el-form-item label="客户端ID" prop="clientId">
         <el-input
-          v-model="queryParams.mobile"
-          placeholder="请输入手机号"
+          v-model="queryParams.clientId"
+          placeholder="请输入客户端ID"
           clearable
-          style="width: 140px"
+          style="width: 300px"
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="注册来源" prop="status">
+      <el-form-item label="客户端类型" prop="clientType">
         <el-select
-          v-model="queryParams.regSource"
-          placeholder="注册来源"
+          v-model="queryParams.clientType"
+          placeholder="客户端类型"
           clearable
           style="width: 120px"
         >
           <el-option
-            v-for="dict in dict.type.iov_reg_source"
+            v-for="dict in dict.type.iov_client_type"
             :key="dict.value"
             :label="dict.label"
             :value="dict.value"
           />
         </el-select>
       </el-form-item>
-      <el-form-item label="状态" prop="status">
-        <el-select
-          v-model="queryParams.enable"
-          placeholder="账号状态"
-          clearable
-          style="width: 120px"
-        >
-          <el-option key="1" label="正常" value="1"/>
-          <el-option key="0" label="停用" value="0"/>
-        </el-select>
-      </el-form-item>
-      <el-form-item label="创建时间">
+      <el-form-item label="最后登录时间">
         <el-date-picker
           v-model="dateRange"
           style="width: 240px"
@@ -70,7 +59,7 @@
           icon="el-icon-plus"
           size="mini"
           @click="handleAdd"
-          v-hasPermi="['user:account:account:add']"
+          v-hasPermi="['user:account:client:add']"
         >新增
         </el-button>
       </el-col>
@@ -82,7 +71,7 @@
           size="mini"
           :disabled="single"
           @click="handleUpdate"
-          v-hasPermi="['user:account:account:edit']"
+          v-hasPermi="['user:account:client:edit']"
         >修改
         </el-button>
       </el-col>
@@ -94,7 +83,7 @@
           size="mini"
           :disabled="multiple"
           @click="handleDelete"
-          v-hasPermi="['user:account:account:remove']"
+          v-hasPermi="['user:account:client:remove']"
         >删除
         </el-button>
       </el-col>
@@ -105,40 +94,27 @@
           icon="el-icon-download"
           size="mini"
           @click="handleExport"
-          v-hasPermi="['user:account:account:export']"
+          v-hasPermi="['user:account:client:export']"
         >导出
         </el-button>
       </el-col>
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
-    <el-table v-loading="loading" :data="accountList" @selection-change="handleSelectionChange">
+    <el-table v-loading="loading" :data="clientList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center"/>
       <el-table-column label="账号ID" prop="accountId" width="200"/>
-      <el-table-column label="手机号" prop="mobile" width="120"/>
-      <el-table-column label="昵称" prop="nickname" width="150"/>
-      <el-table-column label="性别" prop="gender" width="100">
+      <el-table-column label="客户端ID" prop="clientId" width="300"/>
+      <el-table-column label="推送注册ID" prop="pushRegId" width="150"/>
+      <el-table-column label="客户端类型" prop="clientType" width="100">
         <template slot-scope="scope">
-          <span>{{ getGenderLabel(scope.row.gender) }}</span>
+          <span>{{ getClientTypeLabel(scope.row.clientType) }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="注册来源" prop="regSource" width="100">
+      <el-table-column label="最后登录IP" prop="ip" width="150"/>
+      <el-table-column label="最后登录时间" align="center" prop="loginTime" width="180">
         <template slot-scope="scope">
-          <span>{{ getRegSourceLabel(scope.row.regSource) }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="状态" align="center" width="100">
-        <template slot-scope="scope">
-          <el-switch
-            v-model="scope.row.enable"
-            :active-value="true"
-            :inactive-value="false"
-          ></el-switch>
-        </template>
-      </el-table-column>
-      <el-table-column label="创建时间" align="center" prop="createTime" width="180">
-        <template slot-scope="scope">
-          <span>{{ parseTime(scope.row.createTime) }}</span>
+          <span>{{ parseTime(scope.row.loginTime) }}</span>
         </template>
       </el-table-column>
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
@@ -148,7 +124,7 @@
             type="text"
             icon="el-icon-edit"
             @click="handleUpdate(scope.row)"
-            v-hasPermi="['user:account:account:edit']"
+            v-hasPermi="['user:account:client:edit']"
           >修改
           </el-button>
           <el-button
@@ -156,7 +132,7 @@
             type="text"
             icon="el-icon-delete"
             @click="handleDelete(scope.row)"
-            v-hasPermi="['user:account:account:remove']"
+            v-hasPermi="['user:account:client:remove']"
           >删除
           </el-button>
         </template>
@@ -171,25 +147,23 @@
       @pagination="getList"
     />
 
-    <!-- 添加或修改账号配置对话框 -->
+    <!-- 添加或修改客户端配置对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="100px">
-        <el-form-item label="手机号" prop="mobile">
-          <el-input v-model="form.roleName" placeholder="请输入手机号"/>
+        <el-form-item label="账号ID" prop="accountId">
+          <el-input v-model="form.accountId" placeholder="请输入账号ID"/>
         </el-form-item>
-        <el-form-item label="状态">
-          <el-radio-group v-model="form.enable">
-            <el-radio
-              key="1"
-              label="1"
-            >正常
-            </el-radio>
-            <el-radio
-              key="0"
-              label="0"
-            >停用
-            </el-radio>
-          </el-radio-group>
+        <el-form-item label="客户端ID" prop="clientId">
+          <el-input v-model="form.clientId" placeholder="请输入客户端ID"/>
+        </el-form-item>
+        <el-form-item label="推送注册ID" prop="pushRegId">
+          <el-input v-model="form.pushRegId" placeholder="请输入推送注册ID"/>
+        </el-form-item>
+        <el-form-item label="客户端类型" prop="clientType">
+          <el-input v-model="form.clientType" placeholder="请输入客户端类型"/>
+        </el-form-item>
+        <el-form-item label="最后登录IP" prop="ip">
+          <el-input v-model="form.ip" placeholder="请输入最后登录IP"/>
         </el-form-item>
         <el-form-item label="备注">
           <el-input v-model="form.remark" type="textarea" placeholder="请输入内容"></el-input>
@@ -205,17 +179,16 @@
 
 <script>
 import {
-  listAccount,
-  getAccount,
-  addAccount,
-  updateAccount,
-  delAccount
-} from "@/api/user/account/account";
-import {getBrand} from "@/api/vehicle/product/brand";
+  listClient,
+  getClient,
+  addClient,
+  updateClient,
+  delClient
+} from "@/api/user/account/client";
 
 export default {
-  name: "Account",
-  dicts: ['iov_user_gender', 'iov_reg_source'],
+  name: "Client",
+  dicts: ['iov_client_type'],
   data() {
     return {
       // 遮罩层
@@ -231,17 +204,13 @@ export default {
       // 总条数
       total: 0,
       // 账号表格数据
-      accountList: [],
+      clientList: [],
       // 弹出层标题
       title: "",
       // 是否显示弹出层
       open: false,
       // 日期范围
       dateRange: [],
-      // 菜单列表
-      menuOptions: [],
-      // 部门列表
-      deptOptions: [],
       // 查询参数
       queryParams: {
         pageNum: 1,
@@ -251,49 +220,41 @@ export default {
       form: {},
       // 表单校验
       rules: {
-        mobile: [
-          {required: true, message: "手机号不能为空", trigger: "blur"}
+        accountId: [
+          {required: true, message: "账号ID不能为空", trigger: "blur"}
         ],
-        enable: [
-          {required: true, message: "状态不能为空", trigger: "blur"}
+        clientId: [
+          {required: true, message: "客户端ID不能为空", trigger: "blur"}
+        ],
+        clientType: [
+          {required: true, message: "客户端类型不能为空", trigger: "blur"}
         ]
       }
     };
   },
   created() {
-    this.queryParams.accountId = this.$route.query.accountId;
     this.getList();
   },
   methods: {
-    /** 查询账号列表 */
+    /** 查询客户端列表 */
     getList() {
       this.loading = true;
-      listAccount(this.addDateRange(this.queryParams, this.dateRange)).then(response => {
-          this.accountList = response.rows;
+      listClient(this.addDateRange(this.queryParams, this.dateRange)).then(response => {
+          this.clientList = response.rows;
           this.total = response.total;
           this.loading = false;
         }
       );
     },
-    // 获取性别
-    getGenderLabel(gender) {
-      if (!this.dict || !this.dict.type || !this.dict.type.iov_user_gender) {
-        return gender;
+    // 获取客户端类型
+    getClientTypeLabel(clientType) {
+      if (!this.dict || !this.dict.type || !this.dict.type.iov_client_type) {
+        return clientType;
       }
-      const item = this.dict.type.iov_user_gender.find(
-        dict => dict.value === gender
+      const item = this.dict.type.iov_client_type.find(
+        dict => dict.value === clientType
       )
-      return item ? item.label : gender
-    },
-    // 获取注册来源
-    getRegSourceLabel(regSource) {
-      if (!this.dict || !this.dict.type || !this.dict.type.iov_reg_source) {
-        return regSource;
-      }
-      const item = this.dict.type.iov_reg_source.find(
-        dict => dict.value === regSource
-      )
-      return item ? item.label : regSource
+      return item ? item.label : genclientTypeder
     },
     // 取消按钮
     cancel() {
@@ -304,9 +265,9 @@ export default {
     reset() {
       this.form = {
         accountId: undefined,
-        mobile: undefined,
-        regSource: undefined,
-        enable: undefined
+        clientId: undefined,
+        pushRegId: undefined,
+        clientType: undefined
       };
       this.resetForm("form");
     },
@@ -331,30 +292,30 @@ export default {
     handleAdd() {
       this.reset();
       this.open = true;
-      this.title = "添加账号";
+      this.title = "添加客户端";
     },
     /** 修改按钮操作 */
     handleUpdate(row) {
       this.reset();
-      const accountId = row.id || this.ids
-      getAccount(accountId).then(response => {
+      const clientId = row.id || this.ids
+      getClient(clientId).then(response => {
         this.form = response.data;
         this.open = true;
       });
-      this.title = "修改账号";
+      this.title = "修改客户端";
     },
     /** 提交按钮 */
     submitForm: function () {
       this.$refs["form"].validate(valid => {
         if (valid) {
           if (this.form.id != undefined) {
-            updateAccount(this.form).then(response => {
+            updateClient(this.form).then(response => {
               this.$modal.msgSuccess("修改成功");
               this.open = false;
               this.getList();
             });
           } else {
-            addAccount(this.form).then(response => {
+            addClient(this.form).then(response => {
               this.$modal.msgSuccess("新增成功");
               this.open = false;
               this.getList();
@@ -365,9 +326,9 @@ export default {
     },
     /** 删除按钮操作 */
     handleDelete(row) {
-      const accountIds = row.id || this.ids;
-      this.$modal.confirm('是否确认删除账号ID为"' + accountIds + '"的数据项？').then(function () {
-        return delAccount(accountIds);
+      const clientIds = row.id || this.ids;
+      this.$modal.confirm('是否确认删除客户端编号为"' + clientIds + '"的数据项？').then(function () {
+        return delClient(clientIds);
       }).then(() => {
         this.getList();
         this.$modal.msgSuccess("删除成功");
@@ -376,9 +337,9 @@ export default {
     },
     /** 导出按钮操作 */
     handleExport() {
-      this.download('tsp-account/mpt/account/export', {
+      this.download('tsp-account/mpt/client/export', {
         ...this.queryParams
-      }, `account_${new Date().getTime()}.xlsx`)
+      }, `client_${new Date().getTime()}.xlsx`)
     }
   }
 };
