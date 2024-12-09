@@ -6,7 +6,7 @@
           v-model="queryParams.vin"
           placeholder="请输入车架号"
           clearable
-          style="width: 150px"
+          style="width: 190px"
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
@@ -35,7 +35,7 @@
           icon="el-icon-plus"
           size="mini"
           @click="handleAdd"
-          v-hasPermi="['tsp:vmd:vehicle:add']"
+          v-hasPermi="['vehicle:vehicle:vehicle:add']"
         >新增
         </el-button>
       </el-col>
@@ -47,11 +47,10 @@
           size="mini"
           :disabled="single"
           @click="handleUpdate"
-          v-hasPermi="['tsp:vmd:vehicle:edit']"
+          v-hasPermi="['vehicle:vehicle:vehicle:edit']"
         >修改
         </el-button>
       </el-col>
-      <!--
       <el-col :span="1.5">
         <el-button
           type="danger"
@@ -60,11 +59,10 @@
           size="mini"
           :disabled="multiple"
           @click="handleDelete"
-          v-hasPermi="['tsp:vmd:vehicle:remove']"
+          v-hasPermi="['vehicle:vehicle:vehicle:remove']"
         >删除
         </el-button>
       </el-col>
-      -->
       <el-col :span="1.5">
         <el-button
           type="warning"
@@ -72,7 +70,7 @@
           icon="el-icon-download"
           size="mini"
           @click="handleExport"
-          v-hasPermi="['tsp:vmd:vehicle:export']"
+          v-hasPermi="['vehicle:vehicle:vehicle:export']"
         >导出
         </el-button>
       </el-col>
@@ -100,7 +98,7 @@
             type="text"
             icon="el-icon-help"
             @click="handleLifecycle(scope.row)"
-            v-hasPermi="['tsp:vmd:vehicle:query']"
+            v-hasPermi="['vehicle:vehicle:vehicle:query']"
           >生命周期
           </el-button>
           <el-button
@@ -108,19 +106,17 @@
             type="text"
             icon="el-icon-edit"
             @click="handleUpdate(scope.row)"
-            v-hasPermi="['tsp:vmd:vehicle:edit']"
+            v-hasPermi="['vehicle:vehicle:vehicle:edit']"
           >修改
           </el-button>
-          <!--
           <el-button
             size="mini"
             type="text"
             icon="el-icon-delete"
             @click="handleDelete(scope.row)"
-            v-hasPermi="['tsp:vmd:vehicle:remove']"
+            v-hasPermi="['vehicle:vehicle:vehicle:remove']"
           >删除
           </el-button>
-          -->
         </template>
       </el-table-column>
     </el-table>
@@ -176,7 +172,7 @@
                 type="text"
                 icon="el-icon-edit"
                 @click="handleUpdateLifecycle(scope.row)"
-                v-hasPermi="['tsp:vmd:vehicle:edit']"
+                v-hasPermi="['vehicle:vehicle:vehicle:edit']"
               >修改
               </el-button>
               <el-button
@@ -184,7 +180,7 @@
                 type="text"
                 icon="el-icon-delete"
                 @click="handleDeleteLifecycle(scope.row)"
-                v-hasPermi="['tsp:vmd:vehicle:edit']"
+                v-hasPermi="['vehicle:vehicle:vehicle:edit']"
               >删除
               </el-button>
             </template>
@@ -243,13 +239,16 @@
 
 <script>
 import {
-  addVehicle, addVehicleLifecycle,
-  delVehicle, delVehicleLifecycle,
-  getVehicle,
   listVehicle,
   listVehicleLifecycle,
-  updateVehicle, updateVehicleLifecycle
-} from "@/api/tsp/vmd/vehicle";
+  getVehicle,
+  addVehicle,
+  addVehicleLifecycle,
+  updateVehicle,
+  updateVehicleLifecycle,
+  delVehicle,
+  delVehicleLifecycle
+} from "@/api/vehicle/vehicle/vehicle";
 
 export default {
   name: "Vehicle",
@@ -283,33 +282,24 @@ export default {
       openLifecycleList: false,
       // 是否显示弹出层（生命周期）
       openLifecycle: false,
-      menuExpand: false,
-      menuNodeAll: false,
       // 日期范围
       dateRange: [],
-      // 菜单列表
-      menuOptions: [],
       // 查询参数
       queryParams: {
         pageNum: 1,
-        pageSize: 10,
-        vin: undefined
+        pageSize: 10
       },
-      // 路由表单参数
+      // 表单参数
       form: {},
-      // 路由表单参数（生命周期）
+      // 表单参数（生命周期）
       formLifecycle: {},
-      defaultProps: {
-        children: "children",
-        label: "label"
-      },
-      // 车辆表单校验
+      // 表单校验
       rules: {
         vin: [
           {required: true, message: "车架号不能为空", trigger: "blur"}
         ]
       },
-      // 生命周期表单校验
+      // 表单校验（生命周期）
       rulesLifecycle: {
         vin: [
           {required: true, message: "车架号不能为空", trigger: "blur"}
@@ -377,22 +367,17 @@ export default {
     },
     /** 表单重置 */
     reset() {
-      if (this.$refs.menu != undefined) {
-        this.$refs.menu.setCheckedKeys([]);
-      }
-      this.menuExpand = false,
-        this.menuNodeAll = false,
-        this.deptExpand = true,
-        this.deptNodeAll = false,
-        this.form = {
-          vin: undefined
-        };
+      this.form = {
+        vin: undefined
+      };
       this.resetForm("form");
     },
     /** 表单重置（生命周期） */
     resetLifecycle() {
       this.formLifecycle = {
         vin: undefined,
+        node: undefined,
+        reachTime: undefined,
         sort: 0
       };
       this.resetForm("form");
