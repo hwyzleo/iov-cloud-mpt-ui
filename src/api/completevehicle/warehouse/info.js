@@ -9,6 +9,14 @@ export function listWarehouse(query) {
   })
 }
 
+// 查询仓库下库区列表
+export function listWarehouseStorageArea(warehouseId) {
+  return request({
+    url: '/otd-wms/mpt/warehouse/' + warehouseId + '/storageArea',
+    method: 'get'
+  })
+}
+
 // 查询仓库详细
 export function getWarehouse(warehouseId) {
   return request({
@@ -26,6 +34,15 @@ export function addWarehouse(data) {
   })
 }
 
+// 新增仓库储区
+export function addWarehouseStorageArea(warehouseId, data) {
+  return request({
+    url: '/otd-wms/mpt/warehouse/' + warehouseId + '/storageArea',
+    method: 'post',
+    data: data
+  })
+}
+
 // 修改仓库
 export function updateWarehouse(data) {
   return request({
@@ -35,10 +52,27 @@ export function updateWarehouse(data) {
   })
 }
 
+// 修改仓库储区
+export function updateWarehouseStorageArea(warehouseId, data) {
+  return request({
+    url: '/otd-wms/mpt/warehouse/' + warehouseId + '/storageArea',
+    method: 'put',
+    data: data
+  })
+}
+
 // 删除仓库
 export function delWarehouse(warehouseIds) {
   return request({
     url: '/otd-wms/mpt/warehouse/' + warehouseIds,
+    method: 'delete'
+  })
+}
+
+// 删除仓库储区
+export function delWarehouseStorageArea(warehouseId, storageAreaId) {
+  return request({
+    url: '/otd-wms/mpt/warehouse/' + warehouseId + '/storageArea/' + storageAreaId,
     method: 'delete'
   })
 }

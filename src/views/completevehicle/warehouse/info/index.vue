@@ -104,7 +104,7 @@
     <el-table v-loading="loading" :data="warehouseList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center"/>
       <el-table-column label="仓库代码" prop="code" width="100"/>
-      <el-table-column label="仓库名称" prop="name"/>
+      <el-table-column label="仓库名称" prop="name" width="150"/>
       <el-table-column label="仓库管理员" prop="manager" width="100"/>
       <el-table-column label="仓库类型" prop="warehouseLevel" align="center" width="100">
         <template slot-scope="scope">
@@ -125,12 +125,7 @@
         </template>
       </el-table-column>
       <el-table-column label="排序" prop="sort" align="center" width="60"/>
-      <el-table-column label="创建时间" align="center" prop="createTime" width="180">
-        <template slot-scope="scope">
-          <span>{{ parseTime(scope.row.createTime) }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="操作" align="center" width="200" class-name="small-padding fixed-width">
+      <el-table-column label="操作" align="center" width="200" fixed="right" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
             size="mini"
@@ -139,6 +134,14 @@
             @click="handleUpdate(scope.row)"
             v-hasPermi="['completeVehicle:warehouse:info:edit']"
           >修改
+          </el-button>
+          <el-button
+            size="mini"
+            type="text"
+            icon="el-icon-edit"
+            @click="handleStorageAreaList(scope.row)"
+            v-hasPermi="['completeVehicle:warehouse:info:edit']"
+          >库区管理
           </el-button>
           <el-button
             size="mini"
@@ -234,16 +237,109 @@
         <el-button @click="cancel">取 消</el-button>
       </div>
     </el-dialog>
+
+    <!-- 库区管理列表对话框 -->
+    <el-dialog :title="title" :visible.sync="openStorageAreaList" width="800px" append-to-body>
+      <el-table v-loading="loading" :data="storageAreaList">
+        <el-table-column label="储区代码" prop="code" width="100"/>
+        <el-table-column label="储区名称" prop="name"/>
+        <el-table-column label="储区管理员" prop="manager" width="100"/>
+        <el-table-column label="是否启用" align="center" width="100">
+          <template slot-scope="scope">
+            <el-switch
+              v-model="scope.row.enable"
+              :active-value="true"
+              :inactive-value="false"
+            ></el-switch>
+          </template>
+        </el-table-column>
+        <el-table-column label="排序" prop="sort" align="center" width="60"/>
+        <el-table-column label="操作" align="center" width="200" class-name="small-padding fixed-width">
+          <template slot-scope="scope">
+            <el-button
+              size="mini"
+              type="text"
+              icon="el-icon-edit"
+              @click="handleUpdateStorageArea(scope.row)"
+              v-hasPermi="['completeVehicle:warehouse:info:edit']"
+            >修改
+            </el-button>
+            <el-button
+              size="mini"
+              type="text"
+              icon="el-icon-edit"
+              @click="handleUpdate(scope.row)"
+              v-hasPermi="['completeVehicle:warehouse:info:edit']"
+            >库位管理
+            </el-button>
+            <el-button
+              size="mini"
+              type="text"
+              icon="el-icon-delete"
+              @click="handleDeleteStorageArea(form.id, scope.row)"
+              v-hasPermi="['completeVehicle:warehouse:info:remove']"
+            >删除
+            </el-button>
+          </template>
+        </el-table-column>
+      </el-table>
+      <div slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="handleAddStorageArea">新 增</el-button>
+        <el-button @click="cancelStorageAreaList">取 消</el-button>
+      </div>
+    </el-dialog>
+
+    <!-- 添加或修改仓库储区配置对话框 -->
+    <el-dialog :title="title2" :visible.sync="openStorageArea" width="500px" append-to-body>
+      <el-form ref="formStorageArea" :model="formStorageArea" :rules="rulesStorageArea" label-width="100px">
+        <el-form-item label="储区代码" prop="code">
+          <el-input v-model="formStorageArea.code" :readonly="formStorageArea.id !== undefined"
+                    placeholder="请输入储区代码"/>
+        </el-form-item>
+        <el-form-item label="储区名称" prop="name">
+          <el-input v-model="formStorageArea.name" placeholder="请输入储区名称"/>
+        </el-form-item>
+        <el-form-item label="仓库管理员" prop="manager">
+          <el-input v-model="formStorageArea.manager" placeholder="请输入仓库管理员"/>
+        </el-form-item>
+        <el-form-item label="状态">
+          <el-radio-group v-model="formStorageArea.enable">
+            <el-radio
+              :label="true"
+            >启用
+            </el-radio>
+            <el-radio
+              :label="false"
+            >停用
+            </el-radio>
+          </el-radio-group>
+        </el-form-item>
+        <el-form-item label="排序" prop="sort">
+          <el-input-number v-model="formStorageArea.sort" controls-position="right" :min="0"/>
+        </el-form-item>
+        <el-form-item label="备注">
+          <el-input v-model="formStorageArea.description" type="textarea" placeholder="请输入内容"></el-input>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="submitFormStorageArea">确 定</el-button>
+        <el-button @click="cancelStorageArea">取 消</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
 <script>
 import {
   listWarehouse,
+  listWarehouseStorageArea,
   getWarehouse,
   addWarehouse,
+  addWarehouseStorageArea,
   updateWarehouse,
-  delWarehouse
+  updateWarehouseStorageArea,
+  delWarehouse,
+  delWarehouseStorageArea
 } from "@/api/completevehicle/warehouse/info";
 
 export default {
@@ -253,6 +349,8 @@ export default {
     return {
       // 遮罩层
       loading: true,
+      // 遮罩层库区
+      loadingStorageArea: true,
       // 选中数组
       ids: [],
       // 非单个禁用
@@ -265,10 +363,17 @@ export default {
       total: 0,
       // 仓库表格数据
       warehouseList: [],
+      // 库区表格数据
+      storageAreaList: [],
       // 弹出层标题
       title: "",
+      title2: "",
       // 是否显示弹出层
       open: false,
+      // 是否显示库区列表
+      openStorageAreaList: false,
+      // 是否显示库区弹出层
+      openStorageArea: false,
       // 日期范围
       dateRange: [],
       // 查询参数
@@ -278,6 +383,7 @@ export default {
       },
       // 表单参数
       form: {},
+      formStorageArea: {},
       // 表单校验
       rules: {
         code: [
@@ -288,6 +394,14 @@ export default {
         ],
         warehouseType: [
           {required: true, message: "仓库类型不能为空", trigger: "blur"}
+        ]
+      },
+      rulesStorageArea: {
+        code: [
+          {required: true, message: "仓库代码不能为空", trigger: "blur"}
+        ],
+        name: [
+          {required: true, message: "仓库名称不能为空", trigger: "blur"}
         ]
       },
     };
@@ -321,12 +435,31 @@ export default {
       this.open = false;
       this.reset();
     },
+    /** 取消按钮 */
+    cancelStorageAreaList() {
+      this.openStorageAreaList = false;
+    },
+    /** 取消按钮 */
+    cancelStorageArea() {
+      this.openStorageArea = false;
+    },
     /** 表单重置 */
     reset() {
       this.form = {
         code: undefined,
         name: undefined,
-        nameEn: undefined,
+        manager: undefined,
+        enable: true,
+        sort: 99
+      };
+      this.resetForm("form");
+    },
+    /** 储区表单重置 */
+    resetStorageArea() {
+      this.formStorageArea = {
+        code: undefined,
+        name: undefined,
+        manager: undefined,
         enable: true,
         sort: 99
       };
@@ -359,6 +492,17 @@ export default {
         sort: 99
       };
     },
+    /** 新增储区按钮操作 */
+    handleAddStorageArea() {
+      this.resetStorageArea();
+      this.openStorageArea = true;
+      this.title2 = "添加仓库储区";
+      this.formStorageArea = {
+        warehouseCode: this.form.warehouseCode,
+        enable: true,
+        sort: 99
+      };
+    },
     /** 修改按钮操作 */
     handleUpdate(row) {
       this.reset();
@@ -368,6 +512,25 @@ export default {
         this.open = true;
       });
       this.title = "修改仓库";
+    },
+    /** 修改按钮操作 */
+    handleUpdateStorageArea(row) {
+      this.resetStorageArea();
+      this.formStorageArea = row;
+      this.openStorageArea = true;
+      this.title = "修改仓库储区";
+    },
+    /** 库区管理按钮操作 */
+    handleStorageAreaList(row) {
+      this.form = {
+        id: row.id,
+        warehouseCode: row.code
+      }
+      listWarehouseStorageArea(row.id).then(response => {
+        this.storageAreaList = response;
+        this.openStorageAreaList = true;
+      });
+      this.title = "库区管理";
     },
     /** 提交按钮 */
     submitForm: function () {
@@ -389,6 +552,30 @@ export default {
         }
       });
     },
+    /** 储区提交按钮 */
+    submitFormStorageArea: function () {
+      this.$refs["formStorageArea"].validate(valid => {
+        if (valid) {
+          if (this.formStorageArea.id !== undefined) {
+            updateWarehouseStorageArea(this.form.id, this.formStorageArea).then(response => {
+              this.$modal.msgSuccess("修改成功");
+              this.openStorageArea = false;
+              listWarehouseStorageArea(this.form.id).then(response => {
+                this.storageAreaList = response;
+              });
+            });
+          } else {
+            addWarehouseStorageArea(this.form.id, this.formStorageArea).then(response => {
+              this.$modal.msgSuccess("新增成功");
+              this.openStorageArea = false;
+              listWarehouseStorageArea(this.form.id).then(response => {
+                this.storageAreaList = response;
+              });
+            });
+          }
+        }
+      });
+    },
     /** 删除按钮操作 */
     handleDelete(row) {
       const warehouseIds = row.id || this.ids;
@@ -396,6 +583,20 @@ export default {
         return delWarehouse(warehouseIds);
       }).then(() => {
         this.getList();
+        this.$modal.msgSuccess("删除成功");
+      }).catch(() => {
+      });
+    },
+    /** 删除按钮操作 */
+    handleDeleteStorageArea(warehouseId, row) {
+      this.$modal.confirm('是否确认删除仓库储区ID为"' + row.id + '"的数据项？').then(function () {
+        console.log("=====");
+        console.log(warehouseId);
+        return delWarehouseStorageArea(warehouseId, row.id);
+      }).then(() => {
+        listWarehouseStorageArea(warehouseId).then(response => {
+          this.storageAreaList = response;
+        });
         this.$modal.msgSuccess("删除成功");
       }).catch(() => {
       });
