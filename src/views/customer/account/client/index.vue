@@ -254,7 +254,7 @@ export default {
       const item = this.dict.type.iov_client_type.find(
         dict => dict.value === clientType
       )
-      return item ? item.label : genclientTypeder
+      return item ? item.label : clientType;
     },
     // 取消按钮
     cancel() {
