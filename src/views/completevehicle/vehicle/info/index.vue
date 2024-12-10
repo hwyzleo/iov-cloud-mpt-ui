@@ -35,7 +35,7 @@
           icon="el-icon-plus"
           size="mini"
           @click="handleAdd"
-          v-hasPermi="['vehicle:vehicle:vehicle:add']"
+          v-hasPermi="['completeVehicle:vehicle:info:add']"
         >新增
         </el-button>
       </el-col>
@@ -47,7 +47,7 @@
           size="mini"
           :disabled="single"
           @click="handleUpdate"
-          v-hasPermi="['vehicle:vehicle:vehicle:edit']"
+          v-hasPermi="['completeVehicle:vehicle:info:edit']"
         >修改
         </el-button>
       </el-col>
@@ -59,7 +59,7 @@
           size="mini"
           :disabled="multiple"
           @click="handleDelete"
-          v-hasPermi="['vehicle:vehicle:vehicle:remove']"
+          v-hasPermi="['completeVehicle:vehicle:info:remove']"
         >删除
         </el-button>
       </el-col>
@@ -70,7 +70,7 @@
           icon="el-icon-download"
           size="mini"
           @click="handleExport"
-          v-hasPermi="['vehicle:vehicle:vehicle:export']"
+          v-hasPermi="['completeVehicle:vehicle:info:export']"
         >导出
         </el-button>
       </el-col>
@@ -98,7 +98,7 @@
             type="text"
             icon="el-icon-help"
             @click="handleLifecycle(scope.row)"
-            v-hasPermi="['vehicle:vehicle:vehicle:query']"
+            v-hasPermi="['completeVehicle:vehicle:info:query']"
           >生命周期
           </el-button>
           <el-button
@@ -106,7 +106,7 @@
             type="text"
             icon="el-icon-edit"
             @click="handleUpdate(scope.row)"
-            v-hasPermi="['vehicle:vehicle:vehicle:edit']"
+            v-hasPermi="['completeVehicle:vehicle:info:edit']"
           >修改
           </el-button>
           <el-button
@@ -114,7 +114,7 @@
             type="text"
             icon="el-icon-delete"
             @click="handleDelete(scope.row)"
-            v-hasPermi="['vehicle:vehicle:vehicle:remove']"
+            v-hasPermi="['completeVehicle:vehicle:info:remove']"
           >删除
           </el-button>
         </template>

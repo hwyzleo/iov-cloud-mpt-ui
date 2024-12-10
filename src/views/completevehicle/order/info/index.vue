@@ -50,7 +50,7 @@
           icon="el-icon-plus"
           size="mini"
           @click="handleAdd"
-          v-hasPermi="['vehicle:order:order:add']"
+          v-hasPermi="['completeVehicle:order:info:add']"
         >新增
         </el-button>
       </el-col>
@@ -62,7 +62,7 @@
           size="mini"
           :disabled="single"
           @click="handleUpdate"
-          v-hasPermi="['vehicle:order:order:edit']"
+          v-hasPermi="['completeVehicle:order:info:edit']"
         >修改
         </el-button>
       </el-col>
@@ -74,7 +74,7 @@
           size="mini"
           :disabled="multiple"
           @click="handleDelete"
-          v-hasPermi="['vehicle:order:order:remove']"
+          v-hasPermi="['completeVehicle:order:info:remove']"
         >删除
         </el-button>
       </el-col>
@@ -85,7 +85,7 @@
           icon="el-icon-download"
           size="mini"
           @click="handleExport"
-          v-hasPermi="['vehicle:order:order:export']"
+          v-hasPermi="['completeVehicle:order:info:export']"
         >导出
         </el-button>
       </el-col>
@@ -160,7 +160,7 @@
             type="text"
             icon="el-icon-edit"
             @click="handleUpdate(scope.row)"
-            v-hasPermi="['vehicle:order:order:edit']"
+            v-hasPermi="['completeVehicle:order:info:edit']"
           >修改
           </el-button>
           <el-button
@@ -168,7 +168,7 @@
             type="text"
             icon="el-icon-view"
             @click="handleImages(scope.row)"
-            v-hasPermi="['vehicle:order:order:query']"
+            v-hasPermi="['completeVehicle:order:info:query']"
           >详细
           </el-button>
           <el-button
@@ -176,7 +176,7 @@
             type="text"
             icon="el-icon-setting"
             @click="handleConfig(scope.row)"
-            v-hasPermi="['vehicle:order:order:edit']"
+            v-hasPermi="['completeVehicle:order:info:edit']"
           >车型配置
           </el-button>
           <el-button
@@ -184,7 +184,7 @@
             type="text"
             icon="el-icon-delete"
             @click="handleDelete(scope.row)"
-            v-hasPermi="['vehicle:order:order:remove']"
+            v-hasPermi="['completeVehicle:order:info:remove']"
           >删除
           </el-button>
         </template>

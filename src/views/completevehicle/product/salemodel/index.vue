@@ -44,7 +44,7 @@
           icon="el-icon-plus"
           size="mini"
           @click="handleAdd"
-          v-hasPermi="['vehicle:product:saleModel:add']"
+          v-hasPermi="['completeVehicle:product:saleModel:add']"
         >新增
         </el-button>
       </el-col>
@@ -56,7 +56,7 @@
           size="mini"
           :disabled="single"
           @click="handleUpdate"
-          v-hasPermi="['vehicle:product:saleModel:edit']"
+          v-hasPermi="['completeVehicle:product:saleModel:edit']"
         >修改
         </el-button>
       </el-col>
@@ -68,7 +68,7 @@
           size="mini"
           :disabled="multiple"
           @click="handleDelete"
-          v-hasPermi="['vehicle:product:saleModel:remove']"
+          v-hasPermi="['completeVehicle:product:saleModel:remove']"
         >删除
         </el-button>
       </el-col>
@@ -79,7 +79,7 @@
           icon="el-icon-download"
           size="mini"
           @click="handleExport"
-          v-hasPermi="['vehicle:product:saleModel:export']"
+          v-hasPermi="['completeVehicle:product:saleModel:export']"
         >导出
         </el-button>
       </el-col>
@@ -138,7 +138,7 @@
             type="text"
             icon="el-icon-edit"
             @click="handleUpdate(scope.row)"
-            v-hasPermi="['vehicle:product:vso:edit']"
+            v-hasPermi="['completeVehicle:product:saleModel:edit']"
           >修改
           </el-button>
           <el-button
@@ -146,7 +146,7 @@
             type="text"
             icon="el-icon-picture"
             @click="handleImages(scope.row)"
-            v-hasPermi="['vehicle:product:vso:edit']"
+            v-hasPermi="['completeVehicle:product:saleModel:edit']"
           >维护图片
           </el-button>
           <el-button
@@ -154,7 +154,7 @@
             type="text"
             icon="el-icon-setting"
             @click="handleConfig(scope.row)"
-            v-hasPermi="['vehicle:product:vso:edit']"
+            v-hasPermi="['completeVehicle:product:saleModel:edit']"
           >车型配置
           </el-button>
           <el-button
@@ -162,7 +162,7 @@
             type="text"
             icon="el-icon-delete"
             @click="handleDelete(scope.row)"
-            v-hasPermi="['vehicle:product:vso:remove']"
+            v-hasPermi="['completeVehicle:product:saleModel:remove']"
           >删除
           </el-button>
         </template>
@@ -308,7 +308,7 @@
                 type="text"
                 icon="el-icon-edit"
                 @click="handleUpdateConfig(scope.row)"
-                v-hasPermi="['otd:vso:edit']"
+                v-hasPermi="['completeVehicle:product:saleModel:edit']"
               >修改
               </el-button>
               <el-button
@@ -316,7 +316,7 @@
                 type="text"
                 icon="el-icon-delete"
                 @click="handleDeleteConfig(form.id, scope.row)"
-                v-hasPermi="['otd:vso:edit']"
+                v-hasPermi="['completeVehicle:product:saleModel:edit']"
               >删除
               </el-button>
             </template>

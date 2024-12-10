@@ -63,7 +63,7 @@
             type="text"
             icon="el-icon-edit"
             @click="handleAssign(scope.row)"
-            v-hasPermi="['vehicle:order:assignVehicle:edit']"
+            v-hasPermi="['completeVehicle:order:assignVehicle:edit']"
           >分配车辆
           </el-button>
         </template>
@@ -121,7 +121,7 @@
                 type="text"
                 icon="el-icon-edit"
                 @click="handleUpdateConfig(scope.row)"
-                v-hasPermi="['otd:vso:edit']"
+                v-hasPermi="['completeVehicle:order:assignVehicle:edit']"
               >修改
               </el-button>
               <el-button
@@ -129,7 +129,7 @@
                 type="text"
                 icon="el-icon-delete"
                 @click="handleDeleteConfig(form.id, scope.row)"
-                v-hasPermi="['otd:vso:edit']"
+                v-hasPermi="['completeVehicle:order:assignVehicle:edit']"
               >删除
               </el-button>
             </template>

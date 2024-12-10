@@ -78,7 +78,7 @@
             type="text"
             icon="el-icon-edit"
             @click="handleImages(scope.row)"
-            v-hasPermi="['otd:vso:edit']"
+            v-hasPermi="['completeVehicle:order:changeModel:list']"
           >修改配置
           </el-button>
         </template>
@@ -224,7 +224,7 @@
                 type="text"
                 icon="el-icon-edit"
                 @click="handleUpdateConfig(scope.row)"
-                v-hasPermi="['otd:vso:edit']"
+                v-hasPermi="['completeVehicle:order:changeModel:list']"
               >修改
               </el-button>
               <el-button
@@ -232,7 +232,7 @@
                 type="text"
                 icon="el-icon-delete"
                 @click="handleDeleteConfig(form.id, scope.row)"
-                v-hasPermi="['otd:vso:edit']"
+                v-hasPermi="['completeVehicle:order:changeModel:list']"
               >删除
               </el-button>
             </template>
