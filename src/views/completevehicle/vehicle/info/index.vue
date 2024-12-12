@@ -86,6 +86,11 @@
       <el-table-column label="车系代码" prop="seriesCode" align="center" width="100"/>
       <el-table-column label="车型代码" prop="modelCode" align="center" width="100"/>
       <el-table-column label="车型配置代码" prop="modelConfigCode" align="center" width="150"/>
+      <el-table-column label="车辆下线时间" align="center" prop="eolTime" width="180">
+        <template slot-scope="scope">
+          <span>{{ parseTime(scope.row.eolTime) }}</span>
+        </template>
+      </el-table-column>
       <el-table-column label="创建时间" align="center" prop="createTime" width="180">
         <template slot-scope="scope">
           <span>{{ parseTime(scope.row.createTime) }}</span>
