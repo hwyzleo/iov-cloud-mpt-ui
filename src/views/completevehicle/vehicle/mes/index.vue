@@ -17,7 +17,12 @@
           clearable
           style="width: 120px"
         >
-          <el-option key="EOL" label="下线数据" value="EOL"/>
+          <el-option
+            v-for="dict in dict.type.iov_mes_data_type"
+            :key="dict.value"
+            :label="dict.label"
+            :value="dict.value"
+          />
         </el-select>
       </el-form-item>
       <el-form-item label="创建时间">
@@ -90,7 +95,11 @@
     <el-table v-loading="loading" :data="mesVehicleDataList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center"/>
       <el-table-column label="批次号" prop="batchNum"/>
-      <el-table-column label="数据类型" prop="type" align="center" width="120"/>
+      <el-table-column label="数据类型" prop="type" width="100">
+        <template slot-scope="scope">
+          <span>{{ getDataTypeLabel(scope.row.type) }}</span>
+        </template>
+      </el-table-column>
       <el-table-column label="数据版本" prop="version" align="center" width="150"/>
       <el-table-column label="是否已处理" align="center" width="150">
         <template slot-scope="scope">
@@ -145,7 +154,12 @@
             placeholder="数据类型"
             clearable
           >
-            <el-option key="EOL" label="下线数据" value="EOL"/>
+            <el-option
+              v-for="dict in dict.type.iov_mes_data_type"
+              :key="dict.value"
+              :label="dict.label"
+              :value="dict.value"
+            />
           </el-select>
         </el-form-item>
         <el-form-item label="数据版本" prop="version">
@@ -177,7 +191,7 @@ import {
 
 export default {
   name: "MesVehicleData",
-  dicts: [],
+  dicts: ['iov_mes_data_type'],
   data() {
     return {
       // 遮罩层
@@ -237,6 +251,16 @@ export default {
           this.loading = false;
         }
       );
+    },
+    // 获取数据类型
+    getDataTypeLabel(dataType) {
+      if (!this.dict || !this.dict.type || !this.dict.type.iov_mes_data_type) {
+        return dataType;
+      }
+      const item = this.dict.type.iov_mes_data_type.find(
+        dict => dict.value === dataType
+      )
+      return item ? item.label : dataType;
     },
     /** 取消按钮 */
     cancel() {
