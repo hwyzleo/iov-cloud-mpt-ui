@@ -9,6 +9,15 @@ export function listVehicle(query) {
   })
 }
 
+// 查询可分配车辆列表
+export function listAssignableVehicle(query) {
+  return request({
+    url: '/tsp-vmd/mpt/vehicle/listAssignable',
+    method: 'get',
+    params: query
+  })
+}
+
 // 查询车辆详细
 export function getVehicle(vin) {
   return request({
