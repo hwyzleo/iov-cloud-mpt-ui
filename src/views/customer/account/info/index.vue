@@ -19,7 +19,7 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="注册来源" prop="status">
+      <el-form-item label="注册来源" prop="regSource">
         <el-select
           v-model="queryParams.regSource"
           placeholder="注册来源"
@@ -34,7 +34,7 @@
           />
         </el-select>
       </el-form-item>
-      <el-form-item label="状态" prop="status">
+      <el-form-item label="状态" prop="enable">
         <el-select
           v-model="queryParams.enable"
           placeholder="账号状态"
