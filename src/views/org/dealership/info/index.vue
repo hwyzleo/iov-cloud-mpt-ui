@@ -6,7 +6,7 @@
         <pane size="16">
           <el-col>
             <div class="head-container">
-              <el-input v-model="name" placeholder="请输入组织名称" clearable size="small" prefix-icon="el-icon-search" style="margin-bottom: 20px" />
+              <el-input v-model="orgKey" placeholder="请输入组织名称" clearable size="small" prefix-icon="el-icon-search" style="margin-bottom: 20px" />
             </div>
             <div class="head-container">
               <el-tree :data="orgOptions" :props="defaultProps" :expand-on-click-node="false" :filter-node-method="filterNode" ref="tree" node-key="id" default-expand-all highlight-current @node-click="handleNodeClick" />
@@ -183,6 +183,41 @@
             <el-input v-model="form.address" placeholder="请输入门店地址"/>
           </el-form-item>
         </el-row>
+        <el-row>
+          <el-col :span="12">
+            <el-form-item label="大区" prop="regionCode">
+              <el-select
+                v-model="form.regionCode"
+                placeholder="大区"
+                clearable
+                @change="getAreaList"
+              >
+                <el-option
+                  v-for="region in regionList"
+                  :key="region.id"
+                  :label="region.label"
+                  :value="region.id"
+                />
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="小区" prop="areaCode">
+              <el-select
+                v-model="form.areaCode"
+                placeholder="小区"
+                clearable
+              >
+                <el-option
+                  v-for="area in areaList"
+                  :key="area.id"
+                  :label="area.label"
+                  :value="area.id"
+                />
+              </el-select>
+            </el-form-item>
+          </el-col>
+        </el-row>
         <el-form-item label="排序" prop="sort">
           <el-input-number v-model="form.sort" controls-position="right" :min="0"/>
         </el-form-item>
@@ -230,20 +265,29 @@ export default {
       showSearch: true,
       // 总条数
       total: 0,
-      // 路由表格数据
+      // 表格数据
       dealershipList: [],
+      // 大区列表
+      regionList: [],
+      // 小区列表
+      areaList: [],
       // 弹出层标题
       title: "",
       // 组织树选项
       orgOptions: undefined,
       // 是否显示弹出层
       open: false,
+      // 组织关键词
+      orgKey: undefined,
       // 日期范围
       dateRange: [],
       // 查询参数
       queryParams: {
         pageNum: 1,
         pageSize: 10
+      },
+      // 查询参数
+      queryOrgParams: {
       },
       // 表单参数
       form: {},
@@ -282,8 +326,23 @@ export default {
     },
     /** 查询组织下拉树结构 */
     getOrgTree() {
-      orgTreeSelect().then(response => {
+      orgTreeSelect(this.queryOrgParams).then(response => {
         this.orgOptions = response.data;
+      });
+    },
+    // 查询大区列表
+    getRegionList() {
+      this.queryOrgParams.orgType = 'REGION';
+      orgTreeSelect(this.queryOrgParams).then(response => {
+        this.regionList = response.data;
+      });
+    },
+    // 查询小区列表
+    getAreaList(regionCode) {
+      this.queryOrgParams.orgType = 'AREA';
+      this.queryOrgParams.regionCode = regionCode;
+      orgTreeSelect(this.queryOrgParams).then(response => {
+        this.areaList = response.data;
       });
     },
     // 筛选节点
@@ -293,7 +352,12 @@ export default {
     },
     // 节点单击事件
     handleNodeClick(data) {
-      this.resetQuery();
+      this.queryParams = {
+        pageNum: 1,
+        pageSize: 10,
+        regionCode: undefined,
+        areaCode: undefined
+      };
       if(data.type === 'REGION') {
         this.queryParams.regionCode = data.id;
       }
@@ -349,6 +413,7 @@ export default {
       this.open = true;
       this.title = "添加门店";
       this.form = {};
+      this.getRegionList();
     },
     /** 修改按钮操作 */
     handleUpdate(row) {
@@ -358,6 +423,10 @@ export default {
         this.form = response.data;
         this.open = true;
       });
+      this.getRegionList();
+      if(row.regionCode !== undefined) {
+        this.getAreaList(row.regionCode);
+      }
       this.title = "修改门店";
     },
     /** 提交按钮 */
