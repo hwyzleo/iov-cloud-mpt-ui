@@ -42,3 +42,11 @@ export function delDealership(dealershipIds) {
     method: 'delete'
   })
 }
+
+// 查询组织下拉树结构
+export function orgTreeSelect() {
+  return request({
+    url: '/dms-org/mpt/dealership/orgTree',
+    method: 'get'
+  })
+}

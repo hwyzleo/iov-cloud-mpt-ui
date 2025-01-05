@@ -1,153 +1,188 @@
 <template>
   <div class="app-container">
-    <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch">
-      <el-form-item label="门店代码" prop="code">
-        <el-input
-          v-model="queryParams.code"
-          placeholder="请输入门店代码"
-          clearable
-          style="width: 150px"
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="门店全称" prop="name">
-        <el-input
-          v-model="queryParams.name"
-          placeholder="请输入门店全称"
-          clearable
-          style="width: 200px"
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="创建时间">
-        <el-date-picker
-          v-model="dateRange"
-          style="width: 240px"
-          value-format="yyyy-MM-dd"
-          type="daterange"
-          range-separator="-"
-          start-placeholder="开始日期"
-          end-placeholder="结束日期"
-        ></el-date-picker>
-      </el-form-item>
-      <el-form-item>
-        <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
-        <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
-      </el-form-item>
-    </el-form>
+    <el-row :gutter="20">
+      <splitpanes :horizontal="this.$store.getters.device === 'mobile'" class="default-theme">
+        <!--组织架构数据-->
+        <pane size="16">
+          <el-col>
+            <div class="head-container">
+              <el-input v-model="name" placeholder="请输入组织名称" clearable size="small" prefix-icon="el-icon-search" style="margin-bottom: 20px" />
+            </div>
+            <div class="head-container">
+              <el-tree :data="orgOptions" :props="defaultProps" :expand-on-click-node="false" :filter-node-method="filterNode" ref="tree" node-key="id" default-expand-all highlight-current @node-click="handleNodeClick" />
+            </div>
+          </el-col>
+        </pane>
+        <!--用户数据-->
+        <pane size="84">
+          <el-col>
+            <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch">
+              <el-form-item label="门店代码" prop="code">
+                <el-input
+                  v-model="queryParams.code"
+                  placeholder="请输入门店代码"
+                  clearable
+                  style="width: 150px"
+                  @keyup.enter.native="handleQuery"
+                />
+              </el-form-item>
+              <el-form-item label="门店全称" prop="name">
+                <el-input
+                  v-model="queryParams.name"
+                  placeholder="请输入门店全称"
+                  clearable
+                  style="width: 200px"
+                  @keyup.enter.native="handleQuery"
+                />
+              </el-form-item>
+              <el-form-item label="创建时间">
+                <el-date-picker
+                  v-model="dateRange"
+                  style="width: 240px"
+                  value-format="yyyy-MM-dd"
+                  type="daterange"
+                  range-separator="-"
+                  start-placeholder="开始日期"
+                  end-placeholder="结束日期"
+                ></el-date-picker>
+              </el-form-item>
+              <el-form-item>
+                <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
+                <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
+              </el-form-item>
+            </el-form>
+            <el-row :gutter="10" class="mb8">
+              <el-col :span="1.5">
+                <el-button
+                  type="primary"
+                  plain
+                  icon="el-icon-plus"
+                  size="mini"
+                  @click="handleAdd"
+                  v-hasPermi="['org:dealership:info:add']"
+                >新增
+                </el-button>
+              </el-col>
+              <el-col :span="1.5">
+                <el-button
+                  type="success"
+                  plain
+                  icon="el-icon-edit"
+                  size="mini"
+                  :disabled="single"
+                  @click="handleUpdate"
+                  v-hasPermi="['org:dealership:info:edit']"
+                >修改
+                </el-button>
+              </el-col>
+              <el-col :span="1.5">
+                <el-button
+                  type="danger"
+                  plain
+                  icon="el-icon-delete"
+                  size="mini"
+                  :disabled="multiple"
+                  @click="handleDelete"
+                  v-hasPermi="['org:dealership:info:remove']"
+                >删除
+                </el-button>
+              </el-col>
+              <el-col :span="1.5">
+                <el-button
+                  type="warning"
+                  plain
+                  icon="el-icon-download"
+                  size="mini"
+                  @click="handleExport"
+                  v-hasPermi="['org:dealership:info:export']"
+                >导出
+                </el-button>
+              </el-col>
+              <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
+            </el-row>
 
-    <el-row :gutter="10" class="mb8">
-      <el-col :span="1.5">
-        <el-button
-          type="primary"
-          plain
-          icon="el-icon-plus"
-          size="mini"
-          @click="handleAdd"
-          v-hasPermi="['org:dealership:info:add']"
-        >新增
-        </el-button>
-      </el-col>
-      <el-col :span="1.5">
-        <el-button
-          type="success"
-          plain
-          icon="el-icon-edit"
-          size="mini"
-          :disabled="single"
-          @click="handleUpdate"
-          v-hasPermi="['org:dealership:info:edit']"
-        >修改
-        </el-button>
-      </el-col>
-      <el-col :span="1.5">
-        <el-button
-          type="danger"
-          plain
-          icon="el-icon-delete"
-          size="mini"
-          :disabled="multiple"
-          @click="handleDelete"
-          v-hasPermi="['org:dealership:info:remove']"
-        >删除
-        </el-button>
-      </el-col>
-      <el-col :span="1.5">
-        <el-button
-          type="warning"
-          plain
-          icon="el-icon-download"
-          size="mini"
-          @click="handleExport"
-          v-hasPermi="['org:dealership:info:export']"
-        >导出
-        </el-button>
-      </el-col>
-      <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
+            <el-table v-loading="loading" :data="dealershipList" @selection-change="handleSelectionChange">
+              <el-table-column type="selection" width="55" align="center"/>
+              <el-table-column label="门店代码" prop="code" width="120"/>
+              <el-table-column label="门店全称" prop="name" width="200"/>
+              <el-table-column label="门店地址" prop="address" width="300"/>
+              <el-table-column label="排序" prop="sort" align="center" width="60"/>
+              <el-table-column label="创建时间" align="center" prop="createTime" width="180">
+                <template slot-scope="scope">
+                  <span>{{ parseTime(scope.row.createTime) }}</span>
+                </template>
+              </el-table-column>
+              <el-table-column label="操作" align="center" width="150" fixed="right" class-name="small-padding fixed-width">
+                <template slot-scope="scope">
+                  <el-button
+                    size="mini"
+                    type="text"
+                    icon="el-icon-edit"
+                    @click="handleUpdate(scope.row)"
+                    v-hasPermi="['org:dealership:info:edit']"
+                  >修改
+                  </el-button>
+                  <el-button
+                    size="mini"
+                    type="text"
+                    icon="el-icon-delete"
+                    @click="handleDelete(scope.row)"
+                    v-hasPermi="['org:dealership:info:remove']"
+                  >删除
+                  </el-button>
+                </template>
+              </el-table-column>
+            </el-table>
+
+            <pagination
+              v-show="total>0"
+              :total="total"
+              :page.sync="queryParams.pageNum"
+              :limit.sync="queryParams.pageSize"
+              @pagination="getList"
+            />
+          </el-col>
+        </pane>
+      </splitpanes>
     </el-row>
 
-    <el-table v-loading="loading" :data="dealershipList" @selection-change="handleSelectionChange">
-      <el-table-column type="selection" width="55" align="center"/>
-      <el-table-column label="门店代码" prop="code" width="120"/>
-      <el-table-column label="门店全称" prop="name"/>
-      <el-table-column label="门店地址" prop="address" width="400"/>
-      <el-table-column label="排序" prop="sort" align="center" width="60"/>
-      <el-table-column label="创建时间" align="center" prop="createTime" width="180">
-        <template slot-scope="scope">
-          <span>{{ parseTime(scope.row.createTime) }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="操作" align="center" width="200" class-name="small-padding fixed-width">
-        <template slot-scope="scope">
-          <el-button
-            size="mini"
-            type="text"
-            icon="el-icon-edit"
-            @click="handleUpdate(scope.row)"
-            v-hasPermi="['org:dealership:info:edit']"
-          >修改
-          </el-button>
-          <el-button
-            size="mini"
-            type="text"
-            icon="el-icon-delete"
-            @click="handleDelete(scope.row)"
-            v-hasPermi="['org:dealership:info:remove']"
-          >删除
-          </el-button>
-        </template>
-      </el-table-column>
-    </el-table>
-
-    <pagination
-      v-show="total>0"
-      :total="total"
-      :page.sync="queryParams.pageNum"
-      :limit.sync="queryParams.pageSize"
-      @pagination="getList"
-    />
-
     <!-- 添加或修改门店配置对话框 -->
-    <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
-      <el-form ref="form" :model="form" :rules="rules" label-width="120px">
-        <el-form-item label="门店代码" prop="code">
-          <el-input v-model="form.code" placeholder="请输入门店代码"/>
-        </el-form-item>
-        <el-form-item label="门店全称" prop="name">
-          <el-input v-model="form.name" placeholder="请输入门店全称"/>
-        </el-form-item>
-        <el-form-item label="门店简称" prop="shortName">
-          <el-input v-model="form.shortName" placeholder="请输入门店简称"/>
-        </el-form-item>
-        <el-form-item label="英文名称" prop="engName">
-          <el-input v-model="form.engName" placeholder="请输入英文名称"/>
-        </el-form-item>
-        <el-form-item label="曾用名称" prop="formerName">
-          <el-input v-model="form.formerName" placeholder="请输入曾用名称"/>
-        </el-form-item>
-        <el-form-item label="门店地址" prop="address">
-          <el-input v-model="form.address" placeholder="请输入门店地址"/>
-        </el-form-item>
+    <el-dialog :title="title" :visible.sync="open" width="600px" append-to-body>
+      <el-form ref="form" :model="form" :rules="rules" label-width="100px">
+        <el-row>
+          <el-col :span="12">
+            <el-form-item label="门店代码" prop="code">
+              <el-input v-model="form.code" placeholder="请输入门店代码"/>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="门店简称" prop="shortName">
+              <el-input v-model="form.shortName" placeholder="请输入门店简称"/>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-form-item label="门店全称" prop="name">
+            <el-input v-model="form.name" placeholder="请输入门店全称"/>
+          </el-form-item>
+        </el-row>
+        <el-row>
+          <el-col :span="12">
+            <el-form-item label="英文名称" prop="engName">
+              <el-input v-model="form.engName" placeholder="请输入英文名称"/>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="曾用名称" prop="formerName">
+              <el-input v-model="form.formerName" placeholder="请输入曾用名称"/>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-form-item label="门店地址" prop="address">
+            <el-input v-model="form.address" placeholder="请输入门店地址"/>
+          </el-form-item>
+        </el-row>
         <el-form-item label="排序" prop="sort">
           <el-input-number v-model="form.sort" controls-position="right" :min="0"/>
         </el-form-item>
@@ -169,12 +204,18 @@ import {
   getDealership,
   addDealership,
   updateDealership,
-  delDealership
+  delDealership,
+  orgTreeSelect
 } from "@/api/org/dealership/info";
+import Treeselect from "@riophae/vue-treeselect";
+import "@riophae/vue-treeselect/dist/vue-treeselect.css";
+import {Pane, Splitpanes} from "splitpanes";
+import "splitpanes/dist/splitpanes.css";
 
 export default {
   name: "Dealership",
   dicts: [],
+  components: { Treeselect, Splitpanes, Pane },
   data() {
     return {
       // 遮罩层
@@ -193,6 +234,8 @@ export default {
       dealershipList: [],
       // 弹出层标题
       title: "",
+      // 组织树选项
+      orgOptions: undefined,
       // 是否显示弹出层
       open: false,
       // 日期范围
@@ -204,6 +247,10 @@ export default {
       },
       // 表单参数
       form: {},
+      defaultProps: {
+        children: "children",
+        label: "label"
+      },
       // 表单校验
       rules: {
         code: [
@@ -220,6 +267,7 @@ export default {
   },
   created() {
     this.getList();
+    this.getOrgTree();
   },
   methods: {
     /** 查询门店列表 */
@@ -231,6 +279,28 @@ export default {
           this.loading = false;
         }
       );
+    },
+    /** 查询组织下拉树结构 */
+    getOrgTree() {
+      orgTreeSelect().then(response => {
+        this.orgOptions = response.data;
+      });
+    },
+    // 筛选节点
+    filterNode(value, data) {
+      if (!value) return true;
+      return data.label.indexOf(value) !== -1;
+    },
+    // 节点单击事件
+    handleNodeClick(data) {
+      this.resetQuery();
+      if(data.type === 'REGION') {
+        this.queryParams.regionCode = data.id;
+      }
+      if(data.type === 'AREA') {
+        this.queryParams.areaCode = data.id;
+      }
+      this.handleQuery();
     },
     /** 取消按钮 */
     cancel() {
@@ -258,6 +328,12 @@ export default {
     /** 重置按钮操作 */
     resetQuery() {
       this.dateRange = [];
+      this.queryParams = {
+        pageNum: 1,
+        pageSize: 10,
+        regionCode: undefined,
+        areaCode: undefined
+      };
       this.resetForm("queryForm");
       this.handleQuery();
     },
