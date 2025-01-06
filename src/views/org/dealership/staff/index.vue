@@ -103,7 +103,7 @@
                 v-model="form.dealershipName"
                 style="width: 100%;"
                 :fetch-suggestions="searchDealership"
-                placeholder="请输入门店名称"
+                placeholder="请输入关键词查询门店"
                 @select="selectDealership"
               ></el-autocomplete>
             </el-form-item>
@@ -214,7 +214,7 @@ export default {
       ],
       // 表单校验
       rules: {
-        userName: [
+        nickName: [
           { required: true, message: "员工不能为空", trigger: "blur" }
         ],
         dealershipName: [
