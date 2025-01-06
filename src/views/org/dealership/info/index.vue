@@ -106,7 +106,7 @@
               <el-table-column label="门店代码" prop="code" width="120"/>
               <el-table-column label="门店全称" prop="name" width="200"/>
               <el-table-column label="门店地址" prop="address" width="300"/>
-              <el-table-column label="排序" prop="sort" align="center" width="60"/>
+              <el-table-column label="排序" prop="sort" align="center"/>
               <el-table-column label="创建时间" align="center" prop="createTime" width="180">
                 <template slot-scope="scope">
                   <span>{{ parseTime(scope.row.createTime) }}</span>
