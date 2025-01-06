@@ -269,7 +269,7 @@ export default {
       this.form.nickName = item.type
       this.form.userId = item.label
       this.$nextTick(() => {
-        this.$refs.form.validateField('userName');
+        this.$refs.form.validateField('nickName');
       });
     },
     // 查询门店
