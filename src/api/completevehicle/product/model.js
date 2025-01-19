@@ -9,7 +9,7 @@ export function listModel(query) {
   })
 }
 
-// 查询车型平台下车系列表
+// 查询车型平台及车系下车型列表
 export function listModelByPlatformCodeAndSeriesCode(platformCode, seriesCode) {
   const params = {
     platformCode: platformCode,

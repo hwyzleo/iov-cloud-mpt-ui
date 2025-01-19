@@ -28,6 +28,15 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
+      <el-form-item label="基础车型代码" prop="basicModelCode">
+        <el-input
+          v-model="queryParams.basicModelCode"
+          placeholder="请输入基础车型代码"
+          clearable
+          style="width: 140px"
+          @keyup.enter.native="handleQuery"
+        />
+      </el-form-item>
       <el-form-item label="车型配置代码" prop="code">
         <el-input
           v-model="queryParams.code"
@@ -118,6 +127,7 @@
       <el-table-column label="平台代码" prop="platformCode" width="80"/>
       <el-table-column label="车系代码" prop="seriesCode" width="80"/>
       <el-table-column label="车型代码" prop="modelCode" width="80"/>
+      <el-table-column label="基础车型代码" prop="basicModelCode" width="100"/>
       <el-table-column label="车型配置代码" prop="code" width="150"/>
       <el-table-column label="车型配置名称" prop="name"/>
       <el-table-column label="是否启用" align="center" width="100">
@@ -168,89 +178,141 @@
     <!-- 添加或修改车型配置对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="700px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="130px">
-        <el-form-item label="车辆平台" prop="platformCode">
-          <el-select
-            v-model="form.platformCode"
-            placeholder="车辆平台"
-            clearable
-            :disabled="form.id !== undefined"
-            @change="handlePlatformChange"
-          >
-            <el-option
-              v-for="platform in platformList"
-              :key="platform.code"
-              :label="platform.name"
-              :value="platform.code"
-            />
-          </el-select>
-        </el-form-item>
-        <el-form-item label="车系" prop="seriesCode">
-          <el-select
-            v-model="form.seriesCode"
-            placeholder="车系"
-            clearable
-            :disabled="form.id !== undefined"
-            @change="handleSeriesChange"
-          >
-            <el-option
-              v-for="series in seriesList"
-              :key="series.code"
-              :label="series.name"
-              :value="series.code"
-            />
-          </el-select>
-        </el-form-item>
-        <el-form-item label="车型" prop="modelCode">
-          <el-select
-            v-model="form.modelCode"
-            placeholder="车型"
-            clearable
-            :disabled="form.id !== undefined"
-          >
-            <el-option
-              v-for="model in modelList"
-              :key="model.code"
-              :label="model.name"
-              :value="model.code"
-            />
-          </el-select>
-        </el-form-item>
-        <el-form-item label="车型配置代码" prop="code">
-          <el-input v-model="form.code" :readonly="form.id !== undefined" placeholder="请输入车型配置代码"/>
-        </el-form-item>
-        <el-form-item label="车型配置名称" prop="name">
-          <el-input v-model="form.name" placeholder="请输入车型配置名称"/>
-        </el-form-item>
+        <el-row>
+          <el-col :span="12">
+            <el-form-item label="车辆平台" prop="platformCode">
+              <el-select
+                v-model="form.platformCode"
+                placeholder="车辆平台"
+                clearable
+                :disabled="form.id !== undefined"
+                @change="handlePlatformChange"
+              >
+                <el-option
+                  v-for="platform in platformList"
+                  :key="platform.code"
+                  :label="platform.name"
+                  :value="platform.code"
+                />
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="车系" prop="seriesCode">
+              <el-select
+                v-model="form.seriesCode"
+                placeholder="车系"
+                clearable
+                :disabled="form.id !== undefined"
+                @change="handleSeriesChange"
+              >
+                <el-option
+                  v-for="series in seriesList"
+                  :key="series.code"
+                  :label="series.name"
+                  :value="series.code"
+                />
+              </el-select>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="12">
+            <el-form-item label="车型" prop="modelCode">
+              <el-select
+                v-model="form.modelCode"
+                placeholder="车型"
+                clearable
+                :disabled="form.id !== undefined"
+                @change="handleModelChange"
+              >
+                <el-option
+                  v-for="model in modelList"
+                  :key="model.code"
+                  :label="model.name"
+                  :value="model.code"
+                />
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="基础车型" prop="basicModelCode">
+              <el-select
+                v-model="form.basicModelCode"
+                placeholder="基础车型"
+                clearable
+                :disabled="form.id !== undefined"
+              >
+                <el-option
+                  v-for="basicModel in basicModelList"
+                  :key="basicModel.code"
+                  :label="basicModel.name"
+                  :value="basicModel.code"
+                />
+              </el-select>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="12">
+            <el-form-item label="车型配置代码" prop="code">
+              <el-input v-model="form.code" :readonly="form.id !== undefined" placeholder="请输入车型配置代码"/>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="车型配置名称" prop="name">
+              <el-input v-model="form.name" placeholder="请输入车型配置名称"/>
+            </el-form-item>
+          </el-col>
+        </el-row>
         <el-form-item label="车型配置英文名称" prop="nameEn">
           <el-input v-model="form.nameEn" placeholder="请输入车型配置英文名称"/>
         </el-form-item>
-        <el-form-item label="外饰代码" prop="exteriorCode">
-          <el-input v-model="form.exteriorCode" placeholder="请输入外饰代码"/>
-        </el-form-item>
-        <el-form-item label="内饰代码" prop="interiorCode">
-          <el-input v-model="form.interiorCode" placeholder="请输入内饰代码"/>
-        </el-form-item>
-        <el-form-item label="车轮代码" prop="wheelCode">
-          <el-input v-model="form.wheelCode" placeholder="请输入车轮代码"/>
-        </el-form-item>
-        <el-form-item label="备胎代码" prop="spareTireCode">
-          <el-input v-model="form.spareTireCode" placeholder="请输入备胎代码"/>
-        </el-form-item>
-        <el-form-item label="智驾代码" prop="adasCode">
-          <el-input v-model="form.adasCode" placeholder="请输入智驾代码"/>
-        </el-form-item>
-        <el-form-item label="状态">
-          <el-radio-group v-model="form.enable">
-            <el-radio
-              :label="true"
-            >启用
-            </el-radio>
-            <el-radio
-              :label="false"
-            >停用
-            </el-radio>
-          </el-radio-group>
-        </el-form-item>
+        <el-row>
+          <el-col :span="12">
+            <el-form-item label="外饰代码" prop="exteriorCode">
+              <el-input v-model="form.exteriorCode" placeholder="请输入外饰代码"/>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="内饰代码" prop="interiorCode">
+              <el-input v-model="form.interiorCode" placeholder="请输入内饰代码"/>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="12">
+            <el-form-item label="车轮代码" prop="wheelCode">
+              <el-input v-model="form.wheelCode" placeholder="请输入车轮代码"/>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="备胎代码" prop="spareTireCode">
+              <el-input v-model="form.spareTireCode" placeholder="请输入备胎代码"/>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="12">
+            <el-form-item label="智驾代码" prop="adasCode">
+              <el-input v-model="form.adasCode" placeholder="请输入智驾代码"/>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="状态">
+              <el-radio-group v-model="form.enable">
+                <el-radio
+                  :label="true"
+                >启用
+                </el-radio>
+                <el-radio
+                  :label="false"
+                >停用
+                </el-radio>
+              </el-radio-group>
+            </el-form-item>
+          </el-col>
+        </el-row>
         <el-form-item label="排序" prop="sort">
           <el-input-number v-model="form.sort" controls-position="right" :min="0"/>
         </el-form-item>
@@ -283,6 +345,7 @@ import {
 import {
   listModelByPlatformCodeAndSeriesCode
 } from "@/api/completevehicle/product/model";
+import {listBasicModelByPlatformCodeAndSeriesCodeAndModelCode} from "@/api/completevehicle/product/basicmodel";
 
 export default {
   name: "ModelConfig",
@@ -309,6 +372,8 @@ export default {
       seriesList: [],
       // 车型列表
       modelList: [],
+      // 基础车型列表
+      basicModelList: [],
       // 弹出层标题
       title: "",
       // 是否显示弹出层
@@ -332,6 +397,9 @@ export default {
         ],
         modelCode: [
           {required: true, message: "车型代码不能为空", trigger: "blur"}
+        ],
+        basicModelCode: [
+          {required: true, message: "基础车型代码不能为空", trigger: "blur"}
         ],
         code: [
           {required: true, message: "车型配置代码不能为空", trigger: "blur"}
@@ -412,6 +480,14 @@ export default {
         });
       }
     },
+    /** 车型下拉选择操作 */
+    handleModelChange(value) {
+      if (value !== undefined && value !== null && value !== "") {
+        listBasicModelByPlatformCodeAndSeriesCodeAndModelCode(this.form.platformCode, this.form.seriesCode, value).then(response => {
+          this.basicModelList = response;
+        });
+      }
+    },
     /** 新增按钮操作 */
     handleAdd() {
       this.reset();
@@ -436,11 +512,14 @@ export default {
         this.form = response.data;
         listSeriesByPlatformCode(this.form.platformCode).then(response => {
           this.seriesList = response;
-          listModelByPlatformCodeAndSeriesCode(this.form.platformCode, this.form.seriesCode).then(response => {
-            this.modelList = response;
-            this.open = true;
-          });
         });
+        listModelByPlatformCodeAndSeriesCode(this.form.platformCode, this.form.seriesCode).then(response => {
+          this.modelList = response;
+        });
+        listBasicModelByPlatformCodeAndSeriesCodeAndModelCode(this.form.platformCode, this.form.seriesCode, this.form.modelCode).then(response => {
+          this.basicModelList = response;
+        });
+        this.open = true;
       });
       this.title = "修改车型配置";
     },

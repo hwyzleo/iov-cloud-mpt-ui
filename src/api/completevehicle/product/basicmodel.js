@@ -9,6 +9,20 @@ export function listBasicModel(query) {
   })
 }
 
+// 查询车型平台及车系及车型下基础车型列表
+export function listBasicModelByPlatformCodeAndSeriesCodeAndModelCode(platformCode, seriesCode, modelCode) {
+  const params = {
+    platformCode: platformCode,
+    seriesCode: seriesCode,
+    modelCode: modelCode
+  }
+  return request({
+    url: '/tsp-vmd/mpt/basicModel/listByPlatformCodeAndSeriesCodeAndModelCode',
+    method: 'get',
+    params: params
+  })
+}
+
 // 查询基础车型详细
 export function getBasicModel(basicModelId) {
   return request({
