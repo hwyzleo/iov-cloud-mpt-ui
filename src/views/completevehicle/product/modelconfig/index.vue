@@ -242,6 +242,7 @@
                 placeholder="基础车型"
                 clearable
                 :disabled="form.id !== undefined"
+                @change="handleBasicModelChange"
               >
                 <el-option
                   v-for="basicModel in basicModelList"
@@ -254,12 +255,14 @@
           </el-col>
         </el-row>
         <el-row>
-          <el-col :span="12">
+          <el-col :span="24">
             <el-form-item label="车型配置代码" prop="code">
               <el-input v-model="form.code" :readonly="form.id !== undefined" placeholder="请输入车型配置代码"/>
             </el-form-item>
           </el-col>
-          <el-col :span="12">
+        </el-row>
+        <el-row>
+          <el-col :span="24">
             <el-form-item label="车型配置名称" prop="name">
               <el-input v-model="form.name" placeholder="请输入车型配置名称"/>
             </el-form-item>
@@ -270,8 +273,21 @@
         </el-form-item>
         <el-row>
           <el-col :span="12">
-            <el-form-item label="外饰代码" prop="exteriorCode">
-              <el-input v-model="form.exteriorCode" placeholder="请输入外饰代码"/>
+            <el-form-item label="车身颜色" prop="exteriorCode">
+              <el-select
+                v-model="form.exteriorCode"
+                placeholder="车身颜色"
+                clearable
+                :disabled="form.id !== undefined"
+                @change="handleModelConfig"
+              >
+                <el-option
+                  v-for="exterior in exteriorList"
+                  :key="exterior.code"
+                  :label="exterior.name"
+                  :value="exterior.code"
+                />
+              </el-select>
             </el-form-item>
           </el-col>
           <el-col :span="12">
@@ -330,21 +346,16 @@
 
 <script>
 import {
-  listModelConfig,
-  getModelConfig,
   addModelConfig,
-  updateModelConfig,
-  delModelConfig
+  delModelConfig,
+  getModelConfig,
+  listModelConfig,
+  updateModelConfig
 } from "@/api/completevehicle/product/modelconfig";
-import {
-  listAllPlatform
-} from "@/api/completevehicle/product/platform";
-import {
-  listSeriesByPlatformCode
-} from "@/api/completevehicle/product/series";
-import {
-  listModelByPlatformCodeAndSeriesCode
-} from "@/api/completevehicle/product/model";
+import {listAllPlatform} from "@/api/completevehicle/product/platform";
+import {listSeriesByPlatformCode} from "@/api/completevehicle/product/series";
+import {listModelByPlatformCodeAndSeriesCode} from "@/api/completevehicle/product/model";
+import {listExteriorByPlatformCodeAndSeriesCode} from "@/api/completevehicle/product/exterior";
 import {listBasicModelByPlatformCodeAndSeriesCodeAndModelCode} from "@/api/completevehicle/product/basicmodel";
 
 export default {
@@ -374,6 +385,8 @@ export default {
       modelList: [],
       // 基础车型列表
       basicModelList: [],
+      // 车身颜色列表
+      exteriorList: [],
       // 弹出层标题
       title: "",
       // 是否显示弹出层
@@ -406,6 +419,9 @@ export default {
         ],
         name: [
           {required: true, message: "车型配置名称不能为空", trigger: "blur"}
+        ],
+        exteriorCode: [
+          {required: true, message: "车身颜色不能为空", trigger: "blur"}
         ],
         sort: [
           {required: true, message: "排序不能为空", trigger: "blur"}
@@ -478,6 +494,9 @@ export default {
         listModelByPlatformCodeAndSeriesCode(this.form.platformCode, value).then(response => {
           this.modelList = response;
         });
+        listExteriorByPlatformCodeAndSeriesCode(this.form.platformCode, value).then(response => {
+          this.exteriorList = response;
+        });
       }
     },
     /** 车型下拉选择操作 */
@@ -487,6 +506,23 @@ export default {
           this.basicModelList = response;
         });
       }
+    },
+    /** 基础车型下拉选择操作 */
+    handleBasicModelChange(value) {
+      if (value !== undefined && value !== null && value !== "") {
+        this.handleModelConfig();
+      }
+    },
+    /** 拼接车型配置代码 */
+    handleModelConfig() {
+      let basicModelCode = this.form.basicModelCode ? this.form.basicModelCode : '';
+      let exteriorCode = this.form.exteriorCode ? this.form.exteriorCode : '';
+      this.form.code = basicModelCode + exteriorCode.replace("WS0","");
+      const basicModelOption = this.basicModelList.find(item => item.code === basicModelCode);
+      let basicModelName = basicModelOption ? basicModelOption.name : '';
+      const exteriorOption = this.exteriorList.find(item => item.code === exteriorCode);
+      let exteriorName = exteriorOption ? exteriorOption.name : '';
+      this.form.name = basicModelName + " " + exteriorName;
     },
     /** 新增按钮操作 */
     handleAdd() {
