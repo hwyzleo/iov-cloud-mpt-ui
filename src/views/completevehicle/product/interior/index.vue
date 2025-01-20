@@ -19,19 +19,19 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="车身颜色代码" prop="code">
+      <el-form-item label="内饰颜色代码" prop="code">
         <el-input
           v-model="queryParams.code"
-          placeholder="请输入车身颜色代码"
+          placeholder="请输入内饰颜色代码"
           clearable
           style="width: 140px"
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="车身颜色名称" prop="name">
+      <el-form-item label="内饰颜色名称" prop="name">
         <el-input
           v-model="queryParams.name"
-          placeholder="请输入车身颜色名称"
+          placeholder="请输入内饰颜色名称"
           clearable
           style="width: 200px"
           @keyup.enter.native="handleQuery"
@@ -62,7 +62,7 @@
           icon="el-icon-plus"
           size="mini"
           @click="handleAdd"
-          v-hasPermi="['completeVehicle:product:exterior:add']"
+          v-hasPermi="['completeVehicle:product:interior:add']"
         >新增
         </el-button>
       </el-col>
@@ -74,7 +74,7 @@
           size="mini"
           :disabled="single"
           @click="handleUpdate"
-          v-hasPermi="['completeVehicle:product:exterior:edit']"
+          v-hasPermi="['completeVehicle:product:interior:edit']"
         >修改
         </el-button>
       </el-col>
@@ -86,7 +86,7 @@
           size="mini"
           :disabled="multiple"
           @click="handleDelete"
-          v-hasPermi="['completeVehicle:product:exterior:remove']"
+          v-hasPermi="['completeVehicle:product:interior:remove']"
         >删除
         </el-button>
       </el-col>
@@ -97,20 +97,20 @@
           icon="el-icon-download"
           size="mini"
           @click="handleExport"
-          v-hasPermi="['completeVehicle:product:exterior:export']"
+          v-hasPermi="['completeVehicle:product:interior:export']"
         >导出
         </el-button>
       </el-col>
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
-    <el-table v-loading="loading" :data="exteriorList" @selection-change="handleSelectionChange">
+    <el-table v-loading="loading" :data="interiorList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center"/>
       <el-table-column label="平台代码" prop="platformCode" width="100"/>
       <el-table-column label="车系代码" prop="seriesCode" width="100"/>
-      <el-table-column label="车身颜色代码" prop="code" width="100"/>
-      <el-table-column label="车身颜色名称" prop="name" />
-      <el-table-column label="车身颜色英文名称" prop="nameEn" width="150"/>
+      <el-table-column label="内饰颜色代码" prop="code" width="100"/>
+      <el-table-column label="内饰颜色名称" prop="name" />
+      <el-table-column label="内饰颜色英文名称" prop="nameEn" width="150"/>
       <el-table-column label="是否启用" align="center" width="100">
         <template slot-scope="scope">
           <el-switch
@@ -133,7 +133,7 @@
             type="text"
             icon="el-icon-edit"
             @click="handleUpdate(scope.row)"
-            v-hasPermi="['completeVehicle:product:exterior:edit']"
+            v-hasPermi="['completeVehicle:product:interior:edit']"
           >修改
           </el-button>
           <el-button
@@ -141,7 +141,7 @@
             type="text"
             icon="el-icon-delete"
             @click="handleDelete(scope.row)"
-            v-hasPermi="['completeVehicle:product:exterior:remove']"
+            v-hasPermi="['completeVehicle:product:interior:remove']"
           >删除
           </el-button>
         </template>
@@ -156,7 +156,7 @@
       @pagination="getList"
     />
 
-    <!-- 添加或修改车身颜色对话框 -->
+    <!-- 添加或修改内饰颜色对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="700px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="130px">
         <el-row>
@@ -198,20 +198,20 @@
         </el-row>
         <el-row>
           <el-col :span="12">
-            <el-form-item label="车身颜色代码" prop="code">
-              <el-input v-model="form.code" :readonly="form.id !== undefined" placeholder="请输入车身颜色代码"/>
+            <el-form-item label="内饰颜色代码" prop="code">
+              <el-input v-model="form.code" :readonly="form.id !== undefined" placeholder="请输入内饰颜色代码"/>
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="车身颜色名称" prop="name">
-              <el-input v-model="form.name" placeholder="请输入车身颜色名称"/>
+            <el-form-item label="内饰颜色名称" prop="name">
+              <el-input v-model="form.name" placeholder="请输入内饰颜色名称"/>
             </el-form-item>
           </el-col>
         </el-row>
         <el-row>
           <el-col :span="24">
             <el-form-item label="车身颜色英文名称" prop="nameEn">
-              <el-input v-model="form.nameEn" placeholder="请输入车身颜色英文名称"/>
+              <el-input v-model="form.nameEn" placeholder="请输入内饰颜色英文名称"/>
             </el-form-item>
           </el-col>
         </el-row>
@@ -250,12 +250,12 @@
 
 <script>
 import {
-  listExterior,
-  getExterior,
-  addExterior,
-  updateExterior,
-  delExterior
-} from "@/api/completevehicle/product/exterior";
+  listInterior,
+  getInterior,
+  addInterior,
+  updateInterior,
+  delInterior
+} from "@/api/completevehicle/product/interior";
 import {
   listAllPlatform
 } from "@/api/completevehicle/product/platform";
@@ -264,7 +264,7 @@ import {
 } from "@/api/completevehicle/product/series";
 
 export default {
-  name: "Exterior",
+  name: "Interior",
   dicts: [],
   data() {
     return {
@@ -280,8 +280,8 @@ export default {
       showSearch: true,
       // 总条数
       total: 0,
-      // 车身颜色表格数据
-      exteriorList: [],
+      // 内饰颜色表格数据
+      interiorList: [],
       // 车辆平台列表
       platformList: [],
       // 车系列表
@@ -308,10 +308,10 @@ export default {
           {required: true, message: "车系代码不能为空", trigger: "blur"}
         ],
         code: [
-          {required: true, message: "车身颜色代码不能为空", trigger: "blur"}
+          {required: true, message: "内饰颜色代码不能为空", trigger: "blur"}
         ],
         name: [
-          {required: true, message: "车身颜色名称不能为空", trigger: "blur"}
+          {required: true, message: "内饰颜色名称不能为空", trigger: "blur"}
         ],
         sort: [
           {required: true, message: "排序不能为空", trigger: "blur"}
@@ -323,11 +323,11 @@ export default {
     this.getList();
   },
   methods: {
-    /** 查询车身颜色列表 */
+    /** 查询内饰颜色列表 */
     getList() {
       this.loading = true;
-      listExterior(this.addDateRange(this.queryParams, this.dateRange)).then(response => {
-          this.exteriorList = response.rows;
+      listInterior(this.addDateRange(this.queryParams, this.dateRange)).then(response => {
+          this.interiorList = response.rows;
           this.total = response.total;
           this.loading = false;
         }
@@ -383,7 +383,7 @@ export default {
         this.platformList = response;
         this.open = true;
       });
-      this.title = "添加车身颜色";
+      this.title = "添加内饰颜色";
       this.form = {
         enable: true,
         sort: 99
@@ -392,31 +392,31 @@ export default {
     /** 修改按钮操作 */
     handleUpdate(row) {
       this.reset();
-      const exteriorId = row.id || this.ids
+      const interiorId = row.id || this.ids
       listAllPlatform().then(response => {
         this.platformList = response;
       });
-      getExterior(exteriorId).then(response => {
+      getInterior(interiorId).then(response => {
         this.form = response.data;
         listSeriesByPlatformCode(this.form.platformCode).then(response => {
           this.seriesList = response;
           this.open = true;
         });
       });
-      this.title = "修改车身颜色";
+      this.title = "修改内饰颜色";
     },
     /** 提交按钮 */
     submitForm: function () {
       this.$refs["form"].validate(valid => {
         if (valid) {
           if (this.form.id !== undefined) {
-            updateExterior(this.form).then(response => {
+            updateInterior(this.form).then(response => {
               this.$modal.msgSuccess("修改成功");
               this.open = false;
               this.getList();
             });
           } else {
-            addExterior(this.form).then(response => {
+            addInterior(this.form).then(response => {
               this.$modal.msgSuccess("新增成功");
               this.open = false;
               this.getList();
@@ -427,9 +427,9 @@ export default {
     },
     /** 删除按钮操作 */
     handleDelete(row) {
-      const exteriorIds = row.id || this.ids;
-      this.$modal.confirm('是否确认删除车身颜色ID为"' + exteriorIds + '"的数据项？').then(function () {
-        return delExterior(exteriorIds);
+      const interiorIds = row.id || this.ids;
+      this.$modal.confirm('是否确认删除内饰颜色ID为"' + interiorIds + '"的数据项？').then(function () {
+        return delInterior(interiorIds);
       }).then(() => {
         this.getList();
         this.$modal.msgSuccess("删除成功");
@@ -438,9 +438,9 @@ export default {
     },
     /** 导出按钮操作 */
     handleExport() {
-      this.download('tsp-vmd/mpt/exterior/export', {
+      this.download('tsp-vmd/mpt/interior/export', {
         ...this.queryParams
-      }, `exterior_${new Date().getTime()}.xlsx`)
+      }, `interior_${new Date().getTime()}.xlsx`)
     }
   }
 };
