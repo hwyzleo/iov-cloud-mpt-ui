@@ -291,8 +291,21 @@
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="内饰代码" prop="interiorCode">
-              <el-input v-model="form.interiorCode" placeholder="请输入内饰代码"/>
+            <el-form-item label="内饰颜色" prop="interiorCode">
+              <el-select
+                v-model="form.interiorCode"
+                placeholder="内饰颜色"
+                clearable
+                :disabled="form.id !== undefined"
+                @change="handleModelConfig"
+              >
+                <el-option
+                  v-for="interior in interiorList"
+                  :key="interior.code"
+                  :label="interior.name"
+                  :value="interior.code"
+                />
+              </el-select>
             </el-form-item>
           </el-col>
         </el-row>
@@ -356,6 +369,7 @@ import {listAllPlatform} from "@/api/completevehicle/product/platform";
 import {listSeriesByPlatformCode} from "@/api/completevehicle/product/series";
 import {listModelByPlatformCodeAndSeriesCode} from "@/api/completevehicle/product/model";
 import {listExteriorByPlatformCodeAndSeriesCode} from "@/api/completevehicle/product/exterior";
+import {listInteriorByPlatformCodeAndSeriesCode} from "@/api/completevehicle/product/interior";
 import {listBasicModelByPlatformCodeAndSeriesCodeAndModelCode} from "@/api/completevehicle/product/basicmodel";
 
 export default {
@@ -387,6 +401,8 @@ export default {
       basicModelList: [],
       // 车身颜色列表
       exteriorList: [],
+      // 内饰颜色列表
+      interiorList: [],
       // 弹出层标题
       title: "",
       // 是否显示弹出层
@@ -497,6 +513,9 @@ export default {
         listExteriorByPlatformCodeAndSeriesCode(this.form.platformCode, value).then(response => {
           this.exteriorList = response;
         });
+        listInteriorByPlatformCodeAndSeriesCode(this.form.platformCode, value).then(response => {
+          this.interiorList = response;
+        });
       }
     },
     /** 车型下拉选择操作 */
@@ -517,12 +536,15 @@ export default {
     handleModelConfig() {
       let basicModelCode = this.form.basicModelCode ? this.form.basicModelCode : '';
       let exteriorCode = this.form.exteriorCode ? this.form.exteriorCode : '';
-      this.form.code = basicModelCode + exteriorCode.replace("WS0","");
+      let interiorCode = this.form.interiorCode ? this.form.interiorCode : '';
+      this.form.code = basicModelCode + exteriorCode.replace("WS0","") + interiorCode.replace("NS0","");
       const basicModelOption = this.basicModelList.find(item => item.code === basicModelCode);
       let basicModelName = basicModelOption ? basicModelOption.name : '';
       const exteriorOption = this.exteriorList.find(item => item.code === exteriorCode);
       let exteriorName = exteriorOption ? exteriorOption.name : '';
-      this.form.name = basicModelName + " " + exteriorName;
+      const interiorOption = this.interiorList.find(item => item.code === interiorCode);
+      let interiorName = interiorOption ? interiorOption.name : '';
+      this.form.name = basicModelName + " " + exteriorName + " " + interiorName;
     },
     /** 新增按钮操作 */
     handleAdd() {
