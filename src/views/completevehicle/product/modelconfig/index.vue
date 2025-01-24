@@ -311,8 +311,21 @@
         </el-row>
         <el-row>
           <el-col :span="12">
-            <el-form-item label="车轮代码" prop="wheelCode">
-              <el-input v-model="form.wheelCode" placeholder="请输入车轮代码"/>
+            <el-form-item label="轮胎轮毂" prop="wheelCode">
+              <el-select
+                v-model="form.wheelCode"
+                placeholder="轮胎轮毂"
+                clearable
+                :disabled="form.id !== undefined"
+                @change="handleModelConfig"
+              >
+                <el-option
+                  v-for="wheel in wheelList"
+                  :key="wheel.code"
+                  :label="wheel.name"
+                  :value="wheel.code"
+                />
+              </el-select>
             </el-form-item>
           </el-col>
           <el-col :span="12">
@@ -370,6 +383,7 @@ import {listSeriesByPlatformCode} from "@/api/completevehicle/product/series";
 import {listModelByPlatformCodeAndSeriesCode} from "@/api/completevehicle/product/model";
 import {listExteriorByPlatformCodeAndSeriesCode} from "@/api/completevehicle/product/exterior";
 import {listInteriorByPlatformCodeAndSeriesCode} from "@/api/completevehicle/product/interior";
+import {listWheelByPlatformCodeAndSeriesCode} from "@/api/completevehicle/product/wheel";
 import {listBasicModelByPlatformCodeAndSeriesCodeAndModelCode} from "@/api/completevehicle/product/basicmodel";
 
 export default {
@@ -403,6 +417,8 @@ export default {
       exteriorList: [],
       // 内饰颜色列表
       interiorList: [],
+      // 轮胎轮毂列表
+      wheelList:[],
       // 弹出层标题
       title: "",
       // 是否显示弹出层
@@ -516,6 +532,9 @@ export default {
         listInteriorByPlatformCodeAndSeriesCode(this.form.platformCode, value).then(response => {
           this.interiorList = response;
         });
+        listWheelByPlatformCodeAndSeriesCode(this.form.platformCode, value).then(response => {
+          this.wheelList = response;
+        });
       }
     },
     /** 车型下拉选择操作 */
@@ -537,14 +556,18 @@ export default {
       let basicModelCode = this.form.basicModelCode ? this.form.basicModelCode : '';
       let exteriorCode = this.form.exteriorCode ? this.form.exteriorCode : '';
       let interiorCode = this.form.interiorCode ? this.form.interiorCode : '';
-      this.form.code = basicModelCode + exteriorCode.replace("WS0","") + interiorCode.replace("NS0","");
+      let wheelCode = this.form.wheelCode ? this.form.wheelCode : '';
+      this.form.code = basicModelCode + exteriorCode.replace("WS0","") +
+        interiorCode.replace("NS0","") + wheelCode.replace("CL0","");
       const basicModelOption = this.basicModelList.find(item => item.code === basicModelCode);
       let basicModelName = basicModelOption ? basicModelOption.name : '';
       const exteriorOption = this.exteriorList.find(item => item.code === exteriorCode);
       let exteriorName = exteriorOption ? exteriorOption.name : '';
       const interiorOption = this.interiorList.find(item => item.code === interiorCode);
       let interiorName = interiorOption ? interiorOption.name : '';
-      this.form.name = basicModelName + " " + exteriorName + " " + interiorName;
+      const wheelOption = this.wheelList.find(item => item.code === wheelCode);
+      let wheelName = wheelOption ? wheelOption.name : '';
+      this.form.name = basicModelName + " " + exteriorName + " " + interiorName + " " + wheelName;
     },
     /** 新增按钮操作 */
     handleAdd() {
