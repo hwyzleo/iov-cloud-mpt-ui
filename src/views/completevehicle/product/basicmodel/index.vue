@@ -253,7 +253,7 @@
         <el-form-item label="排序" prop="sort">
           <el-input-number v-model="form.sort" controls-position="right" :min="0"/>
         </el-form-item>
-        <el-form-item label="备注">
+        <el-form-item label="备注" prop="description">
           <el-input v-model="form.description" type="textarea" placeholder="请输入内容"></el-input>
         </el-form-item>
       </el-form>
@@ -373,7 +373,8 @@ export default {
         name: undefined,
         nameEn: undefined,
         enable: true,
-        sort: 99
+        sort: 99,
+        description: undefined
       };
       this.resetForm("form");
     },
@@ -440,7 +441,7 @@ export default {
         })
         this.open = true;
       });
-      this.title = "修改车型";
+      this.title = "修改基础车型";
     },
     /** 提交按钮 */
     submitForm: function () {
