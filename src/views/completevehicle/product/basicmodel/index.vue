@@ -120,7 +120,7 @@
       <el-table-column label="车型代码" prop="modelCode" width="80"/>
       <el-table-column label="基础车型代码" prop="code" width="100"/>
       <el-table-column label="基础车型名称" prop="name" />
-      <el-table-column label="基础车型英文名称" prop="nameEn" width="150"/>
+      <el-table-column label="基础车型英文名称" prop="nameEn" width="170"/>
       <el-table-column label="是否启用" align="center" width="100">
         <template slot-scope="scope">
           <el-switch
