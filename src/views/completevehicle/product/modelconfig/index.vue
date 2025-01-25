@@ -646,13 +646,13 @@ export default {
         listBasicModelByPlatformCodeAndSeriesCodeAndModelCode(this.form.platformCode, this.form.seriesCode, this.form.modelCode).then(response => {
           this.basicModelList = response;
         });
-        listExteriorByPlatformCodeAndSeriesCode(this.form.platformCode, value).then(response => {
+        listExteriorByPlatformCodeAndSeriesCode(this.form.platformCode, this.form.seriesCode).then(response => {
           this.exteriorList = response;
         });
-        listInteriorByPlatformCodeAndSeriesCode(this.form.platformCode, value).then(response => {
+        listInteriorByPlatformCodeAndSeriesCode(this.form.platformCode, this.form.seriesCode).then(response => {
           this.interiorList = response;
         });
-        listWheelByPlatformCodeAndSeriesCode(this.form.platformCode, value).then(response => {
+        listWheelByPlatformCodeAndSeriesCode(this.form.platformCode, this.form.seriesCode).then(response => {
           this.wheelList = response;
         });
         this.open = true;
