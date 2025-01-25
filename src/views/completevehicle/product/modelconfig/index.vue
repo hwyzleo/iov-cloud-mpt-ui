@@ -646,6 +646,15 @@ export default {
         listBasicModelByPlatformCodeAndSeriesCodeAndModelCode(this.form.platformCode, this.form.seriesCode, this.form.modelCode).then(response => {
           this.basicModelList = response;
         });
+        listExteriorByPlatformCodeAndSeriesCode(this.form.platformCode, value).then(response => {
+          this.exteriorList = response;
+        });
+        listInteriorByPlatformCodeAndSeriesCode(this.form.platformCode, value).then(response => {
+          this.interiorList = response;
+        });
+        listWheelByPlatformCodeAndSeriesCode(this.form.platformCode, value).then(response => {
+          this.wheelList = response;
+        });
         this.open = true;
       });
       this.title = "修改车型配置";
