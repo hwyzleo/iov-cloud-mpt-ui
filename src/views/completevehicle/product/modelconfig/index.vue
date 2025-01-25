@@ -330,7 +330,7 @@
           </el-col>
           <el-col :span="12">
             <el-form-item label="备胎" prop="spareTireCode">
-              <el-radio-group v-model="form.spareTireCode">
+              <el-radio-group v-model="form.spareTireCode" :disabled="form.id !== undefined">
                 <el-radio
                   label="XZ01"
                 >有
@@ -346,7 +346,7 @@
         <el-row>
           <el-col :span="12">
             <el-form-item label="智驾" prop="adasCode">
-              <el-radio-group v-model="form.adasCode">
+              <el-radio-group v-model="form.adasCode" :disabled="form.id !== undefined">
                 <el-radio
                   label="XZ02"
                   @click.native="handleAdas('XZ02')"
@@ -361,7 +361,23 @@
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="状态">
+            <el-form-item label="座椅" prop="seatCode">
+              <el-radio-group v-model="form.seatCode" :disabled="form.id !== undefined">
+                <el-radio
+                  label="XZ03"
+                >航空座椅
+                </el-radio>
+                <el-radio
+                  label="XZ00"
+                >标准座椅
+                </el-radio>
+              </el-radio-group>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="12">
+            <el-form-item label="状态" prop="enable">
               <el-radio-group v-model="form.enable">
                 <el-radio
                   :label="true"
@@ -374,10 +390,12 @@
               </el-radio-group>
             </el-form-item>
           </el-col>
+          <el-col :span="12">
+            <el-form-item label="排序" prop="sort">
+              <el-input-number v-model="form.sort" controls-position="right" :min="0"/>
+            </el-form-item>
+          </el-col>
         </el-row>
-        <el-form-item label="排序" prop="sort">
-          <el-input-number v-model="form.sort" controls-position="right" :min="0"/>
-        </el-form-item>
         <el-form-item label="备注">
           <el-input v-model="form.description" type="textarea" placeholder="请输入内容"></el-input>
         </el-form-item>
@@ -486,6 +504,9 @@ export default {
         ],
         adasCode: [
           {required: true, message: "智驾不能为空", trigger: "blur"}
+        ],
+        seatCode: [
+          {required: true, message: "座椅不能为空", trigger: "blur"}
         ],
         sort: [
           {required: true, message: "排序不能为空", trigger: "blur"}
