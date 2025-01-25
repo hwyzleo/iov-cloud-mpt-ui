@@ -329,15 +329,35 @@
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="备胎代码" prop="spareTireCode">
-              <el-input v-model="form.spareTireCode" placeholder="请输入备胎代码"/>
+            <el-form-item label="备胎" prop="spareTireCode">
+              <el-radio-group v-model="form.spareTireCode">
+                <el-radio
+                  label="XZ01"
+                >有
+                </el-radio>
+                <el-radio
+                  label="XZ00"
+                >无
+                </el-radio>
+              </el-radio-group>
             </el-form-item>
           </el-col>
         </el-row>
         <el-row>
           <el-col :span="12">
-            <el-form-item label="智驾代码" prop="adasCode">
-              <el-input v-model="form.adasCode" placeholder="请输入智驾代码"/>
+            <el-form-item label="智驾" prop="adasCode">
+              <el-radio-group v-model="form.adasCode">
+                <el-radio
+                  label="XZ02"
+                  @click.native="handleAdas('XZ02')"
+                >高阶智驾
+                </el-radio>
+                <el-radio
+                  label="XZ00"
+                  @click.native="handleAdas('XZ00')"
+                >标准智驾
+                </el-radio>
+              </el-radio-group>
             </el-form-item>
           </el-col>
           <el-col :span="12">
@@ -418,7 +438,7 @@ export default {
       // 内饰颜色列表
       interiorList: [],
       // 轮胎轮毂列表
-      wheelList:[],
+      wheelList: [],
       // 弹出层标题
       title: "",
       // 是否显示弹出层
@@ -454,6 +474,18 @@ export default {
         ],
         exteriorCode: [
           {required: true, message: "车身颜色不能为空", trigger: "blur"}
+        ],
+        interiorCode: [
+          {required: true, message: "内饰颜色不能为空", trigger: "blur"}
+        ],
+        wheelCode: [
+          {required: true, message: "轮胎轮毂不能为空", trigger: "blur"}
+        ],
+        spareTireCode: [
+          {required: true, message: "备胎不能为空", trigger: "blur"}
+        ],
+        adasCode: [
+          {required: true, message: "智驾不能为空", trigger: "blur"}
         ],
         sort: [
           {required: true, message: "排序不能为空", trigger: "blur"}
@@ -557,8 +589,8 @@ export default {
       let exteriorCode = this.form.exteriorCode ? this.form.exteriorCode : '';
       let interiorCode = this.form.interiorCode ? this.form.interiorCode : '';
       let wheelCode = this.form.wheelCode ? this.form.wheelCode : '';
-      this.form.code = basicModelCode + exteriorCode.replace("WS0","") +
-        interiorCode.replace("NS0","") + wheelCode.replace("CL0","");
+      this.form.code = basicModelCode + exteriorCode.replace("WS0", "") +
+        interiorCode.replace("NS0", "") + wheelCode.replace("CL0", "");
       const basicModelOption = this.basicModelList.find(item => item.code === basicModelCode);
       let basicModelName = basicModelOption ? basicModelOption.name : '';
       const exteriorOption = this.exteriorList.find(item => item.code === exteriorCode);
@@ -568,6 +600,20 @@ export default {
       const wheelOption = this.wheelList.find(item => item.code === wheelCode);
       let wheelName = wheelOption ? wheelOption.name : '';
       this.form.name = basicModelName + " " + exteriorName + " " + interiorName + " " + wheelName;
+    },
+    handleAdas(adasCode) {
+      this.handleModelConfig();
+      let adasName = '';
+      if (adasCode === 'XZ02') {
+        adasCode = '1';
+        adasName = '高阶智驾';
+      }
+      if (adasCode === 'XZ00') {
+        adasCode = '0';
+        adasName = '标准智驾';
+      }
+      this.form.code = this.form.code + adasCode;
+      this.form.name = this.form.name + " " + adasName;
     },
     /** 新增按钮操作 */
     handleAdd() {
