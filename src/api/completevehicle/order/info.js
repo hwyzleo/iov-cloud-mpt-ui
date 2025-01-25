@@ -36,9 +36,9 @@ export function updateOrder(data) {
 }
 
 // 删除车辆销售订单
-export function delOrder(orderId) {
+export function delOrder(orderNum) {
   return request({
-    url: '/otd-vso/mpt/vehicleSaleOrder/' + orderId,
+    url: '/otd-vso/mpt/vehicleSaleOrder/' + orderNum,
     method: 'delete'
   })
 }

@@ -68,18 +68,6 @@
       </el-col>
       <el-col :span="1.5">
         <el-button
-          type="danger"
-          plain
-          icon="el-icon-delete"
-          size="mini"
-          :disabled="multiple"
-          @click="handleDelete"
-          v-hasPermi="['completeVehicle:order:info:remove']"
-        >删除
-        </el-button>
-      </el-col>
-      <el-col :span="1.5">
-        <el-button
           type="warning"
           plain
           icon="el-icon-download"
@@ -404,9 +392,8 @@ export default {
     },
     /** 删除按钮操作 */
     handleDelete(row) {
-      const orderIds = row.id || this.ids;
-      this.$modal.confirm('是否确认删除车辆销售订单ID为"' + orderIds + '"的数据项？').then(function () {
-        return delOrder(orderIds);
+      this.$modal.confirm('是否确认删除车辆销售订单号为"' + row.orderNum + '"的数据项？').then(function () {
+        return delOrder(row.orderNum);
       }).then(() => {
         this.getList();
         this.$modal.msgSuccess("删除成功");
