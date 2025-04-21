@@ -16,7 +16,7 @@ export function bindingVehicle(vin, orderNum) {
     orderNum: orderNum
   }
   return request({
-    url: '/otd-vso/mpt/vehicleSaleOrder/order/action/assignVehicle',
+    url: '/otd-vso/mpt/vehicleSaleOrder/action/assignVehicle',
     method: 'post',
     data: data
   })
