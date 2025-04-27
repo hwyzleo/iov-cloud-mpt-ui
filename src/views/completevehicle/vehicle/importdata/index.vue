@@ -18,7 +18,7 @@
           style="width: 120px"
         >
           <el-option
-            v-for="dict in dict.type.iov_mes_data_type"
+            v-for="dict in dict.type.iov_import_data_type"
             :key="dict.value"
             :label="dict.label"
             :value="dict.value"
@@ -50,7 +50,7 @@
           icon="el-icon-plus"
           size="mini"
           @click="handleAdd"
-          v-hasPermi="['completeVehicle:vehicle:mes:add']"
+          v-hasPermi="['completeVehicle:vehicle:importData:add']"
         >新增
         </el-button>
       </el-col>
@@ -62,7 +62,7 @@
           size="mini"
           :disabled="single"
           @click="handleUpdate"
-          v-hasPermi="['completeVehicle:vehicle:mes:edit']"
+          v-hasPermi="['completeVehicle:vehicle:importData:edit']"
         >解析处理
         </el-button>
       </el-col>
@@ -74,7 +74,7 @@
           size="mini"
           :disabled="multiple"
           @click="handleDelete"
-          v-hasPermi="['completeVehicle:vehicle:mes:remove']"
+          v-hasPermi="['completeVehicle:vehicle:importData:remove']"
         >删除
         </el-button>
       </el-col>
@@ -85,14 +85,14 @@
           icon="el-icon-download"
           size="mini"
           @click="handleExport"
-          v-hasPermi="['completeVehicle:vehicle:mes:export']"
+          v-hasPermi="['completeVehicle:vehicle:importData:export']"
         >导出
         </el-button>
       </el-col>
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
-    <el-table v-loading="loading" :data="mesVehicleDataList" @selection-change="handleSelectionChange">
+    <el-table v-loading="loading" :data="vehicleImportDataList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center"/>
       <el-table-column label="批次号" prop="batchNum"/>
       <el-table-column label="数据类型" prop="type" width="100">
@@ -119,7 +119,7 @@
             icon="el-icon-edit"
             @click="handleUpdate(scope.row)"
             v-if="scope.row.handle === false"
-            v-hasPermi="['completeVehicle:vehicle:mes:edit']"
+            v-hasPermi="['completeVehicle:vehicle:importData:edit']"
           >解析处理
           </el-button>
           <el-button
@@ -127,7 +127,7 @@
             type="text"
             icon="el-icon-delete"
             @click="handleDelete(scope.row)"
-            v-hasPermi="['completeVehicle:vehicle:mes:remove']"
+            v-hasPermi="['completeVehicle:vehicle:importData:remove']"
           >删除
           </el-button>
         </template>
@@ -142,7 +142,7 @@
       @pagination="getList"
     />
 
-    <!-- 添加或修改MES车辆数据配置对话框 -->
+    <!-- 添加或修改车辆导入数据配置对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="800px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="120px">
         <el-form-item label="批次号" prop="batchNum">
@@ -155,7 +155,7 @@
             clearable
           >
             <el-option
-              v-for="dict in dict.type.iov_mes_data_type"
+              v-for="dict in dict.type.iov_import_data_type"
               :key="dict.value"
               :label="dict.label"
               :value="dict.value"
@@ -182,16 +182,16 @@
 
 <script>
 import {
-  listMesVehicleData,
-  getMesVehicleData,
-  addMesVehicleData,
-  updateMesVehicleData,
-  delMesVehicleData
-} from "@/api/completevehicle/vehicle/mes";
+  listVehicleImportData,
+  getVehicleImportData,
+  addVehicleImportData,
+  updateVehicleImportData,
+  delVehicleImportData
+} from "@/api/completevehicle/vehicle/importdata";
 
 export default {
-  name: "MesVehicleData",
-  dicts: ['iov_mes_data_type'],
+  name: "VehicleImportData",
+  dicts: ['iov_import_data_type'],
   data() {
     return {
       // 遮罩层
@@ -206,8 +206,8 @@ export default {
       showSearch: true,
       // 总条数
       total: 0,
-      // MES车辆数据表格数据
-      mesVehicleDataList: [],
+      // 车辆导入数据表格数据
+      vehicleImportDataList: [],
       // 弹出层标题
       title: "",
       // 是否显示弹出层
@@ -242,11 +242,11 @@ export default {
     this.getList();
   },
   methods: {
-    /** 查询MES车辆数据列表 */
+    /** 查询车辆导入数据列表 */
     getList() {
       this.loading = true;
-      listMesVehicleData(this.addDateRange(this.queryParams, this.dateRange)).then(response => {
-          this.mesVehicleDataList = response.rows;
+      listVehicleImportData(this.addDateRange(this.queryParams, this.dateRange)).then(response => {
+          this.vehicleImportDataList = response.rows;
           this.total = response.total;
           this.loading = false;
         }
@@ -254,10 +254,10 @@ export default {
     },
     // 获取数据类型
     getDataTypeLabel(dataType) {
-      if (!this.dict || !this.dict.type || !this.dict.type.iov_mes_data_type) {
+      if (!this.dict || !this.dict.type || !this.dict.type.iov_import_data_type) {
         return dataType;
       }
-      const item = this.dict.type.iov_mes_data_type.find(
+      const item = this.dict.type.iov_import_data_type.find(
         dict => dict.value === dataType
       )
       return item ? item.label : dataType;
@@ -299,7 +299,7 @@ export default {
     handleAdd() {
       this.reset();
       this.open = true;
-      this.title = "添加工厂数据";
+      this.title = "添加车辆导入数据";
       const now = new Date();
       const batchNum = now.getFullYear().toString() +
         (now.getMonth() + 1).toString().padStart(2, '0') +
@@ -315,25 +315,25 @@ export default {
     /** 修改按钮操作 */
     handleUpdate(row) {
       this.reset();
-      const mesVehicleDataId = row.id || this.ids
-      getMesVehicleData(mesVehicleDataId).then(response => {
+      const vehicleImportDataId = row.id || this.ids
+      getVehicleImportData(vehicleImportDataId).then(response => {
         this.form = response.data;
         this.open = true;
       });
-      this.title = "修改工厂数据";
+      this.title = "修改车辆导入数据";
     },
     /** 提交按钮 */
     submitForm: function () {
       this.$refs["form"].validate(valid => {
         if (valid) {
           if (this.form.id !== undefined) {
-            updateMesVehicleData(this.form).then(response => {
+            updateVehicleImportData(this.form).then(response => {
               this.$modal.msgSuccess("修改成功");
               this.open = false;
               this.getList();
             });
           } else {
-            addMesVehicleData(this.form).then(response => {
+            addVehicleImportData(this.form).then(response => {
               this.$modal.msgSuccess("新增成功");
               this.open = false;
               this.getList();
@@ -344,9 +344,9 @@ export default {
     },
     /** 删除按钮操作 */
     handleDelete(row) {
-      const mesVehicleDataIds = row.id || this.ids;
-      this.$modal.confirm('是否确认删除工厂数据ID为"' + mesVehicleDataIds + '"的数据项？').then(function () {
-        return delMesVehicleData(mesVehicleDataIds);
+      const vehicleImportDataIds = row.id || this.ids;
+      this.$modal.confirm('是否确认删除车辆导入数据ID为"' + vehicleImportDataIds + '"的数据项？').then(function () {
+        return delVehicleImportData(vehicleImportDataIds);
       }).then(() => {
         this.getList();
         this.$modal.msgSuccess("删除成功");
@@ -355,9 +355,9 @@ export default {
     },
     /** 导出按钮操作 */
     handleExport() {
-      this.download('tsp-vmd/mesVehicleData/export', {
+      this.download('tsp-vmd/vehicleImportData/export', {
         ...this.queryParams
-      }, `mes_vehicle_data_${new Date().getTime()}.xlsx`)
+      }, `vehicle_import_data_${new Date().getTime()}.xlsx`)
     }
   }
 };
