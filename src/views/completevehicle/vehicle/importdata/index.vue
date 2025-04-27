@@ -95,7 +95,7 @@
     <el-table v-loading="loading" :data="vehicleImportDataList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center"/>
       <el-table-column label="批次号" prop="batchNum"/>
-      <el-table-column label="数据类型" prop="type" width="100">
+      <el-table-column label="数据类型" prop="type" width="150">
         <template slot-scope="scope">
           <span>{{ getDataTypeLabel(scope.row.type) }}</span>
         </template>
