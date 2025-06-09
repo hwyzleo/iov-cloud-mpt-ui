@@ -278,7 +278,7 @@ import {listWarehouseByLevel,} from "@/api/completevehicle/warehouse/info";
 
 export default {
   name: "PdcPreInboundOrder",
-  dicts: ['iov_warehouse_level'],
+  dicts: [],
   data() {
     return {
       // 遮罩层
