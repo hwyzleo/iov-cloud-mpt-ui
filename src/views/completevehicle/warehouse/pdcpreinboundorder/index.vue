@@ -144,7 +144,7 @@
 
     <!-- 添加或修改预入库单配置对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
-      <el-form ref="form" :model="form" :rules="rules" label-width="100px">
+      <el-form ref="form" :model="form" :rules="rules" label-width="120px">
         <el-form-item label="预入库单号" prop="orderNum" v-if="form.id !== undefined">
           <el-input v-model="form.orderNum" :readonly="true" placeholder="请输入预入库单号"/>
         </el-form-item>
@@ -382,6 +382,7 @@ export default {
       this.open = true;
       this.title = "添加预入库单";
       this.form = {
+        inboundTime: ''
       };
     },
     /** 修改按钮操作 */
