@@ -332,7 +332,7 @@ export default {
     /** 查询前置库列表 */
     getPdcWarehouseList() {
       listWarehouseByLevel('PDC').then(response => {
-        this.pdcWarehouseList = response.rows;
+        this.pdcWarehouseList = response;
       });
     },
     /** 查询预入库单列表 */
