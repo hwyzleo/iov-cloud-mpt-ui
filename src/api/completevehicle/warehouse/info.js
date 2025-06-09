@@ -9,6 +9,15 @@ export function listWarehouse(query) {
   })
 }
 
+// 根据层级查询仓库列表
+export function listWarehouseByLevel(query) {
+  return request({
+    url: '/otd-wms/mpt/warehouse/listByLevel',
+    method: 'get',
+    params: query
+  })
+}
+
 // 查询仓库下储区列表
 export function listWarehouseStorageArea(warehouseId) {
   return request({

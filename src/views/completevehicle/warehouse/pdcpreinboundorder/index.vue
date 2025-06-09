@@ -6,7 +6,7 @@
           v-model="queryParams.orderNum"
           placeholder="请输入预入库单号"
           clearable
-          style="width: 140px"
+          style="width: 150px"
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
@@ -22,9 +22,9 @@
       <el-form-item label="仓库名称" prop="warehouseName">
         <el-select
           v-model="queryParams.warehouseName"
-          placeholder="请输入仓库名称"
+          placeholder="请选择仓库"
           clearable
-          style="width: 140px"
+          style="width: 200px"
         >
           <el-option
             v-for="dict in dict.type.iov_warehouse_level"
@@ -106,7 +106,7 @@
       <el-table-column label="预入库单号" prop="orderNum" width="100"/>
       <el-table-column label="车架号" prop="vin" width="150"/>
       <el-table-column label="车型配置代码" prop="modelConfigCode" width="100"/>
-      <el-table-column label="仓库名称" prop="warehouseName" width="100"/>
+      <el-table-column label="仓库名称" prop="warehouseName"/>
       <el-table-column label="预计到达时间" prop="estimatedArrivalTime" width="100"/>
       <el-table-column label="到达时间" prop="arrivalTime" width="100"/>
       <el-table-column label="预计入库时间" prop="estimatedInboundTime" width="100"/>
@@ -161,10 +161,10 @@
             clearable
           >
             <el-option
-              v-for="dict in dict.type.iov_warehouse_level"
-              :key="dict.value"
-              :label="dict.label"
-              :value="dict.value"
+              v-for="warehouse in this.pdcWarehouseList"
+              :key="warehouse.code"
+              :label="warehouse.name"
+              :value="warehouse.code"
             />
           </el-select>
         </el-form-item>
@@ -274,6 +274,7 @@
 
 <script>
 import {listPreInboundOrder,} from "@/api/completevehicle/warehouse/pdcpreinboundorder";
+import {listWarehouseByLevel,} from "@/api/completevehicle/warehouse/info";
 
 export default {
   name: "PdcPreInboundOrder",
@@ -292,6 +293,8 @@ export default {
       showSearch: true,
       // 总条数
       total: 0,
+      // 前置库列表
+      pdcWarehouseList: [],
       // 预入库单表格数据
       preInboundOrderList: [],
       // 弹出层标题
@@ -322,9 +325,16 @@ export default {
     };
   },
   created() {
+    this.getPdcWarehouseList();
     this.getList();
   },
   methods: {
+    /** 查询前置库列表 */
+    getPdcWarehouseList() {
+      listWarehouseByLevel('PDC').then(response => {
+        this.pdcWarehouseList = response.rows;
+      });
+    },
     /** 查询预入库单列表 */
     getList() {
       this.loading = true;
