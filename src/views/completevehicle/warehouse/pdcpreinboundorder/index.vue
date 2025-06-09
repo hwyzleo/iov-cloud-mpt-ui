@@ -143,17 +143,23 @@
     />
 
     <!-- 添加或修改预入库单配置对话框 -->
-    <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
+    <el-dialog :title="title" :visible.sync="open" width="700px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="120px">
         <el-form-item label="预入库单号" prop="orderNum" v-if="form.id !== undefined">
           <el-input v-model="form.orderNum" :readonly="true" placeholder="请输入预入库单号"/>
         </el-form-item>
-        <el-form-item label="车架号" prop="vin">
-          <el-input v-model="form.vin" placeholder="请输入车架号"/>
-        </el-form-item>
-        <el-form-item label="车型配置代码" prop="modelConfigCode">
-          <el-input v-model="form.modelConfigCode" placeholder="请输入车型配置代码"/>
-        </el-form-item>
+        <el-row>
+          <el-col :span="12">
+            <el-form-item label="车架号" prop="vin">
+              <el-input v-model="form.vin" placeholder="请输入车架号"/>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="车型配置代码" prop="modelConfigCode">
+              <el-input v-model="form.modelConfigCode" placeholder="请输入车型配置代码"/>
+            </el-form-item>
+          </el-col>
+        </el-row>
         <el-form-item label="前置库" prop="warehouseCode">
           <el-select
             v-model="form.warehouseCode"
@@ -168,90 +174,114 @@
             />
           </el-select>
         </el-form-item>
-        <el-form-item label="预计到达时间" prop="estimatedArrivalTime">
-          <el-date-picker
-            v-model="form.estimatedArrivalTime"
-            type="datetime"
-            placeholder="请选择预计到达时间"
-            value-format="yyyy-MM-dd HH:mm:ss"
-          >
-          </el-date-picker>
-        </el-form-item>
-        <el-form-item label="预计入库时间" prop="estimatedInboundTime">
-          <el-date-picker
-            v-model="form.estimatedInboundTime"
-            type="datetime"
-            placeholder="请选择预计入库时间"
-            value-format="yyyy-MM-dd HH:mm:ss"
-          >
-          </el-date-picker>
-        </el-form-item>
-        <el-form-item label="是否已审核">
-          <el-radio-group v-model="form.audit">
-            <el-radio
-              :label="true"
-            >是
-            </el-radio>
-            <el-radio
-              :label="false"
-            >否
-            </el-radio>
-          </el-radio-group>
-        </el-form-item>
-        <el-form-item label="审核时间" prop="auditTime">
-          <el-date-picker
-            v-model="form.auditTime"
-            type="datetime"
-            placeholder="请选择审核时间"
-            value-format="yyyy-MM-dd HH:mm:ss"
-          >
-          </el-date-picker>
-        </el-form-item>
+        <el-row>
+          <el-col :span="12">
+            <el-form-item label="预计到达时间" prop="estimatedArrivalTime">
+              <el-date-picker
+                v-model="form.estimatedArrivalTime"
+                type="datetime"
+                placeholder="请选择预计到达时间"
+                value-format="yyyy-MM-dd HH:mm:ss"
+              >
+              </el-date-picker>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="预计入库时间" prop="estimatedInboundTime">
+              <el-date-picker
+                v-model="form.estimatedInboundTime"
+                type="datetime"
+                placeholder="请选择预计入库时间"
+                value-format="yyyy-MM-dd HH:mm:ss"
+              >
+              </el-date-picker>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="12">
+            <el-form-item label="是否已审核">
+              <el-radio-group v-model="form.audit">
+                <el-radio
+                  :label="true"
+                >是
+                </el-radio>
+                <el-radio
+                  :label="false"
+                >否
+                </el-radio>
+              </el-radio-group>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="审核时间" prop="auditTime">
+              <el-date-picker
+                v-model="form.auditTime"
+                type="datetime"
+                placeholder="请选择审核时间"
+                value-format="yyyy-MM-dd HH:mm:ss"
+              >
+              </el-date-picker>
+            </el-form-item>
+          </el-col>
+        </el-row>
         <el-form-item label="审核者" prop="auditBy">
           <el-input v-model="form.auditBy" placeholder="请输入审核者"/>
         </el-form-item>
-        <el-form-item label="是否已到达">
-          <el-radio-group v-model="form.arrival">
-            <el-radio
-              :label="true"
-            >是
-            </el-radio>
-            <el-radio
-              :label="false"
-            >否
-            </el-radio>
-          </el-radio-group>
-        </el-form-item>
-        <el-form-item label="到达时间" prop="arrivalTime">
-          <el-date-picker
-            v-model="form.arrivalTime"
-            type="datetime"
-            placeholder="请选择到达时间"
-            value-format="yyyy-MM-dd HH:mm:ss"
-          >
-          </el-date-picker>
-        </el-form-item>
-        <el-form-item label="是否已入库">
-          <el-radio-group v-model="form.inbound">
-            <el-radio
-              :label="true"
-            >是
-            </el-radio>
-            <el-radio
-              :label="false"
-            >否
-            </el-radio>
-          </el-radio-group>
-        </el-form-item>
-        <el-form-item label="入库时间" prop="inboundTime">
-          <el-date-picker
-            v-model="form.inboundTime"
-            type="datetime"
-            placeholder="请选择入库时间"
-            value-format="yyyy-MM-dd HH:mm:ss"
-          >
-          </el-date-picker>
-        </el-form-item>
+        <el-row>
+          <el-col :span="12">
+            <el-form-item label="是否已到达">
+              <el-radio-group v-model="form.arrival">
+                <el-radio
+                  :label="true"
+                >是
+                </el-radio>
+                <el-radio
+                  :label="false"
+                >否
+                </el-radio>
+              </el-radio-group>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="到达时间" prop="arrivalTime">
+              <el-date-picker
+                v-model="form.arrivalTime"
+                type="datetime"
+                placeholder="请选择到达时间"
+                value-format="yyyy-MM-dd HH:mm:ss"
+              >
+              </el-date-picker>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="12">
+            <el-form-item label="是否已入库">
+              <el-radio-group v-model="form.inbound">
+                <el-radio
+                  :label="true"
+                >是
+                </el-radio>
+                <el-radio
+                  :label="false"
+                >否
+                </el-radio>
+              </el-radio-group>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="入库时间" prop="inboundTime">
+              <el-date-picker
+                v-model="form.inboundTime"
+                type="datetime"
+                placeholder="请选择入库时间"
+                value-format="yyyy-MM-dd HH:mm:ss"
+              >
+              </el-date-picker>
+            </el-form-item>
+          </el-col>
+        </el-row>
         <el-form-item label="入库者" prop="inboundBy">
           <el-input v-model="form.inboundBy" placeholder="请输入入库者"/>
         </el-form-item>
