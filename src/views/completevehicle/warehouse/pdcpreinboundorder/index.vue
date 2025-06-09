@@ -253,7 +253,6 @@
             type="datetime"
             placeholder="请选择入库时间"
             value-format="yyyy-MM-dd HH:mm:ss"
-            :default-time="['00:00:00']"
           >
           </el-date-picker>
         </el-form-item>
