@@ -174,7 +174,6 @@
             type="datetime"
             placeholder="请选择预计到达时间"
             value-format="yyyy-MM-dd HH:mm:ss"
-            :default-time="['00:00:00']"
           >
           </el-date-picker>
         </el-form-item>
@@ -184,7 +183,6 @@
             type="datetime"
             placeholder="请选择预计入库时间"
             value-format="yyyy-MM-dd HH:mm:ss"
-            :default-time="['00:00:00']"
           >
           </el-date-picker>
         </el-form-item>
@@ -206,7 +204,6 @@
             type="datetime"
             placeholder="请选择审核时间"
             value-format="yyyy-MM-dd HH:mm:ss"
-            :default-time="['00:00:00']"
           >
           </el-date-picker>
         </el-form-item>
@@ -231,7 +228,6 @@
             type="datetime"
             placeholder="请选择到达时间"
             value-format="yyyy-MM-dd HH:mm:ss"
-            :default-time="['00:00:00']"
           >
           </el-date-picker>
         </el-form-item>
