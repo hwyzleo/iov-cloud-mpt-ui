@@ -27,10 +27,10 @@
           style="width: 200px"
         >
           <el-option
-            v-for="dict in dict.type.iov_warehouse_level"
-            :key="dict.value"
-            :label="dict.label"
-            :value="dict.value"
+            v-for="warehouse in this.pdcWarehouseList"
+            :key="warehouse.code"
+            :label="warehouse.name"
+            :value="warehouse.code"
           />
         </el-select>
       </el-form-item>
