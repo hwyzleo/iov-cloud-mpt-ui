@@ -225,7 +225,7 @@
             </el-form-item>
           </el-col>
         </el-row>
-        <el-form-item label="审核者" prop="auditBy">
+        <el-form-item label="审核者" prop="auditBy" v-if="form.id !== undefined">
           <el-input v-model="form.auditBy" placeholder="请输入审核者"/>
         </el-form-item>
         <el-row>
@@ -282,7 +282,7 @@
             </el-form-item>
           </el-col>
         </el-row>
-        <el-form-item label="入库者" prop="inboundBy">
+        <el-form-item label="入库者" prop="inboundBy" v-if="form.id !== undefined">
           <el-input v-model="form.inboundBy" placeholder="请输入入库者"/>
         </el-form-item>
         <el-form-item label="备注">
@@ -298,7 +298,13 @@
 </template>
 
 <script>
-import {listPreInboundOrder,} from "@/api/completevehicle/warehouse/pdcpreinboundorder";
+import {
+  listPreInboundOrder,
+  getPreInboundOrder,
+  updatePreInboundOrder,
+  addPreInboundOrder,
+  delPreInboundOrder
+} from "@/api/completevehicle/warehouse/pdcpreinboundorder";
 import {listWarehouseByLevel,} from "@/api/completevehicle/warehouse/info";
 
 export default {
@@ -407,7 +413,8 @@ export default {
       this.open = true;
       this.title = "添加预入库单";
       this.form = {
-        inboundTime: ''
+        inboundTime: '',
+        audit: false
       };
     },
     /** 修改按钮操作 */
