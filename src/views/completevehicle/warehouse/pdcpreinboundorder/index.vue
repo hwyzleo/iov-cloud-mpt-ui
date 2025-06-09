@@ -350,7 +350,7 @@ export default {
           {required: true, message: "车型配置代码不能为空", trigger: "blur"}
         ],
         warehouseCode: [
-          {required: true, message: "仓库代码不能为空", trigger: "blur"}
+          {required: true, message: "前置库不能为空", trigger: "blur"}
         ]
       },
     };
@@ -414,7 +414,9 @@ export default {
       this.title = "添加预入库单";
       this.form = {
         inboundTime: '',
-        audit: false
+        audit: false,
+        arrival: false,
+        inbound: false
       };
     },
     /** 修改按钮操作 */
