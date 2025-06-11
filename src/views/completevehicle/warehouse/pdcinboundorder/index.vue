@@ -107,6 +107,8 @@
       <el-table-column label="车架号" prop="vin" width="180"/>
       <el-table-column label="车型配置代码" prop="modelConfigCode" width="120"/>
       <el-table-column label="仓库名称" prop="warehouseName"/>
+      <el-table-column label="储区代码" prop="storageAreaCode" width="100"/>
+      <el-table-column label="储位代码" prop="storageLocationCode" width="100"/>
       <el-table-column label="入库时间" align="center" prop="inboundTime" width="180">
         <template slot-scope="scope">
           <span>{{ parseTime(scope.row.inboundTime) }}</span>
