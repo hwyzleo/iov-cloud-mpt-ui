@@ -286,7 +286,7 @@
                 v-model="form.inboundTime"
                 type="datetime"
                 placeholder="请选择入库时间"
-                value-format="yyyy-MM-dd HH:mm:ss"
+                value-format="timestamp"
               >
               </el-date-picker>
             </el-form-item>
