@@ -191,7 +191,7 @@
                 v-model="form.estimatedArrivalTime"
                 type="datetime"
                 placeholder="请选择预计到达时间"
-                value-format="yyyy-MM-dd HH:mm:ss"
+                value-format="timestamp"
               >
               </el-date-picker>
             </el-form-item>
@@ -202,7 +202,7 @@
                 v-model="form.estimatedInboundTime"
                 type="datetime"
                 placeholder="请选择预计入库时间"
-                value-format="yyyy-MM-dd HH:mm:ss"
+                value-format="timestamp"
               >
               </el-date-picker>
             </el-form-item>
@@ -229,7 +229,7 @@
                 v-model="form.auditTime"
                 type="datetime"
                 placeholder="请选择审核时间"
-                value-format="yyyy-MM-dd HH:mm:ss"
+                value-format="timestamp"
               >
               </el-date-picker>
             </el-form-item>
@@ -259,7 +259,7 @@
                 v-model="form.arrivalTime"
                 type="datetime"
                 placeholder="请选择到达时间"
-                value-format="yyyy-MM-dd HH:mm:ss"
+                value-format="timestamp"
               >
               </el-date-picker>
             </el-form-item>
