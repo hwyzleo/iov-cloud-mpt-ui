@@ -184,6 +184,18 @@
         </el-form-item>
         <el-row>
           <el-col :span="12">
+            <el-form-item label="储区代码" prop="storageAreaCode">
+              <el-input v-model="form.storageAreaCode" placeholder="请输入储区代码"/>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="储位代码" prop="storageLocationCode">
+              <el-input v-model="form.storageLocationCode" placeholder="请输入储位代码"/>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="12">
             <el-form-item label="入库时间" prop="inboundTime">
               <el-date-picker
                 v-model="form.inboundTime"
@@ -266,6 +278,9 @@ export default {
         ],
         warehouseCode: [
           {required: true, message: "前置库不能为空", trigger: "blur"}
+        ],
+        inboundTime: [
+          {required: true, message: "入库时间不能为空", trigger: "blur"}
         ]
       },
     };
