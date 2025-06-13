@@ -1,19 +1,19 @@
 <template>
   <div class="app-container">
     <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch">
-      <el-form-item label="品牌代码" prop="code">
+      <el-form-item label="物流据点类型代码" prop="code">
         <el-input
           v-model="queryParams.code"
-          placeholder="请输入品牌代码"
+          placeholder="请输入物流据点类型代码"
           clearable
           style="width: 140px"
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="品牌名称" prop="name">
+      <el-form-item label="物流据点类型名称" prop="name">
         <el-input
           v-model="queryParams.name"
-          placeholder="请输入品牌名称"
+          placeholder="请输入物流据点类型名称"
           clearable
           style="width: 150px"
           @keyup.enter.native="handleQuery"
@@ -44,7 +44,7 @@
           icon="el-icon-plus"
           size="mini"
           @click="handleAdd"
-          v-hasPermi="['completeVehicle:product:brand:add']"
+          v-hasPermi="['completeVehicle:transport:logisticsNodeType:add']"
         >新增
         </el-button>
       </el-col>
@@ -56,7 +56,7 @@
           size="mini"
           :disabled="single"
           @click="handleUpdate"
-          v-hasPermi="['completeVehicle:product:brand:edit']"
+          v-hasPermi="['completeVehicle:transport:logisticsNodeType:edit']"
         >修改
         </el-button>
       </el-col>
@@ -68,7 +68,7 @@
           size="mini"
           :disabled="multiple"
           @click="handleDelete"
-          v-hasPermi="['completeVehicle:product:brand:remove']"
+          v-hasPermi="['completeVehicle:transport:logisticsNodeType:remove']"
         >删除
         </el-button>
       </el-col>
@@ -79,18 +79,17 @@
           icon="el-icon-download"
           size="mini"
           @click="handleExport"
-          v-hasPermi="['completeVehicle:product:brand:export']"
+          v-hasPermi="['completeVehicle:transport:logisticsNodeType:export']"
         >导出
         </el-button>
       </el-col>
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
-    <el-table v-loading="loading" :data="brandList" @selection-change="handleSelectionChange">
+    <el-table v-loading="loading" :data="logisticNodeTypeList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center"/>
-      <el-table-column label="品牌代码" prop="code"  width="100"/>
-      <el-table-column label="品牌名称" prop="name"/>
-      <el-table-column label="品牌英文名称" prop="nameEn"/>
+      <el-table-column label="物流据点类型代码" prop="code"  width="100"/>
+      <el-table-column label="物流据点类型名称" prop="name"/>
       <el-table-column label="是否启用" align="center" width="100">
         <template slot-scope="scope">
           <el-switch
@@ -113,7 +112,7 @@
             type="text"
             icon="el-icon-edit"
             @click="handleUpdate(scope.row)"
-            v-hasPermi="['completeVehicle:product:brand:edit']"
+            v-hasPermi="['completeVehicle:transport:logisticsNodeType:edit']"
           >修改
           </el-button>
           <el-button
@@ -121,7 +120,7 @@
             type="text"
             icon="el-icon-delete"
             @click="handleDelete(scope.row)"
-            v-hasPermi="['completeVehicle:product:brand:remove']"
+            v-hasPermi="['completeVehicle:transport:logisticsNodeType:remove']"
           >删除
           </el-button>
         </template>
@@ -136,17 +135,14 @@
       @pagination="getList"
     />
 
-    <!-- 添加或修改品牌信息对话框 -->
+    <!-- 添加或修改物流据点类型对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="120px">
-        <el-form-item label="品牌代码" prop="code">
-          <el-input v-model="form.code" :readonly="form.id !== undefined" placeholder="请输入品牌代码"/>
+        <el-form-item label="物流据点类型代码" prop="code">
+          <el-input v-model="form.code" :readonly="form.id !== undefined" placeholder="请输入物流据点类型代码"/>
         </el-form-item>
-        <el-form-item label="品牌名称" prop="name">
-          <el-input v-model="form.name" placeholder="请输入品牌名称"/>
-        </el-form-item>
-        <el-form-item label="品牌英文名称" prop="nameEn">
-          <el-input v-model="form.nameEn" placeholder="请输入品牌英文名称"/>
+        <el-form-item label="物流据点类型名称" prop="name">
+          <el-input v-model="form.name" placeholder="请输入物流据点类型名称"/>
         </el-form-item>
         <el-form-item label="状态">
           <el-radio-group v-model="form.enable">
@@ -177,15 +173,15 @@
 
 <script>
 import {
-  listBrand,
-  getBrand,
-  addBrand,
-  updateBrand,
-  delBrand
-} from "@/api/completevehicle/product/brand";
+  listLogisticsNodeType,
+  getLogisticsNodeType,
+  addLogisticsNodeType,
+  updateLogisticsNodeType,
+  delLogisticsNodeType
+} from "@/api/completevehicle/transport/logisticsnodetype";
 
 export default {
-  name: "Brand",
+  name: "LogisticsNodeType",
   dicts: [],
   data() {
     return {
@@ -201,8 +197,8 @@ export default {
       showSearch: true,
       // 总条数
       total: 0,
-      // 品牌表格数据
-      brandList: [],
+      // 物流据点类型表格数据
+      logisticsNodeTypeList: [],
       // 弹出层标题
       title: "",
       // 是否显示弹出层
@@ -219,10 +215,10 @@ export default {
       // 表单校验
       rules: {
         code: [
-          {required: true, message: "品牌代码不能为空", trigger: "blur"}
+          {required: true, message: "物流据点类型代码不能为空", trigger: "blur"}
         ],
         name: [
-          {required: true, message: "品牌名称不能为空", trigger: "blur"}
+          {required: true, message: "物流据点类型名称不能为空", trigger: "blur"}
         ]
       },
     };
@@ -231,11 +227,11 @@ export default {
     this.getList();
   },
   methods: {
-    /** 查询品牌列表 */
+    /** 查询物流据点类型列表 */
     getList() {
       this.loading = true;
-      listBrand(this.addDateRange(this.queryParams, this.dateRange)).then(response => {
-          this.brandList = response.rows;
+      listLogisticsNodeType(this.addDateRange(this.queryParams, this.dateRange)).then(response => {
+          this.logisticsNodeTypeList = response.rows;
           this.total = response.total;
           this.loading = false;
         }
@@ -251,7 +247,6 @@ export default {
       this.form = {
         code: undefined,
         name: undefined,
-        nameEn: undefined,
         enable: true,
         sort: 99
       };
@@ -278,7 +273,7 @@ export default {
     handleAdd() {
       this.reset();
       this.open = true;
-      this.title = "添加品牌";
+      this.title = "添加物流据点类型";
       this.form = {
         enable: true,
         sort: 99
@@ -287,25 +282,25 @@ export default {
     /** 修改按钮操作 */
     handleUpdate(row) {
       this.reset();
-      const brandId = row.id || this.ids
-      getBrand(brandId).then(response => {
+      const logisticsNodeTypeId = row.id || this.ids
+      getLogisticsNodeType(logisticsNodeTypeId).then(response => {
         this.form = response.data;
         this.open = true;
       });
-      this.title = "修改品牌";
+      this.title = "修改物流据点类型";
     },
     /** 提交按钮 */
     submitForm: function () {
       this.$refs["form"].validate(valid => {
         if (valid) {
           if (this.form.id !== undefined) {
-            updateBrand(this.form).then(response => {
+            updateLogisticsNodeType(this.form).then(response => {
               this.$modal.msgSuccess("修改成功");
               this.open = false;
               this.getList();
             });
           } else {
-            addBrand(this.form).then(response => {
+            addLogisticsNodeType(this.form).then(response => {
               this.$modal.msgSuccess("新增成功");
               this.open = false;
               this.getList();
@@ -316,9 +311,9 @@ export default {
     },
     /** 删除按钮操作 */
     handleDelete(row) {
-      const brandIds = row.id || this.ids;
-      this.$modal.confirm('是否确认删除品牌ID为"' + brandIds + '"的数据项？').then(function () {
-        return delBrand(brandIds);
+      const logisticsNodeTypeIds = row.id || this.ids;
+      this.$modal.confirm('是否确认删除物流据点类型ID为"' + logisticsNodeTypeIds + '"的数据项？').then(function () {
+        return delLogisticsNodeType(logisticsNodeTypeIds);
       }).then(() => {
         this.getList();
         this.$modal.msgSuccess("删除成功");
@@ -327,9 +322,9 @@ export default {
     },
     /** 导出按钮操作 */
     handleExport() {
-      this.download('tsp-vmd/brand/export', {
+      this.download('otd-tms/mpt/logisticsNodeType/export', {
         ...this.queryParams
-      }, `brand_${new Date().getTime()}.xlsx`)
+      }, `logistics_node_type_${new Date().getTime()}.xlsx`)
     }
   }
 };
