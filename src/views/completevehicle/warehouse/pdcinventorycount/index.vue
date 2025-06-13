@@ -40,6 +40,21 @@
           />
         </el-select>
       </el-form-item>
+      <el-form-item label="盘点状态" prop="state">
+        <el-select
+          v-model="queryParams.state"
+          placeholder="盘点状态"
+          clearable
+          style="width: 120px"
+        >
+          <el-option
+            v-for="dict in dict.type.iov_inventory_count_state"
+            :key="dict.value"
+            :label="dict.label"
+            :value="dict.value"
+          />
+        </el-select>
+      </el-form-item>
       <el-form-item label="创建时间">
         <el-date-picker
           v-model="dateRange"
@@ -119,7 +134,13 @@
       </el-table-column>
       <el-table-column label="仓库名称" prop="warehouseName"/>
       <el-table-column label="储区代码" prop="storageAreaCode" width="100"/>
-      <el-table-column label="盘点状态" prop="state" width="100"/>
+      <el-table-column label="盘点状态" align="center" width="120">
+        <template slot-scope="scope">
+          <el-tooltip :content="scope.row.state" placement="top">
+            <span>{{ getInventoryCountStateLabel(scope.row.state) }}</span>
+          </el-tooltip>
+        </template>
+      </el-table-column>
       <el-table-column label="盘点开始时间" align="center" prop="startTime" width="180">
         <template slot-scope="scope">
           <span>{{ parseTime(scope.row.startTime) }}</span>
@@ -218,7 +239,7 @@ import {listWarehouseByLevel,} from "@/api/completevehicle/warehouse/info";
 
 export default {
   name: "InventoryCount",
-  dicts: ['iov_inventory_count_type'],
+  dicts: ['iov_inventory_count_type','iov_inventory_count_state'],
   data() {
     return {
       // 遮罩层
@@ -372,6 +393,16 @@ export default {
         dict => dict.value == type
       )
       return item ? item.label : type
+    },
+    /** 获取盘点状态标签 */
+    getInventoryCountStateLabel(state) {
+      if (!this.dict || !this.dict.type || !this.dict.type.iov_inventory_count_state) {
+        return state;
+      }
+      const item = this.dict.type.iov_inventory_count_state.find(
+        dict => dict.value == state
+      )
+      return item ? item.label : state
     },
   }
 };
