@@ -105,6 +105,13 @@
       <el-table-column type="selection" width="55" align="center"/>
       <el-table-column label="物流据点代码" prop="code"  width="150"/>
       <el-table-column label="物流据点名称" prop="name"/>
+      <el-table-column label="物流据点类型" align="center" width="120">
+        <template slot-scope="scope">
+          <el-tooltip :content="scope.row.typeCode" placement="top">
+            <span>{{ getLogisticsNodeTypeLabel(scope.row.typeCode) }}</span>
+          </el-tooltip>
+        </template>
+      </el-table-column>
       <el-table-column label="是否启用" align="center" width="100">
         <template slot-scope="scope">
           <el-switch
@@ -383,7 +390,17 @@ export default {
       this.download('otd-tms/mpt/logisticsNode/export', {
         ...this.queryParams
       }, `logistics_node_${new Date().getTime()}.xlsx`)
-    }
+    },
+    /** 获取物流据点类型标签 */
+    getLogisticsNodeTypeLabel(typeCode) {
+      if (this.logisticsNodeTypeList.isEmpty()) {
+        return typeCode;
+      }
+      const item = this.logisticsNodeTypeList.find(
+        type => type.code == typeCode
+      )
+      return item ? item.name : typeCode
+    },
   }
 };
 </script>
