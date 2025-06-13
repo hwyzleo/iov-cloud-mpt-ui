@@ -9,6 +9,14 @@ export function listLogisticsNodeType(query) {
   })
 }
 
+// 查询所有物流据点类型列表
+export function listAllLogisticsNodeType() {
+  return request({
+    url: '/otd-tms/mpt/logisticsNodeType/listAll',
+    method: 'get'
+  })
+}
+
 // 查询物流据点类型详细
 export function getLogisticsNodeType(logisticsNodeTypeId) {
   return request({
