@@ -275,6 +275,7 @@ export default {
     };
   },
   created() {
+    this.getLogisticsNodeTypeList();
     this.getList();
   },
   methods: {
