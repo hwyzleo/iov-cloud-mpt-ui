@@ -10,6 +10,21 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
+      <el-form-item label="盘点类型" prop="type">
+        <el-select
+          v-model="queryParams.type"
+          placeholder="盘点类型"
+          clearable
+          style="width: 120px"
+        >
+          <el-option
+            v-for="dict in dict.type.iov_inventory_count_type"
+            :key="dict.value"
+            :label="dict.label"
+            :value="dict.value"
+          />
+        </el-select>
+      </el-form-item>
       <el-form-item label="仓库名称" prop="warehouseName">
         <el-select
           v-model="queryParams.warehouseName"
@@ -94,8 +109,14 @@
 
     <el-table v-loading="loading" :data="inventoryCountList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center"/>
-      <el-table-column label="盘点单号" prop="orderNum" width="180"/>
-      <el-table-column label="盘点类型" prop="type" width="100"/>
+      <el-table-column label="盘点单号" prop="orderNum" width="200"/>
+      <el-table-column label="盘点类型" align="center" width="120">
+        <template slot-scope="scope">
+          <el-tooltip :content="scope.row.type" placement="top">
+            <span>{{ getInventoryCountTypeLabel(scope.row.type) }}</span>
+          </el-tooltip>
+        </template>
+      </el-table-column>
       <el-table-column label="仓库名称" prop="warehouseName"/>
       <el-table-column label="储区代码" prop="storageAreaCode" width="100"/>
       <el-table-column label="盘点状态" prop="state" width="100"/>
@@ -197,7 +218,7 @@ import {listWarehouseByLevel,} from "@/api/completevehicle/warehouse/info";
 
 export default {
   name: "InventoryCount",
-  dicts: [],
+  dicts: ['iov_inventory_count_type'],
   data() {
     return {
       // 遮罩层
@@ -341,7 +362,17 @@ export default {
       this.download('otd-wms/mpt/inventoryCount/export', {
         ...this.queryParams
       }, `inventory_count_${new Date().getTime()}.xlsx`)
-    }
+    },
+    /** 获取盘点类型标签 */
+    getInventoryCountTypeLabel(type) {
+      if (!this.dict || !this.dict.type || !this.dict.type.iov_inventory_count_type) {
+        return type;
+      }
+      const item = this.dict.type.iov_inventory_count_type.find(
+        dict => dict.value == type
+      )
+      return item ? item.label : type
+    },
   }
 };
 </script>
