@@ -147,11 +147,9 @@
     <!-- 添加或修改盘点信息配置对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="700px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="120px">
-        <el-col :span="12">
-          <el-form-item label="盘点类型" prop="type">
-            <el-input v-model="form.type" placeholder="请输入盘点类型"/>
-          </el-form-item>
-        </el-col>
+        <el-form-item label="盘点单号" prop="orderNum" v-if="form.id !== undefined">
+          <el-input v-model="form.orderNum" :readonly="true" placeholder="请输入盘点单号"/>
+        </el-form-item>
         <el-row>
           <el-col :span="12">
             <el-form-item label="前置库" prop="warehouseCode">
@@ -235,9 +233,6 @@ export default {
       rules: {
         warehouseCode: [
           {required: true, message: "前置库不能为空", trigger: "blur"}
-        ],
-        storageAreaCode: [
-          {required: true, message: "储区代码不能为空", trigger: "blur"}
         ]
       },
     };
