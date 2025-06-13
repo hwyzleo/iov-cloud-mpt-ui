@@ -86,9 +86,9 @@
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
-    <el-table v-loading="loading" :data="logisticNodeTypeList" @selection-change="handleSelectionChange">
+    <el-table v-loading="loading" :data="logisticsNodeTypeList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center"/>
-      <el-table-column label="物流据点类型代码" prop="code"  width="100"/>
+      <el-table-column label="物流据点类型代码" prop="code"  width="150"/>
       <el-table-column label="物流据点类型名称" prop="name"/>
       <el-table-column label="是否启用" align="center" width="100">
         <template slot-scope="scope">
@@ -137,7 +137,7 @@
 
     <!-- 添加或修改物流据点类型对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
-      <el-form ref="form" :model="form" :rules="rules" label-width="120px">
+      <el-form ref="form" :model="form" :rules="rules" label-width="140px">
         <el-form-item label="物流据点类型代码" prop="code">
           <el-input v-model="form.code" :readonly="form.id !== undefined" placeholder="请输入物流据点类型代码"/>
         </el-form-item>
