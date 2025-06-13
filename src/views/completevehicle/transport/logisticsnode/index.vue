@@ -393,9 +393,6 @@ export default {
     },
     /** 获取物流据点类型标签 */
     getLogisticsNodeTypeLabel(typeCode) {
-      if (this.logisticsNodeTypeList.isEmpty()) {
-        return typeCode;
-      }
       const item = this.logisticsNodeTypeList.find(
         type => type.code == typeCode
       )
