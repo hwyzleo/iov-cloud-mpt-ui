@@ -91,8 +91,8 @@
       <el-table-column label="承运商代码" prop="carrierCode" width="150"/>
       <el-table-column label="驾驶员姓名" prop="realName"/>
       <el-table-column label="联系电话" prop="contactNumber" width="150"/>
-      <el-table-column label="身份证号" prop="idNumber" width="150"/>
-      <el-table-column label="驾驶证号" prop="drivingLicenseNumber" width="150"/>
+      <el-table-column label="身份证号" prop="idNumber" width="170"/>
+      <el-table-column label="驾驶证号" prop="drivingLicenseNumber" width="170"/>
       <el-table-column label="是否启用" align="center" width="100">
         <template slot-scope="scope">
           <el-switch
