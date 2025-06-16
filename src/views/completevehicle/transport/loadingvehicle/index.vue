@@ -226,6 +226,9 @@ export default {
         licensePlate: [
           {required: true, message: "车牌不能为空", trigger: "blur"}
         ],
+        vehicleType: [
+          {required: true, message: "车型不能为空", trigger: "blur"}
+        ],
         vehicleRegistrationNumber: [
           {required: true, message: "行驶证号不能为空", trigger: "blur"}
         ]
