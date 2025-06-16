@@ -141,7 +141,7 @@
     <!-- 添加或修改驾驶员对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="140px">
-        <el-form-item label="承运商代码" prop="code">
+        <el-form-item label="承运商代码" prop="carrierCode">
           <el-input v-model="form.carrierCode" :readonly="form.id !== undefined" placeholder="请输入承运商代码"/>
         </el-form-item>
         <el-form-item label="驾驶员姓名" prop="realName">
