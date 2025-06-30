@@ -185,7 +185,7 @@
           </el-col>
         </el-row>
         <el-row>
-          <el-col :span="6">
+          <el-col :span="12">
             <el-form-item label="平台类型" prop="type">
               <el-select
                 v-model="form.type"
@@ -201,19 +201,19 @@
               </el-select>
             </el-form-item>
           </el-col>
-          <el-col :span="18">
+          <el-col :span="12">
             <el-form-item label="平台名称" prop="name">
               <el-input v-model="form.name" placeholder="请输入平台名称"/>
             </el-form-item>
           </el-col>
         </el-row>
         <el-row>
-          <el-col :span="18">
+          <el-col :span="12">
             <el-form-item label="平台地址" prop="url">
               <el-input v-model="form.url" placeholder="请输入平台地址"/>
             </el-form-item>
           </el-col>
-          <el-col :span="6">
+          <el-col :span="12">
             <el-form-item label="平台端口" prop="port">
               <el-input-number v-model="form.port" controls-position="right" :min="1"/>
             </el-form-item>
@@ -246,7 +246,7 @@
               </el-radio-group>
             </el-form-item>
           </el-col>
-          <el-col :spen="12">
+          <el-col :span="12">
             <el-form-item label="是否维持心跳">
               <el-radio-group v-model="form.heartbeat">
                 <el-radio
@@ -262,12 +262,12 @@
           </el-col>
         </el-row>
         <el-row>
-          <el-col :span="6">
+          <el-col :span="12">
             <el-form-item label="数据加密方式" prop="encryptType">
               <el-input v-model="form.encryptType" placeholder="请输入数据加密方式"/>
             </el-form-item>
           </el-col>
-          <el-col :span="18">
+          <el-col :span="12">
             <el-form-item label="数据加密KEY" prop="encryptKey">
               <el-input v-model="form.encryptKey" placeholder="请输入数据加密KEY"/>
             </el-form-item>
