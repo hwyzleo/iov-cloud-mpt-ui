@@ -173,14 +173,14 @@
     <el-dialog :title="title" :visible.sync="open" width="750px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="130px">
         <el-form-item label="平台代码" prop="code">
-          <el-input v-model="form.code" placeholder="请输入平台代码"/>
+          <el-input v-model="form.code" :readonly="form.id !== undefined" placeholder="请输入平台代码"/>
         </el-form-item>
         <el-form-item label="平台名称" prop="name">
           <el-input v-model="form.name" placeholder="请输入平台名称"/>
         </el-form-item>
         <el-form-item label="平台类型" prop="type">
           <el-select
-            v-model="form.type"
+            v-model="form.type.toString()"
             placeholder="平台类型"
             clearable
           >
