@@ -180,7 +180,7 @@
         </el-form-item>
         <el-form-item label="平台类型" prop="type">
           <el-select
-            v-model="form.type.toString()"
+            v-model="form.type"
             placeholder="平台类型"
             clearable
           >
@@ -188,7 +188,7 @@
               v-for="dict in dict.type.iov_rsms_server_platform_type"
               :key="dict.value"
               :label="dict.label"
-              :value="dict.value"
+              :value="parseInt(dict.value)"
             />
           </el-select>
         </el-form-item>
