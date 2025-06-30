@@ -133,7 +133,11 @@
           ></el-switch>
         </template>
       </el-table-column>
-      <el-table-column label="数据加密方式" prop="encryptType" align="center" width="140"/>
+      <el-table-column label="数据加密方式" prop="encryptType" align="center" width="140">
+        <template slot-scope="scope">
+          <span>{{ getDataEncryptType(scope.row.encryptType) }}</span>
+        </template>
+      </el-table-column>
       <el-table-column label="创建时间" align="center" prop="createTime" width="180">
         <template slot-scope="scope">
           <span>{{ parseTime(scope.row.createTime) }}</span>
@@ -264,7 +268,18 @@
         <el-row>
           <el-col :span="12">
             <el-form-item label="数据加密方式" prop="encryptType">
-              <el-input v-model="form.encryptType" placeholder="请输入数据加密方式"/>
+              <el-select
+                v-model="form.encryptType"
+                placeholder="数据加密方式"
+                clearable
+              >
+                <el-option
+                  v-for="dict in dict.type.iov_rsms_data_encrypt_type"
+                  :key="dict.value"
+                  :label="dict.label"
+                  :value="parseInt(dict.value)"
+                />
+              </el-select>
             </el-form-item>
           </el-col>
           <el-col :span="12">
@@ -296,7 +311,7 @@ import {
 
 export default {
   name: "ServerPlatform",
-  dicts: ['iov_rsms_server_platform_type'],
+  dicts: ['iov_rsms_server_platform_type','iov_rsms_data_encrypt_type'],
   data() {
     return {
       // 遮罩层
@@ -381,6 +396,16 @@ export default {
         dict => dict.value === serverPlatformType
       )
       return item ? item.label : serverPlatformType
+    },
+    /** 获取数据加密类型 */
+    getDataEncryptType(dataEncryptType) {
+      if (!this.dict || !this.dict.type || !this.dict.type.iov_rsms_data_encrypt_type) {
+        return dataEncryptType;
+      }
+      const item = this.dict.type.iov_rsms_data_encrypt_type.find(
+        dict => dict.value === dataEncryptType
+      )
+      return item ? item.label : dataEncryptType
     },
     /** 取消按钮 */
     cancel() {
