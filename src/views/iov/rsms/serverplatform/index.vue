@@ -298,6 +298,27 @@ export default {
         name: [
           {required: true, message: "平台名称不能为空", trigger: "blur"}
         ],
+        type: [
+          {required: true, message: "平台类型不能为空", trigger: "blur"}
+        ],
+        url: [
+          {required: true, message: "平台地址不能为空", trigger: "blur"}
+        ],
+        port: [
+          {required: true, message: "平台端口不能为空", trigger: "blur"}
+        ],
+        protocol: [
+          {required: true, message: "平台协议不能为空", trigger: "blur"}
+        ],
+        collectFrequency: [
+          {required: true, message: "采集频率不能为空", trigger: "blur"}
+        ],
+        reportFrequency: [
+          {required: true, message: "上报频率不能为空", trigger: "blur"}
+        ],
+        encryptType: [
+          {required: true, message: "数据加密方式不能为空", trigger: "blur"}
+        ]
       },
     };
   },
@@ -362,6 +383,11 @@ export default {
       this.open = true;
       this.title = "添加服务端平台";
       this.form = {
+        port: 19006,
+        collectFrequency: 1000,
+        reportFrequency: 10000,
+        readWriteSync: false,
+        heartbeat: false
       };
     },
     /** 修改按钮操作 */
