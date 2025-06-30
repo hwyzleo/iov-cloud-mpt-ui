@@ -393,7 +393,7 @@ export default {
         return serverPlatformType;
       }
       const item = this.dict.type.iov_rsms_server_platform_type.find(
-        dict => dict.value === serverPlatformType
+        dict => parseInt(dict.value) === serverPlatformType
       )
       return item ? item.label : serverPlatformType
     },
@@ -403,7 +403,7 @@ export default {
         return dataEncryptType;
       }
       const item = this.dict.type.iov_rsms_data_encrypt_type.find(
-        dict => dict.value === dataEncryptType
+        dict => parseInt(dict.value) === dataEncryptType
       )
       return item ? item.label : dataEncryptType
     },
