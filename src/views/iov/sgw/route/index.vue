@@ -62,7 +62,7 @@
           icon="el-icon-plus"
           size="mini"
           @click="handleAdd"
-          v-hasPermi="['tsp:sgw:route:add']"
+          v-hasPermi="['iov:sgw:route:add']"
         >新增
         </el-button>
       </el-col>
@@ -74,7 +74,7 @@
           size="mini"
           :disabled="single"
           @click="handleUpdate"
-          v-hasPermi="['tsp:sgw:route:edit']"
+          v-hasPermi="['iov:sgw:route:edit']"
         >修改
         </el-button>
       </el-col>
@@ -86,7 +86,7 @@
           size="mini"
           :disabled="multiple"
           @click="handleDelete"
-          v-hasPermi="['tsp:sgw:route:remove']"
+          v-hasPermi="['iov:sgw:route:remove']"
         >删除
         </el-button>
       </el-col>
@@ -97,7 +97,7 @@
           icon="el-icon-download"
           size="mini"
           @click="handleExport"
-          v-hasPermi="['tsp:sgw:route:export']"
+          v-hasPermi="['iov:sgw:route:export']"
         >导出
         </el-button>
       </el-col>
@@ -123,7 +123,7 @@
             type="text"
             icon="el-icon-edit"
             @click="handleUpdate(scope.row)"
-            v-hasPermi="['tsp:sgw:route:edit']"
+            v-hasPermi="['iov:sgw:route:edit']"
           >修改
           </el-button>
           <el-button
@@ -131,7 +131,7 @@
             type="text"
             icon="el-icon-delete"
             @click="handleDelete(scope.row)"
-            v-hasPermi="['tsp:sgw:route:remove']"
+            v-hasPermi="['iov:sgw:route:remove']"
           >删除
           </el-button>
         </template>
@@ -183,7 +183,7 @@ import {
   getRoute,
   listRoute,
   updateRoute
-} from "@/api/tsp/sgw/route";
+} from "@/api/iov/sgw/route";
 
 export default {
   name: "TspSgwRoute",
