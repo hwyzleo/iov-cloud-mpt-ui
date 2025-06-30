@@ -104,9 +104,13 @@
     <el-table v-loading="loading" :data="serverPlatformList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center"/>
       <el-table-column label="平台代码" prop="code" width="80"/>
-      <el-table-column label="平台名称" prop="name"/>
-      <el-table-column label="平台类型" prop="type" width="80"/>
-      <el-table-column label="平台地址" prop="url" width="100"/>
+      <el-table-column label="平台名称" prop="name" width="100"/>
+      <el-table-column label="平台类型" prop="type" align="center" width="80">
+        <template slot-scope="scope">
+          <span>{{ getServerPlatformType(scope.row.type) }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="平台地址" prop="url"/>
       <el-table-column label="平台端口" prop="port" width="80"/>
       <el-table-column label="平台协议" prop="protocol" width="80"/>
       <el-table-column label="采集频率" prop="collectFrequency" width="80"/>
@@ -129,7 +133,7 @@
           ></el-switch>
         </template>
       </el-table-column>
-      <el-table-column label="数据加密方式" prop="encryptType" align="center" width="70"/>
+      <el-table-column label="数据加密方式" prop="encryptType" align="center" width="140"/>
       <el-table-column label="创建时间" align="center" prop="createTime" width="180">
         <template slot-scope="scope">
           <span>{{ parseTime(scope.row.createTime) }}</span>
@@ -311,6 +315,16 @@ export default {
         }
       );
     },
+    /** 获取平台类型 */
+    getServerPlatformType(serverPlatformType) {
+      if (!this.dict || !this.dict.type || !this.dict.type.iov_rsms_server_platform_type) {
+        return serverPlatformType;
+      }
+      const item = this.dict.type.iov_rsms_server_platform_type.find(
+        dict => dict.value === serverPlatformType
+      )
+      return item ? item.label : serverPlatformType
+    },
     /** 取消按钮 */
     cancel() {
       this.open = false;
@@ -345,6 +359,7 @@ export default {
     /** 新增按钮操作 */
     handleAdd() {
       this.reset();
+      this.open = true;
       this.title = "添加服务端平台";
       this.form = {
       };
