@@ -172,71 +172,107 @@
     <!-- 添加或修改服务端平台对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="750px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="130px">
-        <el-form-item label="平台代码" prop="code">
-          <el-input v-model="form.code" :readonly="form.id !== undefined" placeholder="请输入平台代码"/>
-        </el-form-item>
-        <el-form-item label="平台名称" prop="name">
-          <el-input v-model="form.name" placeholder="请输入平台名称"/>
-        </el-form-item>
-        <el-form-item label="平台类型" prop="type">
-          <el-select
-            v-model="form.type"
-            placeholder="平台类型"
-            clearable
-          >
-            <el-option
-              v-for="dict in dict.type.iov_rsms_server_platform_type"
-              :key="dict.value"
-              :label="dict.label"
-              :value="parseInt(dict.value)"
-            />
-          </el-select>
-        </el-form-item>
-        <el-form-item label="平台地址" prop="url">
-          <el-input v-model="form.url" placeholder="请输入平台地址"/>
-        </el-form-item>
-        <el-form-item label="平台端口" prop="port">
-          <el-input-number v-model="form.port" controls-position="right" :min="1"/>
-        </el-form-item>
-        <el-form-item label="平台协议" prop="protocol">
-          <el-input v-model="form.protocol" placeholder="请输入平台协议"/>
-        </el-form-item>
-        <el-form-item label="采集频率" prop="collectFrequency">
-          <el-input-number v-model="form.collectFrequency" controls-position="right" :min="1"/>
-        </el-form-item>
-        <el-form-item label="上报频率" prop="reportFrequency">
-          <el-input-number v-model="form.reportFrequency" controls-position="right" :min="1"/>
-        </el-form-item>
-        <el-form-item label="是否读写同步">
-          <el-radio-group v-model="form.readWriteSync">
-            <el-radio
-              :label="true"
-            >启用
-            </el-radio>
-            <el-radio
-              :label="false"
-            >停用
-            </el-radio>
-          </el-radio-group>
-        </el-form-item>
-        <el-form-item label="是否维持心跳">
-          <el-radio-group v-model="form.heartbeat">
-            <el-radio
-              :label="true"
-            >启用
-            </el-radio>
-            <el-radio
-              :label="false"
-            >停用
-            </el-radio>
-          </el-radio-group>
-        </el-form-item>
-        <el-form-item label="数据加密方式" prop="encryptType">
-          <el-input v-model="form.encryptType" placeholder="请输入数据加密方式"/>
-        </el-form-item>
-        <el-form-item label="数据加密KEY" prop="encryptKey">
-          <el-input v-model="form.encryptKey" placeholder="请输入数据加密KEY"/>
-        </el-form-item>
+        <el-row>
+          <el-col :span="12">
+            <el-form-item label="平台代码" prop="code">
+              <el-input v-model="form.code" :readonly="form.id !== undefined" placeholder="请输入平台代码"/>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="平台协议" prop="protocol">
+              <el-input v-model="form.protocol" placeholder="请输入平台协议"/>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="6">
+            <el-form-item label="平台类型" prop="type">
+              <el-select
+                v-model="form.type"
+                placeholder="平台类型"
+                clearable
+              >
+                <el-option
+                  v-for="dict in dict.type.iov_rsms_server_platform_type"
+                  :key="dict.value"
+                  :label="dict.label"
+                  :value="parseInt(dict.value)"
+                />
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="18">
+            <el-form-item label="平台名称" prop="name">
+              <el-input v-model="form.name" placeholder="请输入平台名称"/>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="18">
+            <el-form-item label="平台地址" prop="url">
+              <el-input v-model="form.url" placeholder="请输入平台地址"/>
+            </el-form-item>
+          </el-col>
+          <el-col :span="6">
+            <el-form-item label="平台端口" prop="port">
+              <el-input-number v-model="form.port" controls-position="right" :min="1"/>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="12">
+            <el-form-item label="采集频率" prop="collectFrequency">
+              <el-input-number v-model="form.collectFrequency" controls-position="right" :min="1"/>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="上报频率" prop="reportFrequency">
+              <el-input-number v-model="form.reportFrequency" controls-position="right" :min="1"/>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="12">
+            <el-form-item label="是否读写同步">
+              <el-radio-group v-model="form.readWriteSync">
+                <el-radio
+                  :label="true"
+                >启用
+                </el-radio>
+                <el-radio
+                  :label="false"
+                >停用
+                </el-radio>
+              </el-radio-group>
+            </el-form-item>
+          </el-col>
+          <el-col :spen="12">
+            <el-form-item label="是否维持心跳">
+              <el-radio-group v-model="form.heartbeat">
+                <el-radio
+                  :label="true"
+                >启用
+                </el-radio>
+                <el-radio
+                  :label="false"
+                >停用
+                </el-radio>
+              </el-radio-group>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="6">
+            <el-form-item label="数据加密方式" prop="encryptType">
+              <el-input v-model="form.encryptType" placeholder="请输入数据加密方式"/>
+            </el-form-item>
+          </el-col>
+          <el-col :span="18">
+            <el-form-item label="数据加密KEY" prop="encryptKey">
+              <el-input v-model="form.encryptKey" placeholder="请输入数据加密KEY"/>
+            </el-form-item>
+          </el-col>
+        </el-row>
         <el-form-item label="备注" prop="description">
           <el-input v-model="form.description" type="textarea" placeholder="请输入内容"></el-input>
         </el-form-item>
