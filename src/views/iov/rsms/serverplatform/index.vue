@@ -377,7 +377,7 @@ export default {
     this.getList();
   },
   methods: {
-    /** 查询基础车型列表 */
+    /** 查询服务端平台列表 */
     getList() {
       this.loading = true;
       listServerPlatform(this.addDateRange(this.queryParams, this.dateRange)).then(response => {

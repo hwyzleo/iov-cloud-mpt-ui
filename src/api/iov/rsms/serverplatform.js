@@ -9,6 +9,14 @@ export function listServerPlatform(query) {
   })
 }
 
+// 查询所有服务端平台列表
+export function listAllServerPlatform() {
+  return request({
+    url: '/tsp-rsms/mpt/serverPlatform/listAll',
+    method: 'get'
+  })
+}
+
 // 查询服务端平台详细
 export function getServerPlatform(serverPlatformId) {
   return request({
