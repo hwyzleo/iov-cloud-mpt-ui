@@ -102,6 +102,16 @@
       <el-table-column label="唯一识别码" prop="uniqueCode" width="120"/>
       <el-table-column label="用户名" prop="username" width="100"/>
       <el-table-column label="绑定主机名" prop="hostname"/>
+      <el-table-column label="是否登录" align="center" width="100">
+        <template slot-scope="scope">
+          <el-switch
+            v-model="scope.row.login"
+            :active-value="true"
+            :inactive-value="false"
+            @change="handleLoginChange(scope.row)"
+          ></el-switch>
+        </template>
+      </el-table-column>
       <el-table-column label="是否启用" align="center" width="100">
         <template slot-scope="scope">
           <el-switch
@@ -205,9 +215,11 @@ import {
   delClientPlatform,
   getClientPlatform,
   listClientPlatform,
-  updateClientPlatform
+  updateClientPlatform,
+  login, logout
 } from "@/api/iov/rsms/clientplatform";
 import {listAllServerPlatform} from "@/api/iov/rsms/serverplatform";
+import {changeRoleStatus} from "@/api/system/role";
 
 export default {
   name: "ClientPlatform",
@@ -377,6 +389,21 @@ export default {
       this.download('tsp-rsms/mpt/clientPlatform/export', {
         ...this.queryParams
       }, `client_platform_${new Date().getTime()}.xlsx`)
+    },
+    /** 切换登录状态 */
+    handleLoginChange(row) {
+      let text = row.login ? "登入" : "登出";
+      this.$modal.confirm('确认要"' + text + '"当前平台吗？').then(function () {
+        if (row.login) {
+          return login(row.id);
+        } else {
+          return logout(row.id);
+        }
+      }).then(() => {
+        this.$modal.msgSuccess(text + "成功");
+      }).catch(function () {
+        row.login = !row.login;
+      });
     }
   }
 };

@@ -42,3 +42,19 @@ export function delClientPlatform(clientPlatformIds) {
     method: 'delete'
   })
 }
+
+// 客户端平台登录
+export function login(clientPlatformId) {
+  return request({
+    url: '/tsp-rsms/mpt/clientPlatform/' + clientPlatformId + '/action/login',
+    method: 'post'
+  })
+}
+
+// 客户端平台登出
+export function logout(clientPlatformId) {
+  return request({
+    url: '/tsp-rsms/mpt/clientPlatform/' + clientPlatformId + '/action/logout',
+    method: 'post'
+  })
+}
