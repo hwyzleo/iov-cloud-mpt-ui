@@ -1,19 +1,19 @@
 <template>
   <div class="app-container">
     <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch">
-      <el-form-item label="唯一识别码" prop="uniqueCode">
+      <el-form-item label="车架号" prop="vin">
         <el-input
-          v-model="queryParams.uniqueCode"
-          placeholder="请输入唯一识别码"
+          v-model="queryParams.vin"
+          placeholder="请输入车架号"
           clearable
           style="width: 150px"
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="服务端平台" prop="serverPlatformCode">
+      <el-form-item label="已注册平台" prop="serverPlatformCode">
         <el-select
           v-model="queryParams.serverPlatformCode"
-          placeholder="服务端平台"
+          placeholder="已注册平台"
           clearable
           style="width: 140px"
         >
@@ -50,7 +50,7 @@
           icon="el-icon-plus"
           size="mini"
           @click="handleAdd"
-          v-hasPermi="['iov:rsms:clientPlatform:add']"
+          v-hasPermi="['iov:rsms:registeredVehicle:add']"
         >新增
         </el-button>
       </el-col>
@@ -62,7 +62,7 @@
           size="mini"
           :disabled="single"
           @click="handleUpdate"
-          v-hasPermi="['iov:rsms:clientPlatform:edit']"
+          v-hasPermi="['iov:rsms:registeredVehicle:edit']"
         >修改
         </el-button>
       </el-col>
@@ -74,7 +74,7 @@
           size="mini"
           :disabled="multiple"
           @click="handleDelete"
-          v-hasPermi="['iov:rsms:clientPlatform:remove']"
+          v-hasPermi="['iov:rsms:registeredVehicle:remove']"
         >删除
         </el-button>
       </el-col>
@@ -85,42 +85,22 @@
           icon="el-icon-download"
           size="mini"
           @click="handleExport"
-          v-hasPermi="['iov:rsms:clientPlatform:export']"
+          v-hasPermi="['iov:rsms:registeredVehicle:export']"
         >导出
         </el-button>
       </el-col>
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
-    <el-table v-loading="loading" :data="clientPlatformList" @selection-change="handleSelectionChange">
+    <el-table v-loading="loading" :data="registeredVehicleList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center"/>
-      <el-table-column label="服务端平台" prop="serverPlatformCode" width="150">
+      <el-table-column label="已注册平台" prop="serverPlatformCode" width="150">
         <template slot-scope="scope">
           <span>{{ getServerPlatformName(scope.row.serverPlatformCode) }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="唯一识别码" prop="uniqueCode" width="120"/>
-      <el-table-column label="用户名" prop="username" width="100"/>
-      <el-table-column label="绑定主机名" prop="hostname"/>
-      <el-table-column label="是否登录" align="center" width="100">
-        <template slot-scope="scope">
-          <el-switch
-            v-model="scope.row.login"
-            :active-value="true"
-            :inactive-value="false"
-            @change="handleLoginChange(scope.row)"
-          ></el-switch>
-        </template>
-      </el-table-column>
-      <el-table-column label="是否启用" align="center" width="100">
-        <template slot-scope="scope">
-          <el-switch
-            v-model="scope.row.enable"
-            :active-value="true"
-            :inactive-value="false"
-          ></el-switch>
-        </template>
-      </el-table-column>
+      <el-table-column label="车架号" prop="vin" width="120"/>
+      <el-table-column label="备案型号" prop="model" width="100"/>
       <el-table-column label="创建时间" align="center" prop="createTime" width="180">
         <template slot-scope="scope">
           <span>{{ parseTime(scope.row.createTime) }}</span>
@@ -133,7 +113,7 @@
             type="text"
             icon="el-icon-edit"
             @click="handleUpdate(scope.row)"
-            v-hasPermi="['iov:rsms:clientPlatform:edit']"
+            v-hasPermi="['iov:rsms:registeredVehicle:edit']"
           >修改
           </el-button>
           <el-button
@@ -141,7 +121,7 @@
             type="text"
             icon="el-icon-delete"
             @click="handleDelete(scope.row)"
-            v-hasPermi="['iov:rsms:clientPlatform:remove']"
+            v-hasPermi="['iov:rsms:registeredVehicle:remove']"
           >删除
           </el-button>
         </template>
@@ -156,13 +136,13 @@
       @pagination="getList"
     />
 
-    <!-- 添加或修改客户端平台对话框 -->
+    <!-- 添加或修改已注册车辆对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="750px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="130px">
-        <el-form-item label="服务端平台" prop="serverPlatformCode">
+        <el-form-item label="已注册平台" prop="serverPlatformCode">
           <el-select
             v-model="form.serverPlatformCode"
-            placeholder="服务端平台"
+            placeholder="已注册平台"
             clearable
           >
             <el-option
@@ -173,29 +153,50 @@
             />
           </el-select>
         </el-form-item>
-        <el-form-item label="唯一识别码" prop="uniqueCode">
-          <el-input v-model="form.uniqueCode" :readonly="form.id !== undefined" placeholder="请输入唯一识别码"/>
+        <el-form-item label="车架号" prop="vin">
+          <el-input v-model="form.vin" :readonly="form.id !== undefined" placeholder="请输入车架号"/>
         </el-form-item>
-        <el-form-item label="用户名" prop="username">
-          <el-input v-model="form.username" placeholder="请输入用户名"/>
+        <el-form-item label="ICCID" prop="iccid">
+          <el-input v-model="form.iccid" placeholder="请输入ICCID"/>
         </el-form-item>
-        <el-form-item label="密码" prop="password">
-          <el-input v-model="form.password" placeholder="请输入密码"/>
+        <el-form-item label="备案型号" prop="model">
+          <el-input v-model="form.model" placeholder="请输入备案型号"/>
         </el-form-item>
-        <el-form-item label="绑定主机名" prop="hostname">
-          <el-input v-model="form.hostname" placeholder="请输入绑定主机名"/>
+        <el-form-item label="驱动电机型号" prop="driveMotorType">
+          <el-input v-model="form.driveMotorType" placeholder="请输入驱动电机型号"/>
         </el-form-item>
-        <el-form-item label="是否启用">
-          <el-radio-group v-model="form.enable">
-            <el-radio
-              :label="true"
-            >启用
-            </el-radio>
-            <el-radio
-              :label="false"
-            >停用
-            </el-radio>
-          </el-radio-group>
+        <el-form-item label="整车最高车速" prop="maxSpeed">
+          <el-input-number v-model="form.maxSpeed" controls-position="right" :min="0"/>
+        </el-form-item>
+        <el-form-item label="纯电续航" prop="evRange">
+          <el-input-number v-model="form.evRange" controls-position="right" :min="0"/>
+        </el-form-item>
+        <el-form-item label="各挡位下的传动比" prop="gearRatio">
+          <el-input v-model="form.gearRatio" placeholder="请输入各挡位下的传动比"/>
+        </el-form-item>
+        <el-form-item label="电池相关参数" prop="batteryParam">
+          <el-input v-model="form.batteryParam" type="textarea" placeholder="请输入电池相关参数"/>
+        </el-form-item>
+        <el-form-item label="驱动电机相关参数" prop="driveMotorParam">
+          <el-input v-model="form.driveMotorParam" type="textarea" placeholder="请输入驱动电机相关参数"/>
+        </el-form-item>
+        <el-form-item label="通用报警预值" prop="alarmDefault">
+          <el-input v-model="form.alarmDefault" type="textarea" placeholder="通用报警预值"/>
+        </el-form-item>
+        <el-form-item label="发动机编号" prop="engineSn">
+          <el-input v-model="form.engineSn" placeholder="请输入发动机编号"/>
+        </el-form-item>
+        <el-form-item label="燃油类型" prop="fuelType">
+          <el-input v-model="form.fuelType" placeholder="请输入燃油类型"/>
+        </el-form-item>
+        <el-form-item label="燃油标号" prop="fuelMark">
+          <el-input v-model="form.fuelMark" placeholder="请输入燃油标号"/>
+        </el-form-item>
+        <el-form-item label="最大输出功率" prop="engineMaxPower">
+          <el-input v-model="form.engineMaxPower" placeholder="请输入最大输出功率"/>
+        </el-form-item>
+        <el-form-item label="最大输出转矩" prop="engineMaxTorque">
+          <el-input v-model="form.engineMaxTorque" placeholder="请输入最大输出转矩"/>
         </el-form-item>
         <el-form-item label="备注" prop="description">
           <el-input v-model="form.description" type="textarea" placeholder="请输入内容"></el-input>
@@ -211,17 +212,16 @@
 
 <script>
 import {
-  addClientPlatform,
-  delClientPlatform,
-  getClientPlatform,
-  listClientPlatform,
-  updateClientPlatform,
-  login, logout
-} from "@/api/iov/rsms/clientplatform";
+  addRegisteredVehicle,
+  delRegisteredVehicle,
+  getRegisteredVehicle,
+  listRegisteredVehicle,
+  updateRegisteredVehicle
+} from "@/api/iov/rsms/registeredvehicle";
 import {listAllServerPlatform} from "@/api/iov/rsms/serverplatform";
 
 export default {
-  name: "ClientPlatform",
+  name: "RegisteredVehicle",
   dicts: [],
   data() {
     return {
@@ -237,8 +237,8 @@ export default {
       showSearch: true,
       // 总条数
       total: 0,
-      // 客户端平台表格数据
-      clientPlatformList: [],
+      // 已注册车辆表格数据
+      registeredVehicleList: [],
       // 服务端平台表格数据
       serverPlatformList: [],
       // 弹出层标题
@@ -257,16 +257,10 @@ export default {
       // 表单校验
       rules: {
         serverPlatformCode: [
-          {required: true, message: "服务端平台不能为空", trigger: "blur"}
+          {required: true, message: "已注册平台不能为空", trigger: "blur"}
         ],
-        uniqueCode: [
-          {required: true, message: "唯一识别码不能为空", trigger: "blur"}
-        ],
-        username: [
-          {required: true, message: "用户名不能为空", trigger: "blur"}
-        ],
-        password: [
-          {required: true, message: "密码不能为空", trigger: "blur"}
+        vin: [
+          {required: true, message: "车架号不能为空", trigger: "blur"}
         ]
       },
     };
@@ -276,11 +270,11 @@ export default {
     this.getList();
   },
   methods: {
-    /** 查询客户端平台列表 */
+    /** 查询已注册车辆列表 */
     getList() {
       this.loading = true;
-      listClientPlatform(this.addDateRange(this.queryParams, this.dateRange)).then(response => {
-          this.clientPlatformList = response.rows;
+      listRegisteredVehicle(this.addDateRange(this.queryParams, this.dateRange)).then(response => {
+          this.registeredVehicleList = response.rows;
           this.total = response.total;
           this.loading = false;
         }
@@ -311,7 +305,7 @@ export default {
     reset() {
       this.form = {
         serverPlatformCode: undefined,
-        uniqueCode: undefined,
+        vin: undefined,
         description: undefined
       };
       this.resetForm("form");
@@ -337,33 +331,32 @@ export default {
     handleAdd() {
       this.reset();
       this.open = true;
-      this.title = "添加客户端平台";
+      this.title = "添加已注册车辆";
       this.form = {
-        enable: true
       };
     },
     /** 修改按钮操作 */
     handleUpdate(row) {
       this.reset();
-      const clientPlatformId = row.id || this.ids
-      getClientPlatform(clientPlatformId).then(response => {
+      const registeredVehicleId = row.id || this.ids
+      getRegisteredVehicle(registeredVehicleId).then(response => {
         this.form = response.data;
         this.open = true;
       });
-      this.title = "修改客户端平台";
+      this.title = "修改已注册车辆";
     },
     /** 提交按钮 */
     submitForm: function () {
       this.$refs["form"].validate(valid => {
         if (valid) {
           if (this.form.id !== undefined) {
-            updateClientPlatform(this.form).then(response => {
+            updateRegisteredVehicle(this.form).then(response => {
               this.$modal.msgSuccess("修改成功");
               this.open = false;
               this.getList();
             });
           } else {
-            addClientPlatform(this.form).then(response => {
+            addRegisteredVehicle(this.form).then(response => {
               this.$modal.msgSuccess("新增成功");
               this.open = false;
               this.getList();
@@ -374,9 +367,9 @@ export default {
     },
     /** 删除按钮操作 */
     handleDelete(row) {
-      const clientPlatformIds = row.id || this.ids;
-      this.$modal.confirm('是否确认删除客户端平台ID为"' + clientPlatformIds + '"的数据项？').then(function () {
-        return delClientPlatform(clientPlatformIds);
+      const registeredVehicleIds = row.id || this.ids;
+      this.$modal.confirm('是否确认删除已注册车辆ID为"' + registeredVehicleIds + '"的数据项？').then(function () {
+        return delRegisteredVehicle(registeredVehicleIds);
       }).then(() => {
         this.getList();
         this.$modal.msgSuccess("删除成功");
@@ -385,24 +378,9 @@ export default {
     },
     /** 导出按钮操作 */
     handleExport() {
-      this.download('tsp-rsms/mpt/clientPlatform/export', {
+      this.download('tsp-rsms/mpt/registeredVehicle/export', {
         ...this.queryParams
-      }, `client_platform_${new Date().getTime()}.xlsx`)
-    },
-    /** 切换登录状态 */
-    handleLoginChange(row) {
-      let text = row.login ? "登入" : "登出";
-      this.$modal.confirm('确认要"' + text + '"当前平台吗？').then(function () {
-        if (row.login) {
-          return login(row.id);
-        } else {
-          return logout(row.id);
-        }
-      }).then(() => {
-        this.$modal.msgSuccess(text + "成功");
-      }).catch(function () {
-        row.login = !row.login;
-      });
+      }, `registered_vehicle_${new Date().getTime()}.xlsx`)
     }
   }
 };
