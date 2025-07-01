@@ -6,7 +6,7 @@
           v-model="queryParams.uniqueCode"
           placeholder="请输入唯一识别码"
           clearable
-          style="width: 140px"
+          style="width: 150px"
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
@@ -92,16 +92,16 @@
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
-    <el-table v-loading="loading" :data="serverPlatformList" @selection-change="handleSelectionChange">
+    <el-table v-loading="loading" :data="clientPlatformList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center"/>
       <el-table-column label="服务端平台" prop="serverPlatformCode" width="150">
         <template slot-scope="scope">
           <span>{{ getServerPlatformName(scope.row.serverPlatformCode) }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="唯一识别码" prop="uniqueCode" width="100"/>
-      <el-table-column label="用户名" prop="username"/>
-      <el-table-column label="绑定主机名" prop="hostname" width="80"/>
+      <el-table-column label="唯一识别码" prop="uniqueCode" width="120"/>
+      <el-table-column label="用户名" prop="username" width="100"/>
+      <el-table-column label="绑定主机名" prop="hostname"/>
       <el-table-column label="是否启用" align="center" width="100">
         <template slot-scope="scope">
           <el-switch
