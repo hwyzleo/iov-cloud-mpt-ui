@@ -6,7 +6,7 @@
           v-model="queryParams.vin"
           placeholder="请输入车架号"
           clearable
-          style="width: 150px"
+          style="width: 180px"
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
@@ -99,8 +99,8 @@
           <span>{{ getServerPlatformName(scope.row.serverPlatformCode) }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="车架号" prop="vin" width="120"/>
-      <el-table-column label="备案型号" prop="model" width="100"/>
+      <el-table-column label="车架号" prop="vin"/>
+      <el-table-column label="备案型号" prop="model" width="150"/>
       <el-table-column label="创建时间" align="center" prop="createTime" width="180">
         <template slot-scope="scope">
           <span>{{ parseTime(scope.row.createTime) }}</span>
@@ -139,38 +139,56 @@
     <!-- 添加或修改已注册车辆对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="750px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="130px">
-        <el-form-item label="已注册平台" prop="serverPlatformCode">
-          <el-select
-            v-model="form.serverPlatformCode"
-            placeholder="已注册平台"
-            clearable
-          >
-            <el-option
-              v-for="serverPlatform in this.serverPlatformList"
-              :key="serverPlatform.code"
-              :label="serverPlatform.name"
-              :value="serverPlatform.code"
-            />
-          </el-select>
-        </el-form-item>
-        <el-form-item label="车架号" prop="vin">
-          <el-input v-model="form.vin" :readonly="form.id !== undefined" placeholder="请输入车架号"/>
-        </el-form-item>
+        <el-row>
+          <el-col :span="12">
+            <el-form-item label="已注册平台" prop="serverPlatformCode">
+              <el-select
+                v-model="form.serverPlatformCode"
+                placeholder="已注册平台"
+                clearable
+              >
+                <el-option
+                  v-for="serverPlatform in this.serverPlatformList"
+                  :key="serverPlatform.code"
+                  :label="serverPlatform.name"
+                  :value="serverPlatform.code"
+                />
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="车架号" prop="vin">
+              <el-input v-model="form.vin" :readonly="form.id !== undefined" placeholder="请输入车架号"/>
+            </el-form-item>
+          </el-col>
+        </el-row>
         <el-form-item label="ICCID" prop="iccid">
           <el-input v-model="form.iccid" placeholder="请输入ICCID"/>
         </el-form-item>
-        <el-form-item label="备案型号" prop="model">
-          <el-input v-model="form.model" placeholder="请输入备案型号"/>
-        </el-form-item>
-        <el-form-item label="驱动电机型号" prop="driveMotorType">
-          <el-input v-model="form.driveMotorType" placeholder="请输入驱动电机型号"/>
-        </el-form-item>
-        <el-form-item label="整车最高车速" prop="maxSpeed">
-          <el-input-number v-model="form.maxSpeed" controls-position="right" :min="0"/>
-        </el-form-item>
-        <el-form-item label="纯电续航" prop="evRange">
-          <el-input-number v-model="form.evRange" controls-position="right" :min="0"/>
-        </el-form-item>
+        <el-row>
+          <el-col :span="12">
+            <el-form-item label="备案型号" prop="model">
+              <el-input v-model="form.model" placeholder="请输入备案型号"/>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="驱动电机型号" prop="driveMotorType">
+              <el-input v-model="form.driveMotorType" placeholder="请输入驱动电机型号"/>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="12">
+            <el-form-item label="整车最高车速" prop="maxSpeed">
+              <el-input-number v-model="form.maxSpeed" controls-position="right" :min="0"/>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="纯电续航" prop="evRange">
+              <el-input-number v-model="form.evRange" controls-position="right" :min="0"/>
+            </el-form-item>
+          </el-col>
+        </el-row>
         <el-form-item label="各挡位下的传动比" prop="gearRatio">
           <el-input v-model="form.gearRatio" placeholder="请输入各挡位下的传动比"/>
         </el-form-item>
@@ -186,18 +204,30 @@
         <el-form-item label="发动机编号" prop="engineSn">
           <el-input v-model="form.engineSn" placeholder="请输入发动机编号"/>
         </el-form-item>
-        <el-form-item label="燃油类型" prop="fuelType">
-          <el-input v-model="form.fuelType" placeholder="请输入燃油类型"/>
-        </el-form-item>
-        <el-form-item label="燃油标号" prop="fuelMark">
-          <el-input v-model="form.fuelMark" placeholder="请输入燃油标号"/>
-        </el-form-item>
-        <el-form-item label="最大输出功率" prop="engineMaxPower">
-          <el-input v-model="form.engineMaxPower" placeholder="请输入最大输出功率"/>
-        </el-form-item>
-        <el-form-item label="最大输出转矩" prop="engineMaxTorque">
-          <el-input v-model="form.engineMaxTorque" placeholder="请输入最大输出转矩"/>
-        </el-form-item>
+        <el-row>
+          <el-col :span="12">
+            <el-form-item label="燃油类型" prop="fuelType">
+              <el-input v-model="form.fuelType" placeholder="请输入燃油类型"/>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="燃油标号" prop="fuelMark">
+              <el-input v-model="form.fuelMark" placeholder="请输入燃油标号"/>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="12">
+            <el-form-item label="最大输出功率" prop="engineMaxPower">
+              <el-input v-model="form.engineMaxPower" placeholder="请输入最大输出功率"/>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="最大输出转矩" prop="engineMaxTorque">
+              <el-input v-model="form.engineMaxTorque" placeholder="请输入最大输出转矩"/>
+            </el-form-item>
+          </el-col>
+        </el-row>
         <el-form-item label="备注" prop="description">
           <el-input v-model="form.description" type="textarea" placeholder="请输入内容"></el-input>
         </el-form-item>
