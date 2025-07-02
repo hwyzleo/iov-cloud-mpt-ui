@@ -138,7 +138,7 @@
           <span>{{ getDataEncryptType(scope.row.encryptType) }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="注册车辆数" prop="vehicleCount" width="80"/>
+      <el-table-column label="注册车辆数" prop="vehicleCount" align="center" width="90"/>
       <el-table-column label="创建时间" align="center" prop="createTime" width="180">
         <template slot-scope="scope">
           <span>{{ parseTime(scope.row.createTime) }}</span>
