@@ -6,7 +6,7 @@
           v-model="queryParams.vin"
           placeholder="请输入车架号"
           clearable
-          style="width: 180px"
+          style="width: 200px"
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
