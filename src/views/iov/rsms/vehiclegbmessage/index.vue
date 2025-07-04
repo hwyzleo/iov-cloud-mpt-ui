@@ -98,7 +98,9 @@
       <el-table-column label="消息数据">
         <template slot-scope="scope">
           <el-tooltip effect="dark" placement="top" :content="scope.row.messageData" popper-class="my-tooltip">
-            <span>{{ scope.row.messageData.slice(0, 50) + (scope.row.messageData.length > 50 ? '...' : '') }}</span>
+            <div class="message-cell">
+              {{ scope.row.messageData }}
+            </div>
           </el-tooltip>
         </template>
       </el-table-column>
@@ -209,22 +211,15 @@
     </el-dialog>
 
     <!-- 国标消息解析层 -->
-    <el-drawer
-      title="国标消息详细信息"
-      :visible.sync="openParse"
-      direction="rtl"
-      size="90%"
-      :modal="true"
-      :append-to-body="true"
-      :before-close="handleClose">
+    <el-drawer title="国标消息详细信息" :visible.sync="openParse" direction="rtl" size="80%" :modal="true" :append-to-body="true">
       <div class="drawer-content">
         <el-row>
           <el-col :span="3">原始报文</el-col>
-          <el-col :span="21">{{form.messageData}}</el-col>
+          <el-col :span="21" style="word-break: break-word">{{form.messageData}}</el-col>
         </el-row>
 
-        <div class="drawer-footer">
-          <el-button @click="openParse = false">关闭</el-button>
+        <div slot="footer" class="dialog-footer">
+          <el-button @click="closeParse">关 闭</el-button>
         </div>
       </div>
     </el-drawer>
@@ -326,6 +321,10 @@ export default {
       this.open = false;
       this.reset();
     },
+    /** 关闭解析按钮 */
+    closeParse() {
+      this.openParse = false;
+    },
     /** 表单重置 */
     reset() {
       this.form = {
@@ -419,6 +418,15 @@ export default {
 };
 </script>
 <style>
+.message-cell {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+.message-cell:hover {
+  cursor: pointer;
+}
 .my-tooltip {
   max-width: 400px !important;
   white-space: normal !important;
