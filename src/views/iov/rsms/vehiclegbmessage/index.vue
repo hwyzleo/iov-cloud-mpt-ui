@@ -97,7 +97,7 @@
       </el-table-column>
       <el-table-column label="消息数据">
         <template slot-scope="scope">
-          <el-tooltip effect="dark" placement="top" :content="scope.row.messageData">
+          <el-tooltip effect="dark" placement="top" :content="scope.row.messageData" popper-class="my-tooltip">
             <span>{{ scope.row.messageData.slice(0, 50) + (scope.row.messageData.length > 50 ? '...' : '') }}</span>
           </el-tooltip>
         </template>
@@ -374,3 +374,10 @@ export default {
   }
 };
 </script>
+<style>
+.my-tooltip {
+  max-width: 300px !important;
+  white-space: normal !important;
+  word-break: break-word !important;
+}
+</style>
