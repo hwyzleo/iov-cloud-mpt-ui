@@ -103,18 +103,18 @@
 
     <el-table v-loading="loading" :data="serverPlatformList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center"/>
-      <el-table-column label="平台代码" prop="code" width="80"/>
-      <el-table-column label="平台名称" prop="name" width="100"/>
-      <el-table-column label="平台类型" prop="type" align="center" width="80">
+      <el-table-column label="平台代码" align="center" prop="code" width="80"/>
+      <el-table-column label="平台名称" prop="name" width="120"/>
+      <el-table-column label="平台类型" align="center" prop="type" width="80">
         <template slot-scope="scope">
           <span>{{ getServerPlatformType(scope.row.type) }}</span>
         </template>
       </el-table-column>
       <el-table-column label="平台地址" prop="url"/>
-      <el-table-column label="平台端口" prop="port" width="80"/>
-      <el-table-column label="平台协议" prop="protocol" width="80"/>
-      <el-table-column label="采集频率" prop="collectFrequency" width="80"/>
-      <el-table-column label="上报频率" prop="reportFrequency" width="80"/>
+      <el-table-column label="平台端口" align="center" prop="port" width="80"/>
+      <el-table-column label="平台协议" align="center" prop="protocol" width="80"/>
+      <el-table-column label="采集频率" align="center" prop="collectFrequency" width="80"/>
+      <el-table-column label="上报频率" align="center" prop="reportFrequency" width="80"/>
       <el-table-column label="是否读写同步" align="center" width="100">
         <template slot-scope="scope">
           <el-switch
