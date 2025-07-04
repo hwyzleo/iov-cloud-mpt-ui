@@ -113,6 +113,14 @@
             size="mini"
             type="text"
             icon="el-icon-edit"
+            @click="handleParse(scope.row)"
+            v-hasPermi="['iov:rsms:vehicleGbMessage:query']"
+          >解析
+          </el-button>
+          <el-button
+            size="mini"
+            type="text"
+            icon="el-icon-edit"
             @click="handleUpdate(scope.row)"
             v-hasPermi="['iov:rsms:vehicleGbMessage:edit']"
           >修改
@@ -199,6 +207,27 @@
         <el-button @click="cancel">取 消</el-button>
       </div>
     </el-dialog>
+
+    <!-- 国标消息解析层 -->
+    <el-drawer
+      title="国标消息详细信息"
+      :visible.sync="openParse"
+      direction="rtl"
+      size="90%"
+      :modal="true"
+      :append-to-body="true"
+      :before-close="handleClose">
+      <div class="drawer-content">
+        <el-row>
+          <el-col :span="3">原始报文</el-col>
+          <el-col :span="21">{{form.messageData}}</el-col>
+        </el-row>
+
+        <div class="drawer-footer">
+          <el-button @click="openParse = false">关闭</el-button>
+        </div>
+      </div>
+    </el-drawer>
   </div>
 </template>
 
@@ -207,6 +236,7 @@ import {
   addVehicleGbMessage,
   delVehicleGbMessage,
   getVehicleGbMessage,
+  parseVehicleGbMessage,
   listVehicleGbMessage,
   updateVehicleGbMessage
 } from "@/api/iov/rsms/vehiclegbmessage";
@@ -234,6 +264,8 @@ export default {
       title: "",
       // 是否显示弹出层
       open: false,
+      // 是否显示解析层
+      openParse: false,
       // 日期范围
       dateRange: [],
       // 查询参数
@@ -243,6 +275,8 @@ export default {
       },
       // 表单参数
       form: {},
+      // 解析表单参数
+      formParse: {},
       // 表单校验
       rules: {
         vin: [
@@ -324,6 +358,16 @@ export default {
       this.title = "添加车辆国标消息";
       this.form = {};
     },
+    /** 解析按钮操作 */
+    handleParse(row) {
+      this.reset();
+      const vehicleGbMessageId = row.id || this.ids
+      this.form = row;
+        parseVehicleGbMessage(vehicleGbMessageId).then(response => {
+        this.formParse = response.data;
+        this.openParse = true;
+      });
+    },
     /** 修改按钮操作 */
     handleUpdate(row) {
       this.reset();
@@ -376,7 +420,7 @@ export default {
 </script>
 <style>
 .my-tooltip {
-  max-width: 300px !important;
+  max-width: 400px !important;
   white-space: normal !important;
   word-break: break-word !important;
 }

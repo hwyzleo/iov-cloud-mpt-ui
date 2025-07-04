@@ -17,6 +17,14 @@ export function getVehicleGbMessage(vehicleGbMessageId) {
   })
 }
 
+// 解析车辆国标消息
+export function parseVehicleGbMessage(vehicleGbMessageId) {
+  return request({
+    url: '/tsp-rsms/mpt/vehicleGbMessage/' + vehicleGbMessageId + '/action/parse',
+    method: 'post'
+  })
+}
+
 // 新增车辆国标消息
 export function addVehicleGbMessage(data) {
   return request({
