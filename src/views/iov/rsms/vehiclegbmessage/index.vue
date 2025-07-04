@@ -79,7 +79,7 @@
 
     <el-table v-loading="loading" :data="vehicleGbMessageList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center"/>
-      <el-table-column label="车架号" prop="vin" width="150"/>
+      <el-table-column label="车架号" prop="vin" width="180"/>
       <el-table-column label="解析时间" align="center" prop="parseTime" width="180">
         <template slot-scope="scope">
           <span>{{ parseTime(scope.row.parseTime) }}</span>
@@ -95,7 +95,13 @@
           <span>{{ getCommandFlagType(scope.row.commandFlag) }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="消息数据" prop="messageData"/>
+      <el-table-column label="消息数据">
+        <template slot-scope="scope">
+          <el-tooltip effect="dark" placement="top" :content="scope.row.messageData">
+            <span>{{ scope.row.messageData.slice(0, 50) + (scope.row.messageData.length > 50 ? '...' : '') }}</span>
+          </el-tooltip>
+        </template>
+      </el-table-column>
       <el-table-column label="创建时间" align="center" prop="createTime" width="180">
         <template slot-scope="scope">
           <span>{{ parseTime(scope.row.createTime) }}</span>
