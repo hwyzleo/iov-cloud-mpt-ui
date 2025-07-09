@@ -371,7 +371,7 @@
                 <el-col :span="6">本帧单体电池总数: {{item.frameCellCount}}</el-col>
                 <el-col :span="12"></el-col>
               </el-row>
-              <div :id="'cellVoltageChart' + index" style="width: 100%; height: 300px;"></div>
+              <div :id="'cellVoltageChart' + index" style="width: 100%; height: 400px;"></div>
             </div>
           </div>
           <div v-if="formParse.BATTERY_TEMPERATURE">
@@ -572,11 +572,17 @@ export default {
             },
             xAxis: {
               type: 'category',
-              data: item.cellVoltageList.map((_, i) => `${item.frameStartCellSn + i}号`)
+              data: item.cellVoltageList.map((_, i) => `${item.frameStartCellSn + i}`)
             },
             yAxis: {
               type: 'value',
-              name: '电压(V)'
+              name: '电压(V)',
+              min: function(value) {
+                return Math.floor(value.min * 1000 - 1) / 1000;
+              },
+              max: function(value) {
+                return Math.ceil(value.max * 1000 + 1) / 1000;
+              }
             },
             series: [{
               data: item.cellVoltageList,
