@@ -223,6 +223,7 @@
         </el-row>
         <div v-if="formParse">
           <div v-if="formParse.VEHICLE">
+            <el-divider></el-divider>
             <div class="drawer-title">整车数据</div>
             <el-row class="drawer-row">
               <el-col :span="6">车辆状态: {{formParse.VEHICLE.vehicleState}}</el-col>
@@ -250,6 +251,7 @@
             </el-row>
           </div>
           <div v-if="formParse.DRIVE_MOTOR">
+            <el-divider></el-divider>
             <div class="drawer-title">驱动电机数据</div>
             <div v-for="(item, index) in formParse.DRIVE_MOTOR">
               <el-row class="drawer-row">
@@ -267,6 +269,7 @@
             </div>
           </div>
           <div v-if="formParse.FUEL_CELL">
+            <el-divider></el-divider>
             <div class="drawer-title">燃料电池数据</div>
             <el-row class="drawer-row">
               <el-col :span="6">燃料电池电压: {{item.voltage}} V</el-col>
@@ -288,6 +291,7 @@
             </el-row>
           </div>
           <div v-if="formParse.ENGINE">
+            <el-divider></el-divider>
             <div class="drawer-title">发动机数据</div>
             <el-row class="drawer-row">
               <el-col :span="6">发动机状态: {{formParse.ENGINE.state}}</el-col>
@@ -297,6 +301,7 @@
             </el-row>
           </div>
           <div v-if="formParse.POSITION">
+            <el-divider></el-divider>
             <div class="drawer-title">车辆位置</div>
             <el-row class="drawer-row">
               <el-col :span="6">定位状态: {{formParse.POSITION.positionValid}}</el-col>
@@ -306,6 +311,7 @@
             </el-row>
           </div>
           <div v-if="formParse.EXTREMUM">
+            <el-divider></el-divider>
             <div class="drawer-title">极值数据</div>
             <el-row class="drawer-row">
               <el-col :span="6">最高电压电池子系统号: {{formParse.EXTREMUM.maxVoltageBatteryDeviceNo}}</el-col>
@@ -327,6 +333,7 @@
             </el-row>
           </div>
           <div v-if="formParse.ALARM">
+            <el-divider></el-divider>
             <div class="drawer-title">报警数据</div>
             <el-row class="drawer-row">
               <el-col :span="6">最高报警等级: {{formParse.ALARM.maxAlarmLevel}}</el-col>
@@ -350,6 +357,7 @@
             </el-row>
           </div>
           <div v-if="formParse.BATTERY_VOLTAGE">
+            <el-divider></el-divider>
             <div class="drawer-title">可充电储能装置电压数据</div>
             <div v-for="(item, index) in formParse.BATTERY_VOLTAGE">
               <el-row class="drawer-row">
@@ -361,11 +369,13 @@
               <el-row class="drawer-row">
                 <el-col :span="6">本帧起始电池序号: {{item.frameStartCellSn}}</el-col>
                 <el-col :span="6">本帧单体电池总数: {{item.frameCellCount}}</el-col>
-                <el-col :span="12">单体电池电压: {{item.cellVoltageList}}</el-col>
+                <el-col :span="12"></el-col>
               </el-row>
+              <div :ref="'cellVoltageChart' + index" style="width: 100%; height: 400px;"></div>
             </div>
           </div>
           <div v-if="formParse.BATTERY_TEMPERATURE">
+            <el-divider></el-divider>
             <div class="drawer-title">可充电储能装置温度数据</div>
             <div v-for="(item, index) in formParse.BATTERY_TEMPERATURE">
               <el-row class="drawer-row">
@@ -393,6 +403,7 @@ import {
   listVehicleGbMessage,
   updateVehicleGbMessage
 } from "@/api/iov/rsms/vehiclegbmessage";
+import * as echarts from 'echarts';
 
 export default {
   name: "VehicleGbMessage",
@@ -448,6 +459,7 @@ export default {
           {required: true, message: "消息数据不能为空", trigger: "blur"}
         ]
       },
+      chartInstance: null
     };
   },
   created() {
@@ -523,6 +535,50 @@ export default {
         parseVehicleGbMessage(vehicleGbMessageId).then(response => {
         this.formParse = response.data;
         this.openParse = true;
+        this.initCellVoltageChart();
+      });
+    },
+    initCellVoltageChart() {
+      this.formParse.BATTERY_VOLTAGE.forEach((item, index) => {
+        // 获取对应的DOM元素
+        const chartRef = this.$refs['cellVoltageChart' + index];
+        if (!chartRef || chartRef.length === 0) return;
+
+        const chartDom = chartRef[0];
+
+        // 如果已有实例则销毁
+        if (this.chartInstances[index]) {
+          this.chartInstances[index].dispose();
+        }
+
+        // 创建新图表
+        const chart = echarts.init(chartDom);
+        this.chartInstances[index] = chart;
+
+        // 设置图表配置
+        chart.setOption({
+          title: {
+            text: `可充电储能子系统 ${item.sn} 单体电池电压`,
+            left: 'center'
+          },
+          tooltip: {
+            trigger: 'axis',
+            formatter: '{b}: {c} V'
+          },
+          xAxis: {
+            type: 'category',
+            data: item.cellVoltageList.map((_, i) => `${item.frameStartCellSn + i}号`)
+          },
+          yAxis: {
+            type: 'value',
+            name: '电压(V)'
+          },
+          series: [{
+            data: item.cellVoltageList,
+            type: 'bar',
+            name: '电压'
+          }]
+        });
       });
     },
     /** 修改按钮操作 */
@@ -598,10 +654,10 @@ export default {
 .drawer-title {
   font-size: 16px;
   font-weight: bolder;
-  margin-top: 10px;
-  margin-bottom: 10px;
+  margin-top: 20px;
+  margin-bottom: 20px;
 }
 .drawer-row {
-  margin-bottom: 10px;
+  margin-bottom: 15px;
 }
 </style>
