@@ -221,31 +221,31 @@
           <el-col :span="3">消息时间</el-col>
           <el-col :span="21" style="word-break: break-word">{{ parseTime(form.messageTime) }}</el-col>
         </el-row>
-        <div v-if="formParse && formParse.data">
-          <div v-if="formParse.data.VEHICLE">
+        <div v-if="formParse">
+          <div v-if="formParse.VEHICLE">
             <div>整车数据</div>
             <el-row>
-              <el-col :span="6">车辆状态: {{formParse.data.VEHICLE.vehicleState}}</el-col>
-              <el-col :span="6">充电状态: {{formParse.data.VEHICLE.chargingState}}</el-col>
-              <el-col :span="6">运行模式: {{formParse.data.VEHICLE.runningMode}}</el-col>
-              <el-col :span="6">车速: {{formParse.data.VEHICLE.speed}} km/h</el-col>
+              <el-col :span="6">车辆状态: {{formParse.VEHICLE.vehicleState}}</el-col>
+              <el-col :span="6">充电状态: {{formParse.VEHICLE.chargingState}}</el-col>
+              <el-col :span="6">运行模式: {{formParse.VEHICLE.runningMode}}</el-col>
+              <el-col :span="6">车速: {{formParse.VEHICLE.speed}} km/h</el-col>
             </el-row>
             <el-row>
-              <el-col :span="6">累计里程: {{formParse.data.VEHICLE.totalOdometer}} km</el-col>
-              <el-col :span="6">总电压: {{formParse.data.VEHICLE.totalVoltage}} V</el-col>
-              <el-col :span="6">总电流: {{formParse.data.VEHICLE.totalCurrent}} A</el-col>
-              <el-col :span="6">SOC: {{formParse.data.VEHICLE.soc}} %</el-col>
+              <el-col :span="6">累计里程: {{formParse.VEHICLE.totalOdometer}} km</el-col>
+              <el-col :span="6">总电压: {{formParse.VEHICLE.totalVoltage}} V</el-col>
+              <el-col :span="6">总电流: {{formParse.VEHICLE.totalCurrent}} A</el-col>
+              <el-col :span="6">SOC: {{formParse.VEHICLE.soc}} %</el-col>
             </el-row>
             <el-row>
-              <el-col :span="6">DC/DC状态: {{formParse.data.VEHICLE.dcdcState}}</el-col>
-              <el-col :span="6">驱动力: {{formParse.data.VEHICLE.driving}}</el-col>
-              <el-col :span="6">制动力: {{formParse.data.VEHICLE.braking}}</el-col>
-              <el-col :span="6">挡位: {{formParse.data.VEHICLE.gear}}</el-col>
+              <el-col :span="6">DC/DC状态: {{formParse.VEHICLE.dcdcState}}</el-col>
+              <el-col :span="6">驱动力: {{formParse.VEHICLE.driving}}</el-col>
+              <el-col :span="6">制动力: {{formParse.VEHICLE.braking}}</el-col>
+              <el-col :span="6">挡位: {{formParse.VEHICLE.gear}}</el-col>
             </el-row>
             <el-row>
-              <el-col :span="6">绝缘电阻: {{formParse.data.VEHICLE.insulationResistance}} kΩ</el-col>
-              <el-col :span="6">加速踏板行程值: {{formParse.data.VEHICLE.acceleratorPedalPosition}} %</el-col>
-              <el-col :span="6">制动踏板状态: {{formParse.data.VEHICLE.brakePedalPosition}} %</el-col>
+              <el-col :span="6">绝缘电阻: {{formParse.VEHICLE.insulationResistance}} kΩ</el-col>
+              <el-col :span="6">加速踏板行程值: {{formParse.VEHICLE.acceleratorPedalPosition}} %</el-col>
+              <el-col :span="6">制动踏板状态: {{formParse.VEHICLE.brakePedalPosition}} %</el-col>
               <el-col :span="6"></el-col>
             </el-row>
           </div>
