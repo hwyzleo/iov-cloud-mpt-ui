@@ -211,7 +211,7 @@
     </el-dialog>
 
     <!-- 国标消息解析层 -->
-    <el-drawer title="国标消息详细信息" :visible.sync="openParse" direction="rtl" size="80%" :modal="true" :append-to-body="true">
+    <el-drawer title="国标消息详细信息" :visible.sync="openParse" direction="rtl" size="80%" :modal="true" :append-to-body="true" @opened="initCellVoltageChart">
       <div class="drawer-content">
         <el-row class="drawer-row">
           <el-col :span="3">消息数据:</el-col>
@@ -532,50 +532,66 @@ export default {
       this.reset();
       const vehicleGbMessageId = row.id || this.ids
       this.form = row;
-        parseVehicleGbMessage(vehicleGbMessageId).then(response => {
+      parseVehicleGbMessage(vehicleGbMessageId).then(response => {
         this.formParse = response.data;
         this.openParse = true;
-        this.initCellVoltageChart();
       });
     },
     initCellVoltageChart() {
-      this.formParse.BATTERY_VOLTAGE.forEach((item, index) => {
-        // 获取对应的DOM元素
-        const chartDom = document.getElementById('cellVoltageChart' + index);
-        if (!chartDom) return;
+      // 检查数据
+      if (!this.formParse || !this.formParse.BATTERY_VOLTAGE || !Array.isArray(this.formParse.BATTERY_VOLTAGE)) {
+        console.warn('无效的电池电压数据');
+        return;
+      }
 
-        // 如果已有实例则销毁
-        if (this.chartInstances[index]) {
-          this.chartInstances[index].dispose();
-        }
+      this.$nextTick(() => {
+        this.formParse.BATTERY_VOLTAGE.forEach((item, index) => {
+          const chartId = 'cellVoltageChart' + index;
+          // 获取对应的DOM元素
+          const chartDom = document.getElementById(chartId);
+          if (!chartDom) return;
 
-        // 创建新图表
-        const chart = echarts.init(chartDom);
-        this.chartInstances[index] = chart;
+          // 如果已有实例则销毁
+          if (this.chartInstances[index]) {
+            this.chartInstances[index].dispose();
+          }
 
-        // 设置图表配置
-        chart.setOption({
-          title: {
-            text: `可充电储能子系统 ${item.sn} 单体电池电压`,
-            left: 'center'
-          },
-          tooltip: {
-            trigger: 'axis',
-            formatter: '{b}: {c} V'
-          },
-          xAxis: {
-            type: 'category',
-            data: item.cellVoltageList.map((_, i) => `${item.frameStartCellSn + i}号`)
-          },
-          yAxis: {
-            type: 'value',
-            name: '电压(V)'
-          },
-          series: [{
-            data: item.cellVoltageList,
-            type: 'bar',
-            name: '电压'
-          }]
+          // 创建新图表
+          const chart = echarts.init(chartDom);
+          this.chartInstances[index] = chart;
+
+          // 设置图表配置
+          const option = {
+            title: {
+              text: `可充电储能子系统 ${item.sn} 单体电池电压`,
+              left: 'center'
+            },
+            tooltip: {
+              trigger: 'axis',
+              formatter: '{b}: {c} V'
+            },
+            xAxis: {
+              type: 'category',
+              data: item.cellVoltageList.map((_, i) => `${item.frameStartCellSn + i}号`)
+            },
+            yAxis: {
+              type: 'value',
+              name: '电压(V)'
+            },
+            series: [{
+              data: item.cellVoltageList,
+              type: 'bar',
+              name: '电压'
+            }]
+          };
+
+          // 设置图表选项并捕获可能的错误
+          try {
+            chart.setOption(option);
+            console.log('图表初始化成功:', chartId);
+          } catch (error) {
+            console.error('图表初始化失败:', error);
+          }
         });
       });
     },
