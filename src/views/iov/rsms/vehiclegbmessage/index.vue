@@ -658,7 +658,7 @@ export default {
             },
             xAxis: {
               type: 'category',
-              data: item.temperatures.map((_, i) => `${i}`)
+              data: item.temperatures.map((_, i) => `${i + 1}`)
             },
             yAxis: {
               type: 'value',
