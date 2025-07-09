@@ -249,14 +249,132 @@
               <el-col :span="6"></el-col>
             </el-row>
           </div>
-          <div class="drawer-title">驱动电机数据</div>
-          <div class="drawer-title">燃料电池数据</div>
-          <div class="drawer-title">发动机数据</div>
-          <div class="drawer-title">车辆位置</div>
-          <div class="drawer-title">极值数据</div>
-          <div class="drawer-title">报警数据</div>
-          <div class="drawer-title">可充电储能装置电压数据</div>
-          <div class="drawer-title">可充电储能装置温度数据</div>
+          <div v-if="formParse.DRIVE_MOTOR">
+            <div class="drawer-title">驱动电机数据</div>
+            <div v-for="(item, index) in formParse.DRIVE_MOTOR">
+              <el-row class="drawer-row">
+                <el-col :span="6">驱动电机序号: {{item.sn}}</el-col>
+                <el-col :span="6">驱动电机状态: {{item.state}}</el-col>
+                <el-col :span="6">驱动电机控制器温度: {{item.controllerTemperature}} ℃</el-col>
+                <el-col :span="6">驱动电机转速: {{item.speed}} r/min</el-col>
+              </el-row>
+              <el-row class="drawer-row">
+                <el-col :span="6">驱动电机转矩: {{item.torque}} N·m</el-col>
+                <el-col :span="6">驱动电机温度: {{item.temperature}} ℃</el-col>
+                <el-col :span="6">电机控制器输入电压: {{item.controllerInputVoltage}} V</el-col>
+                <el-col :span="6">电机控制器直流母线电流: {{item.controllerDcBusCurrent}} A</el-col>
+              </el-row>
+            </div>
+          </div>
+          <div v-if="formParse.FUEL_CELL">
+            <div class="drawer-title">燃料电池数据</div>
+            <el-row class="drawer-row">
+              <el-col :span="6">燃料电池电压: {{item.voltage}} V</el-col>
+              <el-col :span="6">燃料电池电流: {{item.current}} A</el-col>
+              <el-col :span="6">燃料消耗率: {{item.consumptionRate}} kg/100km</el-col>
+              <el-col :span="6">燃料电池温度探针总数: {{item.temperatureProbeCount}}</el-col>
+            </el-row>
+            <el-row class="drawer-row">
+              <el-col :span="6">探针温度值: {{item.probeTemperature}}</el-col>
+              <el-col :span="6">氢系统中最高温度: {{item.hydrogenSystemMaxTemperature}} ℃</el-col>
+              <el-col :span="6">氢系统中最高温度探针代号: {{item.hydrogenSystemMaxTemperatureProbe}}</el-col>
+              <el-col :span="6">氢气最高浓度: {{item.hydrogenMaxConcentration}} mg/kg</el-col>
+            </el-row>
+            <el-row class="drawer-row">
+              <el-col :span="6">氢气最高浓度传感器代号: {{item.hydrogenMaxConcentrationSensor}}</el-col>
+              <el-col :span="6">氢气最高压力: {{item.hydrogenMaxPressure}} MPa</el-col>
+              <el-col :span="6">氢气最高压力传感器代号: {{item.hydrogenMaxPressureSensor}}</el-col>
+              <el-col :span="6">高压DC/DC状态: {{item.highPressureDcdcState}}</el-col>
+            </el-row>
+          </div>
+          <div v-if="formParse.ENGINE">
+            <div class="drawer-title">发动机数据</div>
+            <el-row class="drawer-row">
+              <el-col :span="6">发动机状态: {{formParse.ENGINE.state}}</el-col>
+              <el-col :span="6">曲轴转速: {{formParse.ENGINE.crankshaftSpeed}} r/min</el-col>
+              <el-col :span="6">燃料消耗率: {{formParse.ENGINE.consumptionRate}} L/100km</el-col>
+              <el-col :span="6"></el-col>
+            </el-row>
+          </div>
+          <div v-if="formParse.POSITION">
+            <div class="drawer-title">车辆位置</div>
+            <el-row class="drawer-row">
+              <el-col :span="6">定位状态: {{formParse.POSITION.positionValid}}</el-col>
+              <el-col :span="6"><span v-if="formParse.POSITION.westLongitude">西经</span><span v-else>东经</span>: {{formParse.POSITION.longitude}}</el-col>
+              <el-col :span="6"><span v-if="formParse.POSITION.southLatitude">南纬</span><span v-else>北纬</span>: {{formParse.POSITION.latitude}}</el-col>
+              <el-col :span="6"></el-col>
+            </el-row>
+          </div>
+          <div v-if="formParse.EXTREMUM">
+            <div class="drawer-title">极值数据</div>
+            <el-row class="drawer-row">
+              <el-col :span="6">最高电压电池子系统号: {{formParse.EXTREMUM.maxVoltageBatteryDeviceNo}}</el-col>
+              <el-col :span="6">最低电压电池子系统号: {{formParse.EXTREMUM.minVoltageBatteryDeviceNo}}</el-col>
+              <el-col :span="6">最高温度子系统号: {{formParse.EXTREMUM.maxTemperatureDeviceNo}}</el-col>
+              <el-col :span="6">最低温度子系统号: {{formParse.EXTREMUM.minTemperatureDeviceNo}}</el-col>
+            </el-row>
+            <el-row class="drawer-row">
+              <el-col :span="6">最高电压电池单体代号: {{formParse.EXTREMUM.maxVoltageCellNo}}</el-col>
+              <el-col :span="6">最低电压电池单体代号: {{formParse.EXTREMUM.minVoltageCellNo}}</el-col>
+              <el-col :span="6">最高温度探针序号: {{formParse.EXTREMUM.maxTemperatureProbeNo}}</el-col>
+              <el-col :span="6">最低温度探针序号: {{formParse.EXTREMUM.minTemperatureProbeNo}} mg/kg</el-col>
+            </el-row>
+            <el-row class="drawer-row">
+              <el-col :span="6">电池单体电压最高值: {{formParse.EXTREMUM.cellMaxVoltage}} V</el-col>
+              <el-col :span="6">电池单体电压最低值: {{formParse.EXTREMUM.cellMinVoltage}} V</el-col>
+              <el-col :span="6">最高温度值: {{formParse.EXTREMUM.maxTemperature}} ℃</el-col>
+              <el-col :span="6">最低温度值: {{formParse.EXTREMUM.minTemperature}} ℃</el-col>
+            </el-row>
+          </div>
+          <div v-if="formParse.ALARM">
+            <div class="drawer-title">报警数据</div>
+            <el-row class="drawer-row">
+              <el-col :span="6">最高报警等级: {{formParse.ALARM.maxAlarmLevel}}</el-col>
+              <el-col :span="18">通用报警标志: {{formParse.ALARM.alarmFlagMap}}</el-col>
+            </el-row>
+            <el-row class="drawer-row">
+              <el-col :span="6">可充电储能装置故障总数: {{formParse.ALARM.batteryFaultCount}}</el-col>
+              <el-col :span="18">可充电储能装置故障列表: {{formParse.ALARM.batteryFaultList}}</el-col>
+            </el-row>
+            <el-row class="drawer-row">
+              <el-col :span="6">驱动电机故障总数: {{formParse.ALARM.driveMotorFaultCount}}</el-col>
+              <el-col :span="18">驱动电机故障列表: {{formParse.ALARM.driveMotorFaultList}}</el-col>
+            </el-row>
+            <el-row class="drawer-row">
+              <el-col :span="6">发动机故障总数: {{formParse.ALARM.engineFaultCount}}</el-col>
+              <el-col :span="18">发动机故障列表: {{formParse.ALARM.engineFaultList}}</el-col>
+            </el-row>
+            <el-row class="drawer-row">
+              <el-col :span="6">其他故障总数: {{formParse.ALARM.otherFaultCount}}</el-col>
+              <el-col :span="18">其他故障列表: {{formParse.ALARM.otherFaultList}}</el-col>
+            </el-row>
+          </div>
+          <div v-if="formParse.BATTERY_VOLTAGE">
+            <div class="drawer-title">可充电储能装置电压数据</div>
+            <div v-for="(item, index) in formParse.BATTERY_VOLTAGE">
+              <el-row class="drawer-row">
+                <el-col :span="6">可充电储能子系统号: {{item.sn}}</el-col>
+                <el-col :span="6">可充电储能装置电压: {{item.voltage}} V</el-col>
+                <el-col :span="6">可充电储能装置电流: {{item.current}} A</el-col>
+                <el-col :span="6">单体电池总数: {{item.cellCount}}</el-col>
+              </el-row>
+              <el-row class="drawer-row">
+                <el-col :span="6">本帧起始电池序号: {{item.frameStartCellSn}}</el-col>
+                <el-col :span="6">本帧单体电池总数: {{item.frameCellCount}}</el-col>
+                <el-col :span="12">单体电池电压: {{item.cellVoltageList}}</el-col>
+              </el-row>
+            </div>
+          </div>
+          <div v-if="formParse.BATTERY_TEMPERATURE">
+            <div class="drawer-title">可充电储能装置温度数据</div>
+            <div v-for="(item, index) in formParse.BATTERY_TEMPERATURE">
+              <el-row class="drawer-row">
+                <el-col :span="6">可充电储能子系统号: {{item.sn}}</el-col>
+                <el-col :span="6">可充电储能温度探针个数: {{item.probeCount}}</el-col>
+                <el-col :span="12">可充电储能子系统各温度探针检测到的温度值: {{item.temperatures}}</el-col>
+              </el-row>
+            </div>
+          </div>
         </div>
         <div slot="footer" class="dialog-footer">
           <el-button @click="closeParse">关 闭</el-button>
@@ -480,10 +598,10 @@ export default {
 .drawer-title {
   font-size: 16px;
   font-weight: bolder;
-  margin-top: 5px;
-  margin-bottom: 5px;
+  margin-top: 10px;
+  margin-bottom: 10px;
 }
 .drawer-row {
-  margin-bottom: 5px;
+  margin-bottom: 10px;
 }
 </style>
