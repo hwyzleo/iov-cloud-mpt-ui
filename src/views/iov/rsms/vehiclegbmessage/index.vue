@@ -459,7 +459,7 @@ export default {
           {required: true, message: "消息数据不能为空", trigger: "blur"}
         ]
       },
-      chartInstance: null
+      chartInstances: {}
     };
   },
   created() {
@@ -628,6 +628,12 @@ export default {
         ...this.queryParams
       }, `vehicle_gb_message_${new Date().getTime()}.xlsx`)
     }
+  },
+  beforeDestroy() {
+    // 清理所有图表实例
+    Object.values(this.chartInstances).forEach(chart => {
+      chart && chart.dispose();
+    });
   }
 };
 </script>
