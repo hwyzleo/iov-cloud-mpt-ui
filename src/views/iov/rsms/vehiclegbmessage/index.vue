@@ -211,7 +211,7 @@
     </el-dialog>
 
     <!-- 国标消息解析层 -->
-    <el-drawer title="国标消息详细信息" :visible.sync="openParse" direction="rtl" size="80%" :modal="true" :append-to-body="true" @opened="initCellVoltageChart">
+    <el-drawer title="国标消息详细信息" :visible.sync="openParse" direction="rtl" size="80%" :modal="true" :append-to-body="true">
       <div class="drawer-content">
         <el-row class="drawer-row">
           <el-col :span="3">消息数据:</el-col>
@@ -356,7 +356,7 @@
               <el-col :span="18">其他故障列表: {{formParse.ALARM.otherFaultList}}</el-col>
             </el-row>
           </div>
-          <div v-if="formParse.BATTERY_VOLTAGE">
+          <div v-if="formParse.BATTERY_VOLTAGE" @opened="initCellVoltageChart">
             <el-divider></el-divider>
             <div class="drawer-title">可充电储能装置电压数据</div>
             <div v-for="(item, index) in formParse.BATTERY_VOLTAGE">
@@ -374,7 +374,7 @@
               <div :id="'cellVoltageChart' + index" style="width: 100%; height: 300px;"></div>
             </div>
           </div>
-          <div v-if="formParse.BATTERY_TEMPERATURE">
+          <div v-if="formParse.BATTERY_TEMPERATURE" @opened="initTemperaturesChart">
             <el-divider></el-divider>
             <div class="drawer-title">可充电储能装置温度数据</div>
             <div v-for="(item, index) in formParse.BATTERY_TEMPERATURE">
@@ -383,6 +383,7 @@
                 <el-col :span="6">可充电储能温度探针个数: {{item.probeCount}}</el-col>
                 <el-col :span="12">可充电储能子系统各温度探针检测到的温度值: {{item.temperatures}}</el-col>
               </el-row>
+              <div :id="'temperaturesChart' + index" style="width: 100%; height: 300px;"></div>
             </div>
           </div>
         </div>
@@ -459,7 +460,8 @@ export default {
           {required: true, message: "消息数据不能为空", trigger: "blur"}
         ]
       },
-      chartInstances: {}
+      cellVoltageChartInstances: {},
+      temperaturesChartInstances: {}
     };
   },
   created() {
@@ -552,13 +554,13 @@ export default {
           if (!chartDom) return;
 
           // 如果已有实例则销毁
-          if (this.chartInstances[index]) {
-            this.chartInstances[index].dispose();
+          if (this.cellVoltageChartInstances[index]) {
+            this.cellVoltageChartInstances[index].dispose();
           }
 
           // 创建新图表
           const chart = echarts.init(chartDom);
-          this.chartInstances[index] = chart;
+          this.cellVoltageChartInstances[index] = chart;
 
           // 设置图表配置
           const option = {
@@ -593,6 +595,86 @@ export default {
                   // 找出最大值和最小值
                   const max = Math.max(...item.cellVoltageList);
                   const min = Math.min(...item.cellVoltageList);
+                  if (params.value === max) return '#ff4d4f'; // 最高值 - 红色
+                  if (params.value === min) return '#52c41a'; // 最低值 - 绿色
+                  return '#1890ff'; // 其他值使用蓝色
+                }
+              },
+              markPoint: {
+                data: [
+                  {type: 'max', name: '最高值', itemStyle: {color: '#ff4d4f'}},
+                  {type: 'min', name: '最低值', itemStyle: {color: '#52c41a'}}
+                ]
+              }
+            }]
+          };
+
+          // 设置图表选项并捕获可能的错误
+          try {
+            chart.setOption(option);
+            console.log('图表初始化成功:', chartId);
+          } catch (error) {
+            console.error('图表初始化失败:', error);
+          }
+        });
+      });
+    },
+    initTemperaturesChart() {
+      // 检查数据
+      if (!this.formParse || !this.formParse.BATTERY_TEMPERATURE || !Array.isArray(this.formParse.BATTERY_TEMPERATURE)) {
+        console.warn('无效的电池温度数据');
+        return;
+      }
+
+      this.$nextTick(() => {
+        this.formParse.BATTERY_TEMPERATURE.forEach((item, index) => {
+          const chartId = 'temperaturesChart' + index;
+          // 获取对应的DOM元素
+          const chartDom = document.getElementById(chartId);
+          if (!chartDom) return;
+
+          // 如果已有实例则销毁
+          if (this.temperaturesChartInstances[index]) {
+            this.temperaturesChartInstances[index].dispose();
+          }
+
+          // 创建新图表
+          const chart = echarts.init(chartDom);
+          this.temperaturesChartInstances[index] = chart;
+
+          // 设置图表配置
+          const option = {
+            title: {
+              text: `可充电储能子系统 ${item.sn} 各温度探针检测到的温度值`,
+              left: 'center'
+            },
+            tooltip: {
+              trigger: 'axis',
+              formatter: '{b}: {c} ℃'
+            },
+            xAxis: {
+              type: 'category',
+              data: item.temperatures.map((_, i) => `${i}`)
+            },
+            yAxis: {
+              type: 'value',
+              name: '温度(℃)',
+              min: function(value) {
+                return value.min - 1;
+              },
+              max: function(value) {
+                return value.max + 1;
+              }
+            },
+            series: [{
+              data: item.temperatures,
+              type: 'bar',
+              name: '温度',
+              itemStyle: {
+                color: function(params) {
+                  // 找出最大值和最小值
+                  const max = Math.max(...item.temperatures);
+                  const min = Math.min(...item.temperatures);
                   if (params.value === max) return '#ff4d4f'; // 最高值 - 红色
                   if (params.value === min) return '#52c41a'; // 最低值 - 绿色
                   return '#1890ff'; // 其他值使用蓝色
