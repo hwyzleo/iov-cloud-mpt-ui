@@ -211,7 +211,7 @@
     </el-dialog>
 
     <!-- 国标消息解析层 -->
-    <el-drawer title="国标消息详细信息" :visible.sync="openParse" direction="rtl" size="80%" :modal="true" :append-to-body="true" @opened="initCellVoltageChart">
+    <el-drawer title="国标消息详细信息" :visible.sync="openParse" direction="rtl" size="80%" :modal="true" :append-to-body="true" @opened="initChart">
       <div class="drawer-content">
         <el-row class="drawer-row">
           <el-col :span="3">消息数据:</el-col>
@@ -356,7 +356,7 @@
               <el-col :span="18">其他故障列表: {{formParse.ALARM.otherFaultList}}</el-col>
             </el-row>
           </div>
-          <div v-if="formParse.BATTERY_VOLTAGE" @opened="initCellVoltageChart">
+          <div v-if="formParse.BATTERY_VOLTAGE">
             <el-divider></el-divider>
             <div class="drawer-title">可充电储能装置电压数据</div>
             <div v-for="(item, index) in formParse.BATTERY_VOLTAGE">
@@ -374,7 +374,7 @@
               <div :id="'cellVoltageChart' + index" style="width: 100%; height: 300px;"></div>
             </div>
           </div>
-          <div v-if="formParse.BATTERY_TEMPERATURE" @opened="initTemperaturesChart">
+          <div v-if="formParse.BATTERY_TEMPERATURE">
             <el-divider></el-divider>
             <div class="drawer-title">可充电储能装置温度数据</div>
             <div v-for="(item, index) in formParse.BATTERY_TEMPERATURE">
@@ -538,6 +538,10 @@ export default {
         this.formParse = response.data;
         this.openParse = true;
       });
+    },
+    initChart() {
+      this.initCellVoltageChart();
+      this.initTemperaturesChart();
     },
     initCellVoltageChart() {
       // 检查数据
