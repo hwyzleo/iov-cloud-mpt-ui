@@ -239,8 +239,8 @@
             </el-row>
             <el-row class="drawer-row">
               <el-col :span="6">DC/DC状态: {{formParse.VEHICLE.dcdcState}}</el-col>
-              <el-col :span="6">驱动力: {{formParse.VEHICLE.driving}}</el-col>
-              <el-col :span="6">制动力: {{formParse.VEHICLE.braking}}</el-col>
+              <el-col :span="6">驱动力: <span v-if="formParse.VEHICLE.driving">有驱动力</span><span v-else>无驱动力</span></el-col>
+              <el-col :span="6">制动力: <span v-if="formParse.VEHICLE.braking">有制动力</span><span v-else>无制动力</span></el-col>
               <el-col :span="6">挡位: {{formParse.VEHICLE.gear}}</el-col>
             </el-row>
             <el-row class="drawer-row">
@@ -304,7 +304,7 @@
             <el-divider></el-divider>
             <div class="drawer-title">车辆位置</div>
             <el-row class="drawer-row">
-              <el-col :span="6">定位状态: {{formParse.POSITION.positionValid}}</el-col>
+              <el-col :span="6">定位状态: <span v-if="formParse.POSITION.positionValid">有效定位</span><span v-else>无效定位</span></el-col>
               <el-col :span="6"><span v-if="formParse.POSITION.westLongitude">西经</span><span v-else>东经</span>: {{formParse.POSITION.longitude}}</el-col>
               <el-col :span="6"><span v-if="formParse.POSITION.southLatitude">南纬</span><span v-else>北纬</span>: {{formParse.POSITION.latitude}}</el-col>
               <el-col :span="6"></el-col>
