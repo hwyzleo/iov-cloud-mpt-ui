@@ -211,7 +211,7 @@
     </el-dialog>
 
     <!-- 国标消息解析层 -->
-    <el-drawer title="国标消息详细信息" :visible.sync="openParse" direction="rtl" size="80%" :modal="true" :append-to-body="true">
+    <el-drawer title="国标消息详细信息" :visible.sync="openParse" direction="rtl" size="80%" :modal="true" :append-to-body="true" @opened="initCellVoltageChart">
       <div class="drawer-content">
         <el-row class="drawer-row">
           <el-col :span="3">消息数据:</el-col>
@@ -381,7 +381,7 @@
               <el-row class="drawer-row">
                 <el-col :span="6">可充电储能子系统号: {{item.sn}}</el-col>
                 <el-col :span="6">可充电储能温度探针个数: {{item.probeCount}}</el-col>
-                <el-col :span="12">可充电储能子系统各温度探针检测到的温度值: {{item.temperatures}}</el-col>
+                <el-col :span="12"></el-col>
               </el-row>
               <div :id="'temperaturesChart' + index" style="width: 100%; height: 300px;"></div>
             </div>
@@ -749,7 +749,10 @@ export default {
   },
   beforeDestroy() {
     // 清理所有图表实例
-    Object.values(this.chartInstances).forEach(chart => {
+    Object.values(this.cellVoltageChartInstances).forEach(chart => {
+      chart && chart.dispose();
+    });
+    Object.values(this.temperaturesChartInstances).forEach(chart => {
       chart && chart.dispose();
     });
   }
