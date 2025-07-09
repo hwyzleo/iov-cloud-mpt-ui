@@ -213,36 +213,36 @@
     <!-- 国标消息解析层 -->
     <el-drawer title="国标消息详细信息" :visible.sync="openParse" direction="rtl" size="80%" :modal="true" :append-to-body="true">
       <div class="drawer-content">
-        <el-row>
-          <el-col :span="3">消息数据</el-col>
+        <el-row class="drawer-row">
+          <el-col :span="3">消息数据:</el-col>
           <el-col :span="21" style="word-break: break-word">{{form.messageData}}</el-col>
         </el-row>
-        <el-row>
-          <el-col :span="3">消息时间</el-col>
+        <el-row class="drawer-row">
+          <el-col :span="3">消息时间:</el-col>
           <el-col :span="21">{{ parseTime(form.messageTime) }}</el-col>
         </el-row>
         <div v-if="formParse">
           <div v-if="formParse.VEHICLE">
             <div class="drawer-title">整车数据</div>
-            <el-row>
+            <el-row class="drawer-row">
               <el-col :span="6">车辆状态: {{formParse.VEHICLE.vehicleState}}</el-col>
               <el-col :span="6">充电状态: {{formParse.VEHICLE.chargingState}}</el-col>
               <el-col :span="6">运行模式: {{formParse.VEHICLE.runningMode}}</el-col>
               <el-col :span="6">车速: {{formParse.VEHICLE.speed}} km/h</el-col>
             </el-row>
-            <el-row>
+            <el-row class="drawer-row">
               <el-col :span="6">累计里程: {{formParse.VEHICLE.totalOdometer}} km</el-col>
               <el-col :span="6">总电压: {{formParse.VEHICLE.totalVoltage}} V</el-col>
               <el-col :span="6">总电流: {{formParse.VEHICLE.totalCurrent}} A</el-col>
               <el-col :span="6">SOC: {{formParse.VEHICLE.soc}} %</el-col>
             </el-row>
-            <el-row>
+            <el-row class="drawer-row">
               <el-col :span="6">DC/DC状态: {{formParse.VEHICLE.dcdcState}}</el-col>
               <el-col :span="6">驱动力: {{formParse.VEHICLE.driving}}</el-col>
               <el-col :span="6">制动力: {{formParse.VEHICLE.braking}}</el-col>
               <el-col :span="6">挡位: {{formParse.VEHICLE.gear}}</el-col>
             </el-row>
-            <el-row>
+            <el-row class="drawer-row">
               <el-col :span="6">绝缘电阻: {{formParse.VEHICLE.insulationResistance}} kΩ</el-col>
               <el-col :span="6">加速踏板行程值: {{formParse.VEHICLE.acceleratorPedalPosition}} %</el-col>
               <el-col :span="6">制动踏板状态: {{formParse.VEHICLE.brakePedalPosition}} %</el-col>
@@ -480,5 +480,10 @@ export default {
 .drawer-title {
   font-size: 16px;
   font-weight: bolder;
+  margin-top: 5px;
+  margin-bottom: 5px;
+}
+.drawer-row {
+  margin-bottom: 5px;
 }
 </style>
