@@ -323,7 +323,7 @@
               <el-col :span="6">最高电压电池单体代号: {{formParse.EXTREMUM.maxVoltageCellNo}}</el-col>
               <el-col :span="6">最低电压电池单体代号: {{formParse.EXTREMUM.minVoltageCellNo}}</el-col>
               <el-col :span="6">最高温度探针序号: {{formParse.EXTREMUM.maxTemperatureProbeNo}}</el-col>
-              <el-col :span="6">最低温度探针序号: {{formParse.EXTREMUM.minTemperatureProbeNo}} mg/kg</el-col>
+              <el-col :span="6">最低温度探针序号: {{formParse.EXTREMUM.minTemperatureProbeNo}}</el-col>
             </el-row>
             <el-row class="drawer-row">
               <el-col :span="6">电池单体电压最高值: {{formParse.EXTREMUM.cellMaxVoltage}} V</el-col>
