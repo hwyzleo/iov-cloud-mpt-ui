@@ -371,7 +371,7 @@
                 <el-col :span="6">本帧单体电池总数: {{item.frameCellCount}}</el-col>
                 <el-col :span="12"></el-col>
               </el-row>
-              <div :ref="'cellVoltageChart' + index" style="width: 100%; height: 400px;"></div>
+              <div :id="'cellVoltageChart' + index" style="width: 100%; height: 300px;"></div>
             </div>
           </div>
           <div v-if="formParse.BATTERY_TEMPERATURE">
@@ -541,10 +541,8 @@ export default {
     initCellVoltageChart() {
       this.formParse.BATTERY_VOLTAGE.forEach((item, index) => {
         // 获取对应的DOM元素
-        const chartRef = this.$refs['cellVoltageChart' + index];
-        if (!chartRef || chartRef.length === 0) return;
-
-        const chartDom = chartRef[0];
+        const chartDom = document.getElementById('cellVoltageChart' + index);
+        if (!chartDom) return;
 
         // 如果已有实例则销毁
         if (this.chartInstances[index]) {
