@@ -371,7 +371,7 @@
                 <el-col :span="6">本帧单体电池总数: {{item.frameCellCount}}</el-col>
                 <el-col :span="12"></el-col>
               </el-row>
-              <div :id="'cellVoltageChart' + index" style="width: 100%; height: 400px;"></div>
+              <div :id="'cellVoltageChart' + index" style="width: 100%; height: 300px;"></div>
             </div>
           </div>
           <div v-if="formParse.BATTERY_TEMPERATURE">
@@ -587,7 +587,23 @@ export default {
             series: [{
               data: item.cellVoltageList,
               type: 'bar',
-              name: '电压'
+              name: '电压',
+              itemStyle: {
+                color: function(params) {
+                  // 找出最大值和最小值
+                  const max = Math.max(...item.cellVoltageList);
+                  const min = Math.min(...item.cellVoltageList);
+                  if (params.value === max) return '#ff4d4f'; // 最高值 - 红色
+                  if (params.value === min) return '#52c41a'; // 最低值 - 绿色
+                  return '#1890ff'; // 其他值使用蓝色
+                }
+              },
+              markPoint: {
+                data: [
+                  {type: 'max', name: '最高值', itemStyle: {color: '#ff4d4f'}},
+                  {type: 'min', name: '最低值', itemStyle: {color: '#52c41a'}}
+                ]
+              }
             }]
           };
 
