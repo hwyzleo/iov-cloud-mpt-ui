@@ -208,7 +208,7 @@
     </el-dialog>
 
     <!-- 客户端平台节点 -->
-    <el-drawer title="节点列表" :visible.sync="openNode" direction="rtl" size="500" :modal="true"
+    <el-drawer title="节点列表" :visible.sync="openNode" direction="rtl" size="30%" :modal="true"
                :append-to-body="true">
       <el-table :data="clientPlatformNodeList">
         <el-table-column label="节点主机名" prop="hostname"/>
@@ -232,6 +232,9 @@
           </template>
         </el-table-column>
       </el-table>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="closeNode">关 闭</el-button>
+      </div>
     </el-drawer>
   </div>
 </template>
@@ -337,6 +340,11 @@ export default {
       this.open = false;
       this.reset();
     },
+    /** 关闭节点列表按钮 */
+    closeNode() {
+      this.openNode = false;
+      this.getList();
+    },
     /** 表单重置 */
     reset() {
       this.form = {
@@ -417,7 +425,7 @@ export default {
     handleNode(row) {
       this.clientPlatformNodeList = [];
       Object.entries(row.connectState).forEach(([key, value]) => {
-        this.clientPlatformNodeList.push({"hostname": key, "connect": value, "login": row.loginState[key]})
+        this.clientPlatformNodeList.push({"id": row.id, "hostname": key, "connect": value, "login": row.loginState[key]})
       });
       this.openNode = true;
     },
