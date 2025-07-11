@@ -252,10 +252,10 @@
             <span>{{ parseTime(scope.row.loginTime) }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="登录流水号" prop="loginSn" align="center" width="80"/>
+        <el-table-column label="登录流水号" prop="loginSn" align="center" width="100"/>
         <el-table-column label="登录结果" prop="loginResult" align="center" width="80"/>
-        <el-table-column label="登录失败原因" prop="failureReason" align="center" width="80"/>
-        <el-table-column label="连续登录失败次数" prop="failureCount" align="center" width="100"/>
+        <el-table-column label="失败原因" prop="failureReason" align="center" width="80"/>
+        <el-table-column label="连续失败次数" prop="failureCount" align="center" width="100"/>
         <el-table-column label="登出时间" align="center" prop="logoutTime" width="180">
           <template slot-scope="scope">
             <span>{{ parseTime(scope.row.logoutTime) }}</span>
