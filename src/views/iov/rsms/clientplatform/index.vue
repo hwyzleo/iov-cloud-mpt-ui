@@ -208,11 +208,11 @@
     </el-dialog>
 
     <!-- 客户端平台节点 -->
-    <el-drawer title="节点列表" :visible.sync="openNode" direction="rtl" size="300" :modal="true"
+    <el-drawer title="节点列表" :visible.sync="openNode" direction="rtl" size="500" :modal="true"
                :append-to-body="true">
       <el-table :data="clientPlatformNodeList">
         <el-table-column label="节点主机名" prop="hostname"/>
-        <el-table-column label="是否连接" align="connect" width="100">
+        <el-table-column label="是否连接" align="center" width="100">
           <template slot-scope="scope">
             <el-switch
               v-model="scope.row.connect"
@@ -432,9 +432,9 @@ export default {
       let text = row.login ? "登入" : "登出";
       this.$modal.confirm('确认要"' + text + '"当前平台吗？').then(function () {
         if (row.login) {
-          return login(row.id);
+          return login(row.id, row.hostname);
         } else {
-          return logout(row.id);
+          return logout(row.id, row.hostname);
         }
       }).then(() => {
         this.$modal.msgSuccess(text + "成功");

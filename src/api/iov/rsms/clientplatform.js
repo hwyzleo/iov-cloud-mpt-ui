@@ -44,17 +44,17 @@ export function delClientPlatform(clientPlatformIds) {
 }
 
 // 客户端平台登录
-export function login(clientPlatformId) {
+export function login(clientPlatformId, hostname) {
   return request({
-    url: '/tsp-rsms/mpt/clientPlatform/' + clientPlatformId + '/action/login',
+    url: '/tsp-rsms/mpt/clientPlatform/' + clientPlatformId + '/action/login?hostname=' + hostname,
     method: 'post'
   })
 }
 
 // 客户端平台登出
-export function logout(clientPlatformId) {
+export function logout(clientPlatformId, hostname) {
   return request({
-    url: '/tsp-rsms/mpt/clientPlatform/' + clientPlatformId + '/action/logout',
+    url: '/tsp-rsms/mpt/clientPlatform/' + clientPlatformId + '/action/logout?hostname=' + hostname,
     method: 'post'
   })
 }
