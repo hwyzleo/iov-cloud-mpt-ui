@@ -209,29 +209,31 @@
 
     <!-- 客户端平台节点 -->
     <el-drawer title="节点列表" :visible.sync="openNode" direction="rtl" size="30%" :modal="true"
-               :append-to-body="true">
-      <el-table :data="clientPlatformNodeList">
-        <el-table-column label="节点主机名" prop="hostname"/>
-        <el-table-column label="是否连接" align="center" width="100">
-          <template slot-scope="scope">
-            <el-switch
-              v-model="scope.row.connect"
-              :active-value="true"
-              :inactive-value="false"
-            ></el-switch>
-          </template>
-        </el-table-column>
-        <el-table-column label="是否登录" align="center" width="100">
-          <template slot-scope="scope">
-            <el-switch
-              v-model="scope.row.login"
-              :active-value="true"
-              :inactive-value="false"
-              @change="handleLoginChange(scope.row)"
-            ></el-switch>
-          </template>
-        </el-table-column>
-      </el-table>
+               :append-to-body="true" :before-close="closeNode">
+      <div class="drawer-content">
+        <el-table :data="clientPlatformNodeList">
+          <el-table-column label="节点主机名" prop="hostname"/>
+          <el-table-column label="是否连接" align="center" width="100">
+            <template slot-scope="scope">
+              <el-switch
+                v-model="scope.row.connect"
+                :active-value="true"
+                :inactive-value="false"
+              ></el-switch>
+            </template>
+          </el-table-column>
+          <el-table-column label="是否登录" align="center" width="100">
+            <template slot-scope="scope">
+              <el-switch
+                v-model="scope.row.login"
+                :active-value="true"
+                :inactive-value="false"
+                @change="handleLoginChange(scope.row)"
+              ></el-switch>
+            </template>
+          </el-table-column>
+        </el-table>
+      </div>
       <div slot="footer" class="dialog-footer">
         <el-button @click="closeNode">关 闭</el-button>
       </div>
