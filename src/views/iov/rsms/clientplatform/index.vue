@@ -102,16 +102,6 @@
       <el-table-column label="唯一识别码" prop="uniqueCode" width="120"/>
       <el-table-column label="用户名" prop="username" width="100"/>
       <el-table-column label="绑定主机名" prop="hostname"/>
-      <el-table-column label="是否登录" align="center" width="100">
-        <template slot-scope="scope">
-          <el-switch
-            v-model="scope.row.login"
-            :active-value="true"
-            :inactive-value="false"
-            @change="handleLoginChange(scope.row)"
-          ></el-switch>
-        </template>
-      </el-table-column>
       <el-table-column label="是否启用" align="center" width="100">
         <template slot-scope="scope">
           <el-switch
@@ -121,6 +111,8 @@
           ></el-switch>
         </template>
       </el-table-column>
+      <el-table-column label="连接状态" align="center" prop="connectStat" width="150"/>
+      <el-table-column label="登录状态" align="center" prop="loginStat" width="150"/>
       <el-table-column label="创建时间" align="center" prop="createTime" width="180">
         <template slot-scope="scope">
           <span>{{ parseTime(scope.row.createTime) }}</span>
