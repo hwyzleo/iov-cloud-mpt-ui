@@ -136,6 +136,14 @@
             v-hasPermi="['iov:rsms:clientPlatform:remove']"
           >删除
           </el-button>
+          <el-button
+            size="mini"
+            type="text"
+            icon="el-icon-info"
+            @click="handleNode(scope.row)"
+            v-hasPermi="['iov:rsms:clientPlatform:listNode']"
+          >节点管理
+          </el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -198,6 +206,33 @@
         <el-button @click="cancel">取 消</el-button>
       </div>
     </el-dialog>
+
+    <!-- 客户端平台节点 -->
+    <el-drawer title="节点列表" :visible.sync="openNode" direction="rtl" size="300" :modal="true"
+               :append-to-body="true">
+      <el-table :data="clientPlatformNodeList">
+        <el-table-column label="节点主机名" prop="hostname"/>
+        <el-table-column label="是否连接" align="connect" width="100">
+          <template slot-scope="scope">
+            <el-switch
+              v-model="scope.row.connect"
+              :active-value="true"
+              :inactive-value="false"
+            ></el-switch>
+          </template>
+        </el-table-column>
+        <el-table-column label="是否登录" align="center" width="100">
+          <template slot-scope="scope">
+            <el-switch
+              v-model="scope.row.login"
+              :active-value="true"
+              :inactive-value="false"
+              @change="handleLoginChange(scope.row)"
+            ></el-switch>
+          </template>
+        </el-table-column>
+      </el-table>
+    </el-drawer>
   </div>
 </template>
 
@@ -207,8 +242,9 @@ import {
   delClientPlatform,
   getClientPlatform,
   listClientPlatform,
-  updateClientPlatform,
-  login, logout
+  login,
+  logout,
+  updateClientPlatform
 } from "@/api/iov/rsms/clientplatform";
 import {listAllServerPlatform} from "@/api/iov/rsms/serverplatform";
 
@@ -231,12 +267,14 @@ export default {
       total: 0,
       // 客户端平台表格数据
       clientPlatformList: [],
+      clientPlatformNodeList: [],
       // 服务端平台表格数据
       serverPlatformList: [],
       // 弹出层标题
       title: "",
       // 是否显示弹出层
       open: false,
+      openNode: false,
       // 日期范围
       dateRange: [],
       // 查询参数
@@ -374,6 +412,14 @@ export default {
         this.$modal.msgSuccess("删除成功");
       }).catch(() => {
       });
+    },
+    /** 节点管理按钮操作 */
+    handleNode(row) {
+      this.clientPlatformNodeList = [];
+      Object.entries(row.connectState).forEach(([key, value]) => {
+        this.clientPlatformNodeList.add({"hostname": key, "connect": value, "login": row.loginState[key]})
+      });
+      this.openNode = true;
     },
     /** 导出按钮操作 */
     handleExport() {
