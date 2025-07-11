@@ -118,7 +118,7 @@
           <span>{{ parseTime(scope.row.createTime) }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="操作" align="center" width="150" class-name="small-padding fixed-width">
+      <el-table-column label="操作" align="center" width="220" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
             size="mini"
@@ -417,7 +417,7 @@ export default {
     handleNode(row) {
       this.clientPlatformNodeList = [];
       Object.entries(row.connectState).forEach(([key, value]) => {
-        this.clientPlatformNodeList.add({"hostname": key, "connect": value, "login": row.loginState[key]})
+        this.clientPlatformNodeList.push({"hostname": key, "connect": value, "login": row.loginState[key]})
       });
       this.openNode = true;
     },
