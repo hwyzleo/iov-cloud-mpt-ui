@@ -118,7 +118,7 @@
           <span>{{ parseTime(scope.row.createTime) }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="操作" align="center" width="220" class-name="small-padding fixed-width">
+      <el-table-column label="操作" align="center" width="280" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
             size="mini"
@@ -143,6 +143,14 @@
             @click="handleNode(scope.row)"
             v-hasPermi="['iov:rsms:clientPlatform:listNode']"
           >节点管理
+          </el-button>
+          <el-button
+            size="mini"
+            type="text"
+            icon="el-icon-info"
+            @click="handleLoginHistory(scope.row)"
+            v-hasPermi="['iov:rsms:clientPlatform:listLoginHistory']"
+          >登录历史
           </el-button>
         </template>
       </el-table-column>
@@ -210,33 +218,50 @@
     <!-- 客户端平台节点 -->
     <el-drawer title="节点列表" :visible.sync="openNode" direction="rtl" size="30%" :modal="true"
                :append-to-body="true" :before-close="closeNode">
-      <div class="drawer-content">
-        <el-table :data="clientPlatformNodeList">
-          <el-table-column label="节点主机名" prop="hostname"/>
-          <el-table-column label="是否连接" align="center" width="100">
-            <template slot-scope="scope">
-              <el-switch
-                v-model="scope.row.connect"
-                :active-value="true"
-                :inactive-value="false"
-              ></el-switch>
-            </template>
-          </el-table-column>
-          <el-table-column label="是否登录" align="center" width="100">
-            <template slot-scope="scope">
-              <el-switch
-                v-model="scope.row.login"
-                :active-value="true"
-                :inactive-value="false"
-                @change="handleLoginChange(scope.row)"
-              ></el-switch>
-            </template>
-          </el-table-column>
-        </el-table>
-      </div>
-      <div slot="footer" class="dialog-footer">
-        <el-button @click="closeNode">关 闭</el-button>
-      </div>
+      <el-table :data="clientPlatformNodeList">
+        <el-table-column label="节点主机名" prop="hostname"/>
+        <el-table-column label="是否连接" align="center" width="100">
+          <template slot-scope="scope">
+            <el-switch
+              v-model="scope.row.connect"
+              :active-value="true"
+              :inactive-value="false"
+            ></el-switch>
+          </template>
+        </el-table-column>
+        <el-table-column label="是否登录" align="center" width="100">
+          <template slot-scope="scope">
+            <el-switch
+              v-model="scope.row.login"
+              :active-value="true"
+              :inactive-value="false"
+              @change="handleLoginChange(scope.row)"
+            ></el-switch>
+          </template>
+        </el-table-column>
+      </el-table>
+    </el-drawer>
+
+    <!-- 客户端平台登录历史 -->
+    <el-drawer title="登录历史" :visible.sync="openLoginHistory" direction="rtl" size="50%" :modal="true"
+               :append-to-body="true">
+      <el-table v-loading="loadingLoginHistory" :data="clientPlatformLoginHistoryList">
+        <el-table-column label="节点主机名" prop="hostname"/>
+        <el-table-column label="登录时间" align="center" prop="loginTime" width="180">
+          <template slot-scope="scope">
+            <span>{{ parseTime(scope.row.loginTime) }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="登录流水号" prop="loginSn" align="center" width="80"/>
+        <el-table-column label="登录结果" prop="loginResult" align="center" width="80"/>
+        <el-table-column label="登录失败原因" prop="failureReason" align="center" width="80"/>
+        <el-table-column label="连续登录失败次数" prop="failureCount" align="center" width="100"/>
+        <el-table-column label="登出时间" align="center" prop="logoutTime" width="180">
+          <template slot-scope="scope">
+            <span>{{ parseTime(scope.row.logoutTime) }}</span>
+          </template>
+        </el-table-column>
+      </el-table>
     </el-drawer>
   </div>
 </template>
@@ -246,7 +271,7 @@ import {
   addClientPlatform,
   delClientPlatform,
   getClientPlatform,
-  listClientPlatform,
+  listClientPlatform, listClientPlatformLoginHistory,
   login,
   logout,
   updateClientPlatform
@@ -260,6 +285,7 @@ export default {
     return {
       // 遮罩层
       loading: true,
+      loadingLoginHistory: true,
       // 选中数组
       ids: [],
       // 非单个禁用
@@ -273,6 +299,7 @@ export default {
       // 客户端平台表格数据
       clientPlatformList: [],
       clientPlatformNodeList: [],
+      clientPlatformLoginHistoryList: [],
       // 服务端平台表格数据
       serverPlatformList: [],
       // 弹出层标题
@@ -280,6 +307,7 @@ export default {
       // 是否显示弹出层
       open: false,
       openNode: false,
+      openLoginHistory: false,
       // 日期范围
       dateRange: [],
       // 查询参数
@@ -430,6 +458,17 @@ export default {
         this.clientPlatformNodeList.push({"id": row.id, "hostname": key, "connect": value, "login": row.loginState[key]})
       });
       this.openNode = true;
+    },
+    /** 登录历史按钮操作 */
+    handleLoginHistory(row) {
+      this.openLoginHistory = true;
+      this.loadingLoginHistory = true;
+      listClientPlatformLoginHistory(row.id).then(response => {
+          this.clientPlatformLoginHistoryList = response.rows;
+          this.total = response.total;
+          this.loadingLoginHistory = false;
+        }
+      );
     },
     /** 导出按钮操作 */
     handleExport() {
