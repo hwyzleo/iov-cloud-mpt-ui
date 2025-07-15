@@ -10,6 +10,21 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
+      <el-form-item label="车辆上报状态" prop="type">
+        <el-select
+          v-model="queryParams.reportState"
+          placeholder="车辆上报状态"
+          clearable
+          style="width: 140px"
+        >
+          <el-option
+            v-for="dict in dict.type.iov_rsms_vehicle_report_state"
+            :key="dict.value"
+            :label="dict.label"
+            :value="dict.value"
+          />
+        </el-select>
+      </el-form-item>
       <el-form-item label="已注册平台" prop="serverPlatformCode">
         <el-select
           v-model="queryParams.serverPlatformCode"
@@ -100,6 +115,11 @@
         </template>
       </el-table-column>
       <el-table-column label="车架号" prop="vin"/>
+      <el-table-column label="车辆上报状态" prop="reportState" width="150">
+        <template slot-scope="scope">
+          <span>{{ getReportState(scope.row.reportState) }}</span>
+        </template>
+      </el-table-column>
       <el-table-column label="备案型号" prop="model" width="150"/>
       <el-table-column label="创建时间" align="center" prop="createTime" width="180">
         <template slot-scope="scope">
@@ -252,7 +272,7 @@ import {listAllServerPlatform} from "@/api/iov/rsms/serverplatform";
 
 export default {
   name: "RegisteredVehicle",
-  dicts: [],
+  dicts: ['iov_rsms_vehicle_report_state'],
   data() {
     return {
       // 遮罩层
@@ -325,6 +345,16 @@ export default {
         serverPlatform => serverPlatform.code === serverPlatformCode
       )
       return item ? item.name : serverPlatformCode
+    },
+    /** 获取车辆上报状态 */
+    getReportState(reportState) {
+      if (!this.dict || !this.dict.type || !this.dict.type.iov_rsms_vehicle_report_state) {
+        return reportState;
+      }
+      const item = this.dict.type.iov_rsms_vehicle_report_state.find(
+        dict => parseInt(dict.value) === reportState
+      )
+      return item ? item.label : reportState
     },
     /** 取消按钮 */
     cancel() {
