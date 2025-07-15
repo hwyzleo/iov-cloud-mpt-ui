@@ -50,3 +50,19 @@ export function delServerPlatform(serverPlatformIds) {
     method: 'delete'
   })
 }
+
+// 同步服务端平台信息
+export function syncServerPlatformInfo(serverPlatformId) {
+  return request({
+    url: '/tsp-rsms/mpt/serverPlatform/' + serverPlatformId + '/action/syncPlatform',
+    method: 'post'
+  })
+}
+
+// 同步服务端平台车辆
+export function syncServerPlatformVehicle(serverPlatformId) {
+  return request({
+    url: '/tsp-rsms/mpt/serverPlatform/' + serverPlatformId + '/action/syncVehicle',
+    method: 'post'
+  })
+}

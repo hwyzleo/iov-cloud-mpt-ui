@@ -104,35 +104,19 @@
     <el-table v-loading="loading" :data="serverPlatformList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center"/>
       <el-table-column label="平台代码" align="center" prop="code" width="80"/>
-      <el-table-column label="平台名称" prop="name" width="120"/>
+      <el-table-column label="平台名称" prop="name"/>
       <el-table-column label="平台类型" align="center" prop="type" width="80">
         <template slot-scope="scope">
           <span>{{ getServerPlatformType(scope.row.type) }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="平台地址" prop="url"/>
+      <el-table-column label="平台地址" prop="url" width="120"/>
       <el-table-column label="平台端口" align="center" prop="port" width="80"/>
       <el-table-column label="平台协议" align="center" prop="protocol" width="80"/>
       <el-table-column label="采集频率" align="center" prop="collectFrequency" width="80"/>
       <el-table-column label="上报频率" align="center" prop="reportFrequency" width="80"/>
-      <el-table-column label="是否读写同步" align="center" width="100">
-        <template slot-scope="scope">
-          <el-switch
-            v-model="scope.row.readWriteSync"
-            :active-value="true"
-            :inactive-value="false"
-          ></el-switch>
-        </template>
-      </el-table-column>
-      <el-table-column label="是否维持心跳" align="center" width="100">
-        <template slot-scope="scope">
-          <el-switch
-            v-model="scope.row.heartbeat"
-            :active-value="true"
-            :inactive-value="false"
-          ></el-switch>
-        </template>
-      </el-table-column>
+      <el-table-column label="是否读写同步" align="center" prop="readWriteSync" width="100"/>
+      <el-table-column label="是否维持心跳" align="center" prop="heartbeat" width="100"/>
       <el-table-column label="数据加密方式" prop="encryptType" align="center" width="140">
         <template slot-scope="scope">
           <span>{{ getDataEncryptType(scope.row.encryptType) }}</span>
@@ -161,6 +145,22 @@
             @click="handleDelete(scope.row)"
             v-hasPermi="['iov:rsms:serverPlatform:remove']"
           >删除
+          </el-button>
+          <el-button
+            size="mini"
+            type="text"
+            icon="el-icon-s-promotion"
+            @click="handleSyncPlatform(scope.row)"
+            v-hasPermi="['iov:rsms:serverPlatform:syncPlatform']"
+          >同步平台
+          </el-button>
+          <el-button
+            size="mini"
+            type="text"
+            icon="el-icon-s-promotion"
+            @click="handleSyncVehicle(scope.row)"
+            v-hasPermi="['iov:rsms:serverPlatform:syncVehicle']"
+          >同步车辆
           </el-button>
         </template>
       </el-table-column>
@@ -307,7 +307,7 @@ import {
   getServerPlatform,
   addServerPlatform,
   updateServerPlatform,
-  delServerPlatform
+  delServerPlatform, syncServerPlatformVehicle, syncServerPlatformInfo
 } from "@/api/iov/rsms/serverplatform";
 
 export default {
@@ -490,6 +490,24 @@ export default {
       }).then(() => {
         this.getList();
         this.$modal.msgSuccess("删除成功");
+      }).catch(() => {
+      });
+    },
+    /** 同步平台按钮操作 */
+    handleSyncPlatform(row) {
+      this.$modal.confirm('是否确认同步服务端平台ID为"' + row.id + '"的信息？').then(function () {
+        return syncServerPlatformInfo(row.id);
+      }).then(() => {
+        this.$modal.msgSuccess("同步成功");
+      }).catch(() => {
+      });
+    },
+    /** 同步车辆按钮操作 */
+    handleSyncVehicle(row) {
+      this.$modal.confirm('是否确认同步服务端平台ID为"' + row.id + '"的车辆？').then(function () {
+        return syncServerPlatformVehicle(row.id);
+      }).then(() => {
+        this.$modal.msgSuccess("同步成功");
       }).catch(() => {
       });
     },
