@@ -115,9 +115,9 @@
       <el-table-column label="平台协议" align="center" prop="protocol" width="80"/>
       <el-table-column label="采集频率" align="center" prop="collectFrequency" width="80"/>
       <el-table-column label="上报频率" align="center" prop="reportFrequency" width="80"/>
-      <el-table-column label="是否读写同步" align="center" prop="readWriteSync" width="100"/>
-      <el-table-column label="是否维持心跳" align="center" prop="heartbeat" width="100"/>
-      <el-table-column label="数据加密方式" prop="encryptType" align="center" width="140">
+      <el-table-column label="读写同步" align="center" prop="readWriteSync" width="80"/>
+      <el-table-column label="维持心跳" align="center" prop="heartbeat" width="80"/>
+      <el-table-column label="加密方式" prop="encryptType" align="center" width="120">
         <template slot-scope="scope">
           <span>{{ getDataEncryptType(scope.row.encryptType) }}</span>
         </template>
@@ -128,7 +128,7 @@
           <span>{{ parseTime(scope.row.createTime) }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="操作" align="center" width="150" class-name="small-padding fixed-width">
+      <el-table-column label="操作" align="center" width="300" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
             size="mini"
