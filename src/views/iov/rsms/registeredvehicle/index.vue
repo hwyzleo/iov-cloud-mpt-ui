@@ -109,13 +109,13 @@
 
     <el-table v-loading="loading" :data="registeredVehicleList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center"/>
-      <el-table-column label="已注册平台" prop="serverPlatformCode" width="150">
+      <el-table-column label="已注册平台" align="center" prop="serverPlatformCode" width="150">
         <template slot-scope="scope">
           <span>{{ getServerPlatformName(scope.row.serverPlatformCode) }}</span>
         </template>
       </el-table-column>
       <el-table-column label="车架号" prop="vin"/>
-      <el-table-column label="车辆上报状态" prop="reportState" width="150">
+      <el-table-column label="车辆上报状态" align="center" prop="reportState" width="150">
         <template slot-scope="scope">
           <span>{{ getReportState(scope.row.reportState) }}</span>
         </template>
@@ -332,6 +332,9 @@ export default {
         ],
         vin: [
           {required: true, message: "车架号不能为空", trigger: "blur"}
+        ],
+        reportState: [
+          {required: true, message: "车辆上报状态不能为空", trigger: "blur"}
         ]
       },
     };
