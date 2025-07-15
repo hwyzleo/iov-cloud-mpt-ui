@@ -51,6 +51,14 @@ export function delClientPlatform(clientPlatformIds) {
   })
 }
 
+// 同步客户端平台信息
+export function syncClientPlatformInfo(clientPlatformId) {
+  return request({
+    url: '/tsp-rsms/mpt/clientPlatform/' + clientPlatformId + '/action/syncPlatform',
+    method: 'post'
+  })
+}
+
 // 客户端平台登录
 export function login(clientPlatformId, hostname) {
   return request({

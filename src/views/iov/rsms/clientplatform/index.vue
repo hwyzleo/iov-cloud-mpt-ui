@@ -118,7 +118,7 @@
           <span>{{ parseTime(scope.row.createTime) }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="操作" align="center" width="280" class-name="small-padding fixed-width">
+      <el-table-column label="操作" align="center" width="350" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
             size="mini"
@@ -139,7 +139,7 @@
           <el-button
             size="mini"
             type="text"
-            icon="el-icon-info"
+            icon="el-icon-menu"
             @click="handleNode(scope.row)"
             v-hasPermi="['iov:rsms:clientPlatform:listNode']"
           >节点管理
@@ -151,6 +151,14 @@
             @click="handleLoginHistory(scope.row)"
             v-hasPermi="['iov:rsms:clientPlatform:listLoginHistory']"
           >登录历史
+          </el-button>
+          <el-button
+            size="mini"
+            type="text"
+            icon="el-icon-s-promotion"
+            @click="handleSyncPlatform(scope.row)"
+            v-hasPermi="['iov:rsms:clientPlatform:syncPlatform']"
+          >同步平台
           </el-button>
         </template>
       </el-table-column>
@@ -273,7 +281,7 @@ import {
   getClientPlatform,
   listClientPlatform, listClientPlatformLoginHistory,
   login,
-  logout,
+  logout, syncClientPlatformInfo,
   updateClientPlatform
 } from "@/api/iov/rsms/clientplatform";
 import {listAllServerPlatform} from "@/api/iov/rsms/serverplatform";
@@ -469,6 +477,15 @@ export default {
           this.loadingLoginHistory = false;
         }
       );
+    },
+    /** 同步平台按钮操作 */
+    handleSyncPlatform(row) {
+      this.$modal.confirm('是否确认同步客户端平台ID为"' + row.id + '"的信息？').then(function () {
+        return syncClientPlatformInfo(row.id);
+      }).then(() => {
+        this.$modal.msgSuccess("同步成功");
+      }).catch(() => {
+      });
     },
     /** 导出按钮操作 */
     handleExport() {
