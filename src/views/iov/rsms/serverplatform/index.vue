@@ -115,8 +115,16 @@
       <el-table-column label="平台协议" align="center" prop="protocol" width="80"/>
       <el-table-column label="采集频率" align="center" prop="collectFrequency" width="80"/>
       <el-table-column label="上报频率" align="center" prop="reportFrequency" width="80"/>
-      <el-table-column label="读写同步" align="center" prop="readWriteSync" width="80"/>
-      <el-table-column label="维持心跳" align="center" prop="heartbeat" width="80"/>
+      <el-table-column label="读写同步" align="center" prop="readWriteSync" width="80">
+        <template slot-scope="scope">
+          {{ scope.row.readWriteSync ? '是' : '否' }}
+        </template>
+      </el-table-column>
+      <el-table-column label="维持心跳" align="center" prop="heartbeat" width="80">
+        <template slot-scope="scope">
+          {{ scope.row.heartbeat ? '是' : '否' }}
+        </template>
+      </el-table-column>
       <el-table-column label="加密方式" prop="encryptType" align="center" width="120">
         <template slot-scope="scope">
           <span>{{ getDataEncryptType(scope.row.encryptType) }}</span>
