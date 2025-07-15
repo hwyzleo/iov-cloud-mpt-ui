@@ -10,7 +10,7 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="车辆上报状态" prop="type">
+      <el-form-item label="车辆上报状态" prop="reportState">
         <el-select
           v-model="queryParams.reportState"
           placeholder="车辆上报状态"
@@ -182,9 +182,30 @@
             </el-form-item>
           </el-col>
         </el-row>
-        <el-form-item label="ICCID" prop="iccid">
-          <el-input v-model="form.iccid" placeholder="请输入ICCID"/>
-        </el-form-item>
+        <el-row>
+          <el-col :span="12">
+            <el-form-item label="车辆上报状态" prop="reportState">
+              <el-select
+                v-model="form.reportState"
+                placeholder="车辆上报状态"
+                clearable
+                style="width: 140px"
+              >
+                <el-option
+                  v-for="dict in dict.type.iov_rsms_vehicle_report_state"
+                  :key="dict.value"
+                  :label="dict.label"
+                  :value="dict.value"
+                />
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="ICCID" prop="iccid">
+              <el-input v-model="form.iccid" placeholder="请输入ICCID"/>
+            </el-form-item>
+          </el-col>
+        </el-row>
         <el-row>
           <el-col :span="12">
             <el-form-item label="备案型号" prop="model">
