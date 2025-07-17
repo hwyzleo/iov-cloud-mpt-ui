@@ -261,7 +261,11 @@
           </template>
         </el-table-column>
         <el-table-column label="登录流水号" prop="loginSn" align="center" width="100"/>
-        <el-table-column label="登录结果" prop="loginResult" align="center" width="80"/>
+        <el-table-column label="登录结果" prop="loginResult" align="center" width="80">
+          <template slot-scope="scope">
+            {{ scope.row.loginResult ? '成功' : '失败' }}
+          </template>
+        </el-table-column>
         <el-table-column label="失败原因" prop="failureReason" align="center" width="80"/>
         <el-table-column label="连续失败次数" prop="failureCount" align="center" width="100"/>
         <el-table-column label="登出时间" align="center" prop="logoutTime" width="180">
@@ -279,9 +283,11 @@ import {
   addClientPlatform,
   delClientPlatform,
   getClientPlatform,
-  listClientPlatform, listClientPlatformLoginHistory,
+  listClientPlatform,
+  listClientPlatformLoginHistory,
   login,
-  logout, syncClientPlatformInfo,
+  logout,
+  syncClientPlatformInfo,
   updateClientPlatform
 } from "@/api/iov/rsms/clientplatform";
 import {listAllServerPlatform} from "@/api/iov/rsms/serverplatform";
@@ -463,7 +469,12 @@ export default {
     handleNode(row) {
       this.clientPlatformNodeList = [];
       Object.entries(row.connectState).forEach(([key, value]) => {
-        this.clientPlatformNodeList.push({"id": row.id, "hostname": key, "connect": value, "login": row.loginState[key]})
+        this.clientPlatformNodeList.push({
+          "id": row.id,
+          "hostname": key,
+          "connect": value,
+          "login": row.loginState[key]
+        })
       });
       this.openNode = true;
     },
