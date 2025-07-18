@@ -10,7 +10,22 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="消息时间">
+      <el-form-item label="报警级别" prop="type">
+        <el-select
+          v-model="queryParams.alarmLevel"
+          placeholder="报警级别"
+          clearable
+          style="width: 140px"
+        >
+          <el-option
+            v-for="dict in dict.type.iov_rsms_general_alarm_level"
+            :key="dict.value"
+            :label="dict.label"
+            :value="dict.value"
+          />
+        </el-select>
+      </el-form-item>
+      <el-form-item label="报警时间">
         <el-date-picker
           v-model="dateRange"
           style="width: 240px"
@@ -35,7 +50,7 @@
           icon="el-icon-plus"
           size="mini"
           @click="handleAdd"
-          v-hasPermi="['iov:rsms:vehicleGbMessage:add']"
+          v-hasPermi="['iov:rsms:vehicleGbAlarm:add']"
         >新增
         </el-button>
       </el-col>
@@ -47,7 +62,7 @@
           size="mini"
           :disabled="single"
           @click="handleUpdate"
-          v-hasPermi="['iov:rsms:vehicleGbMessage:edit']"
+          v-hasPermi="['iov:rsms:vehicleGbAlarm:edit']"
         >修改
         </el-button>
       </el-col>
@@ -59,7 +74,7 @@
           size="mini"
           :disabled="multiple"
           @click="handleDelete"
-          v-hasPermi="['iov:rsms:vehicleGbMessage:remove']"
+          v-hasPermi="['iov:rsms:vehicleGbAlarm:remove']"
         >删除
         </el-button>
       </el-col>
@@ -70,29 +85,29 @@
           icon="el-icon-download"
           size="mini"
           @click="handleExport"
-          v-hasPermi="['iov:rsms:vehicleGbMessage:export']"
+          v-hasPermi="['iov:rsms:vehicleGbAlarm:export']"
         >导出
         </el-button>
       </el-col>
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
-    <el-table v-loading="loading" :data="vehicleGbMessageList" @selection-change="handleSelectionChange">
+    <el-table v-loading="loading" :data="vehicleGbAlarmList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center"/>
       <el-table-column label="车架号" prop="vin" width="180"/>
-      <el-table-column label="解析时间" align="center" prop="parseTime" width="180">
+      <el-table-column label="报警时间" align="center" prop="alarmTime" width="180">
         <template slot-scope="scope">
-          <span>{{ parseTime(scope.row.parseTime) }}</span>
+          <span>{{ parseTime(scope.row.alarmTime) }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="消息时间" align="center" prop="messageTime" width="180">
+      <el-table-column label="报警标识" prop="alarmFlag" align="center" width="200">
         <template slot-scope="scope">
-          <span>{{ parseTime(scope.row.messageTime) }}</span>
+          <span>{{ getAlarmFlag(scope.row.alarmFlag) }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="命令标识" prop="commandFlag" align="center" width="140">
+      <el-table-column label="报警级别" prop="alarmLevel" align="center" width="120">
         <template slot-scope="scope">
-          <span>{{ getCommandFlagType(scope.row.commandFlag) }}</span>
+          <span>{{ getAlarmLevel(scope.row.alarmLevel) }}</span>
         </template>
       </el-table-column>
       <el-table-column label="消息数据">
@@ -116,7 +131,7 @@
             type="text"
             icon="el-icon-edit"
             @click="handleParse(scope.row)"
-            v-hasPermi="['iov:rsms:vehicleGbMessage:query']"
+            v-hasPermi="['iov:rsms:vehicleGbAlarm:query']"
           >解析
           </el-button>
           <el-button
@@ -124,7 +139,7 @@
             type="text"
             icon="el-icon-edit"
             @click="handleUpdate(scope.row)"
-            v-hasPermi="['iov:rsms:vehicleGbMessage:edit']"
+            v-hasPermi="['iov:rsms:vehicleGbAlarm:edit']"
           >修改
           </el-button>
           <el-button
@@ -132,7 +147,7 @@
             type="text"
             icon="el-icon-delete"
             @click="handleDelete(scope.row)"
-            v-hasPermi="['iov:rsms:vehicleGbMessage:remove']"
+            v-hasPermi="['iov:rsms:vehicleGbAlarm:remove']"
           >删除
           </el-button>
         </template>
@@ -147,7 +162,7 @@
       @pagination="getList"
     />
 
-    <!-- 添加或修改国标消息对话框 -->
+    <!-- 添加或修改国标报警对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="750px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="130px">
         <el-row>
@@ -157,14 +172,27 @@
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="命令标识" prop="commandFlag">
+            <el-form-item label="报警时间" prop="alarmTime">
+              <el-date-picker
+                v-model="form.alarmTime"
+                type="datetime"
+                placeholder="请选择报警时间"
+                value-format="timestamp"
+              >
+              </el-date-picker>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="12">
+            <el-form-item label="报警标识" prop="alarmFlag">
               <el-select
-                v-model="form.commandFlag"
-                placeholder="命令标识"
+                v-model="form.alarmFlag"
+                placeholder="报警标识"
                 clearable
               >
                 <el-option
-                  v-for="dict in dict.type.iov_rsms_command_flag_type"
+                  v-for="dict in dict.type.iov_rsms_general_alarm_flag"
                   :key="dict.value"
                   :label="dict.label"
                   :value="dict.value"
@@ -172,28 +200,20 @@
               </el-select>
             </el-form-item>
           </el-col>
-        </el-row>
-        <el-row>
           <el-col :span="12">
-            <el-form-item label="解析时间" prop="parseTime">
-              <el-date-picker
-                v-model="form.parseTime"
-                type="datetime"
-                placeholder="请选择解析时间"
-                value-format="timestamp"
+            <el-form-item label="报警级别" prop="alarmLevel">
+              <el-select
+                v-model="form.alarmLevel"
+                placeholder="报警级别"
+                clearable
               >
-              </el-date-picker>
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="消息时间" prop="messageTime">
-              <el-date-picker
-                v-model="form.messageTime"
-                type="datetime"
-                placeholder="请选择消息时间"
-                value-format="timestamp"
-              >
-              </el-date-picker>
+                <el-option
+                  v-for="dict in dict.type.iov_rsms_general_alarm_level"
+                  :key="dict.value"
+                  :label="dict.label"
+                  :value="dict.value"
+                />
+              </el-select>
             </el-form-item>
           </el-col>
         </el-row>
@@ -397,18 +417,18 @@
 
 <script>
 import {
-  addVehicleGbMessage,
-  delVehicleGbMessage,
-  getVehicleGbMessage,
-  parseVehicleGbMessage,
-  listVehicleGbMessage,
-  updateVehicleGbMessage
-} from "@/api/iov/rsms/vehiclegbmessage";
+  addVehicleGbAlarm,
+  delVehicleGbAlarm,
+  getVehicleGbAlarm,
+  parseVehicleGbAlarm,
+  listVehicleGbAlarm,
+  updateVehicleGbAlarm
+} from "@/api/iov/rsms/vehiclegbalarm";
 import * as echarts from 'echarts';
 
 export default {
-  name: "VehicleGbMessage",
-  dicts: ['iov_rsms_command_flag_type'],
+  name: "VehicleGbAlarm",
+  dicts: ['iov_rsms_general_alarm_level','iov_rsms_general_alarm_flag'],
   data() {
     return {
       // 遮罩层
@@ -423,8 +443,8 @@ export default {
       showSearch: true,
       // 总条数
       total: 0,
-      // 车辆国标消息表格数据
-      vehicleGbMessageList: [],
+      // 车辆国标报警表格数据
+      vehicleGbAlarmList: [],
       // 弹出层标题
       title: "",
       // 是否显示弹出层
@@ -447,14 +467,11 @@ export default {
         vin: [
           {required: true, message: "车架号不能为空", trigger: "blur"}
         ],
-        commandFlag: [
-          {required: true, message: "命令标识不能为空", trigger: "blur"}
+        alarmFlag: [
+          {required: true, message: "报警标识不能为空", trigger: "blur"}
         ],
-        parseTime: [
-          {required: true, message: "解析时间不能为空", trigger: "blur"}
-        ],
-        messageTime: [
-          {required: true, message: "消息时间不能为空", trigger: "blur"}
+        alarmTime: [
+          {required: true, message: "报警时间不能为空", trigger: "blur"}
         ],
         messageData: [
           {required: true, message: "消息数据不能为空", trigger: "blur"}
@@ -468,25 +485,35 @@ export default {
     this.getList();
   },
   methods: {
-    /** 查询车辆国标消息列表 */
+    /** 查询车辆国标报警列表 */
     getList() {
       this.loading = true;
-      listVehicleGbMessage(this.addDateRange(this.queryParams, this.dateRange)).then(response => {
-          this.vehicleGbMessageList = response.rows;
+      listVehicleGbAlarm(this.addDateRange(this.queryParams, this.dateRange)).then(response => {
+          this.vehicleGbAlarmList = response.rows;
           this.total = response.total;
           this.loading = false;
         }
       );
     },
-    /** 获取命令标识类型 */
-    getCommandFlagType(commandFlag) {
-      if (!this.dict || !this.dict.type || !this.dict.type.iov_rsms_command_flag_type) {
-        return commandFlag;
+    /** 获取报警标识 */
+    getAlarmFlag(alarmFlag) {
+      if (!this.dict || !this.dict.type || !this.dict.type.iov_rsms_general_alarm_flag) {
+        return alarmFlag;
       }
-      const item = this.dict.type.iov_rsms_command_flag_type.find(
-        dict => dict.value === commandFlag
+      const item = this.dict.type.iov_rsms_general_alarm_flag.find(
+        dict => parseInt(dict.value) === alarmFlag
       )
-      return item ? item.label : commandFlag
+      return item ? item.label : alarmFlag
+    },
+    /** 获取报警级别 */
+    getAlarmLevel(alarmLevel) {
+      if (!this.dict || !this.dict.type || !this.dict.type.iov_rsms_general_alarm_level) {
+        return alarmLevel;
+      }
+      const item = this.dict.type.iov_rsms_general_alarm_level.find(
+        dict => parseInt(dict.value) === alarmLevel
+      )
+      return item ? item.label : alarmLevel
     },
     /** 取消按钮 */
     cancel() {
@@ -526,15 +553,15 @@ export default {
     handleAdd() {
       this.reset();
       this.open = true;
-      this.title = "添加车辆国标消息";
+      this.title = "添加车辆国标报警";
       this.form = {};
     },
     /** 解析按钮操作 */
     handleParse(row) {
       this.reset();
-      const vehicleGbMessageId = row.id || this.ids
+      const vehicleGbAlarmId = row.id || this.ids
       this.form = row;
-      parseVehicleGbMessage(vehicleGbMessageId).then(response => {
+      parseVehicleGbAlarm(vehicleGbAlarmId).then(response => {
         this.formParse = response.data;
         this.openParse = true;
       });
@@ -706,25 +733,25 @@ export default {
     /** 修改按钮操作 */
     handleUpdate(row) {
       this.reset();
-      const vehicleGbMessageId = row.id || this.ids
-      getVehicleGbMessage(vehicleGbMessageId).then(response => {
+      const vehicleGbAlarmId = row.id || this.ids
+      getVehicleGbAlarm(vehicleGbAlarmId).then(response => {
         this.form = response.data;
         this.open = true;
       });
-      this.title = "修改车辆国标消息";
+      this.title = "修改车辆国标报警";
     },
     /** 提交按钮 */
     submitForm: function () {
       this.$refs["form"].validate(valid => {
         if (valid) {
           if (this.form.id !== undefined) {
-            updateVehicleGbMessage(this.form).then(response => {
+            updateVehicleGbAlarm(this.form).then(response => {
               this.$modal.msgSuccess("修改成功");
               this.open = false;
               this.getList();
             });
           } else {
-            addVehicleGbMessage(this.form).then(response => {
+            addVehicleGbAlarm(this.form).then(response => {
               this.$modal.msgSuccess("新增成功");
               this.open = false;
               this.getList();
@@ -735,9 +762,9 @@ export default {
     },
     /** 删除按钮操作 */
     handleDelete(row) {
-      const vehicleGbMessageIds = row.id || this.ids;
-      this.$modal.confirm('是否确认删除车辆国标消息ID为"' + vehicleGbMessageIds + '"的数据项？').then(function () {
-        return delVehicleGbMessage(vehicleGbMessageIds);
+      const vehicleGbAlarmIds = row.id || this.ids;
+      this.$modal.confirm('是否确认删除车辆国标报警ID为"' + vehicleGbAlarmIds + '"的数据项？').then(function () {
+        return delVehicleGbAlarm(vehicleGbAlarmIds);
       }).then(() => {
         this.getList();
         this.$modal.msgSuccess("删除成功");
@@ -746,9 +773,9 @@ export default {
     },
     /** 导出按钮操作 */
     handleExport() {
-      this.download('tsp-rsms/mpt/vehicleGbMessage/export', {
+      this.download('tsp-rsms/mpt/vehicleGbAlarm/export', {
         ...this.queryParams
-      }, `vehicle_gb_message_${new Date().getTime()}.xlsx`)
+      }, `vehicle_gb_alarm_${new Date().getTime()}.xlsx`)
     }
   },
   beforeDestroy() {
