@@ -94,13 +94,13 @@
 
     <el-table v-loading="loading" :data="vehicleGbAlarmList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center"/>
-      <el-table-column label="车架号" prop="vin" width="180"/>
+      <el-table-column label="车架号" align="center" prop="vin" width="180"/>
       <el-table-column label="报警时间" align="center" prop="alarmTime" width="180">
         <template slot-scope="scope">
           <span>{{ parseTime(scope.row.alarmTime) }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="报警标识" prop="alarmFlag" align="center" width="200">
+      <el-table-column label="报警标识" prop="alarmFlag" width="200">
         <template slot-scope="scope">
           <span>{{ getAlarmFlag(scope.row.alarmFlag) }}</span>
         </template>
@@ -239,7 +239,7 @@
         </el-row>
         <el-row class="drawer-row">
           <el-col :span="3">消息时间:</el-col>
-          <el-col :span="21">{{ parseTime(form.messageTime) }}</el-col>
+          <el-col :span="21">{{ parseTime(form.alarmTime) }}</el-col>
         </el-row>
         <div v-if="formParse">
           <div v-if="formParse.VEHICLE">
