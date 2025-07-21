@@ -1,10 +1,10 @@
 <template>
   <div class="app-container">
     <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch">
-      <el-form-item label="唯一识别码" prop="uniqueCode">
+      <el-form-item label="企业编码" prop="uniqueCode">
         <el-input
           v-model="queryParams.uniqueCode"
-          placeholder="请输入唯一识别码"
+          placeholder="请输入企业编码"
           clearable
           style="width: 150px"
           @keyup.enter.native="handleQuery"
@@ -99,7 +99,7 @@
           <span>{{ getServerPlatformName(scope.row.serverPlatformCode) }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="唯一识别码" prop="uniqueCode" width="120"/>
+      <el-table-column label="企业编码" prop="uniqueCode" width="120"/>
       <el-table-column label="用户名" prop="username" width="100"/>
       <el-table-column label="绑定主机名" prop="hostname"/>
       <el-table-column label="是否启用" align="center" width="100">
@@ -189,8 +189,8 @@
             />
           </el-select>
         </el-form-item>
-        <el-form-item label="唯一识别码" prop="uniqueCode">
-          <el-input v-model="form.uniqueCode" :readonly="form.id !== undefined" placeholder="请输入唯一识别码"/>
+        <el-form-item label="企业编码" prop="uniqueCode">
+          <el-input v-model="form.uniqueCode" :readonly="form.id !== undefined" placeholder="请输入企业编码"/>
         </el-form-item>
         <el-form-item label="用户名" prop="username">
           <el-input v-model="form.username" placeholder="请输入用户名"/>
@@ -337,7 +337,7 @@ export default {
           {required: true, message: "服务端平台不能为空", trigger: "blur"}
         ],
         uniqueCode: [
-          {required: true, message: "唯一识别码不能为空", trigger: "blur"}
+          {required: true, message: "企业编码不能为空", trigger: "blur"}
         ],
         username: [
           {required: true, message: "用户名不能为空", trigger: "blur"}
