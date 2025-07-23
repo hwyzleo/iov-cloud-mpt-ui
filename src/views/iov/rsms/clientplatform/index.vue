@@ -590,7 +590,7 @@ export default {
       this.openAccountList = true;
       this.loadingAccount = true;
       listClientPlatformAccount(clientPlatformId).then(response => {
-        this.clientPlatformAccountList = response.data;
+        this.clientPlatformAccountList = response;
         this.loadingAccount = false;
       });
     },
