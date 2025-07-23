@@ -677,7 +677,7 @@ export default {
     },
     /** 新增账号按钮操作 */
     handleAddAccount() {
-      this.reset();
+      this.resetAccount();
       this.openAccount = true;
       this.title = "添加客户端平台账号";
       this.formAccount = {
