@@ -735,7 +735,7 @@ export default {
       this.$modal.confirm('是否确认删除客户端平台账号ID为"' + row.id + '"的数据项？').then(function () {
         return delClientPlatformAccount(this.form.id, row.id);
       }).then(() => {
-        this.getList();
+        this.getClientPlatformAccountList(this.form.id);
         this.$modal.msgSuccess("删除成功");
       }).catch(() => {
       });
