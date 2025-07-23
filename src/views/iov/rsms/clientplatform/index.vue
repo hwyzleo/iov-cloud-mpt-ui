@@ -733,10 +733,11 @@ export default {
     },
     /** 删除账号按钮操作 */
     handleDeleteAccount(row) {
+      const clientPlatformId = this.form.id;
       this.$modal.confirm('是否确认删除客户端平台账号ID为"' + row.id + '"的数据项？').then(function () {
-        return delClientPlatformAccount(this.form.id, row.id);
+        return delClientPlatformAccount(clientPlatformId, row.id);
       }).then(() => {
-        this.getClientPlatformAccountList(this.form.id);
+        this.getClientPlatformAccountList(clientPlatformId);
         this.$modal.msgSuccess("删除成功");
       }).catch(() => {
         this.$modal.msgError("删除失败");
