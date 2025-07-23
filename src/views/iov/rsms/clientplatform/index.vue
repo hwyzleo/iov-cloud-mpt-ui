@@ -123,7 +123,7 @@
           <span>{{ parseTime(scope.row.createTime) }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="操作" align="center" width="380" class-name="small-padding fixed-width">
+      <el-table-column label="操作" align="center" width="390" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
             size="mini"
@@ -274,20 +274,20 @@
         <el-row>
           <el-col :span="12">
             <el-form-item label="用户名" prop="username">
-              <el-input v-model="form.username" placeholder="请输入用户名"/>
+              <el-input v-model="formAccount.username" placeholder="请输入用户名"/>
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="密码" prop="password">
-              <el-input v-model="form.password" placeholder="请输入密码"/>
+              <el-input v-model="formAccount.password" placeholder="请输入密码"/>
             </el-form-item>
           </el-col>
         </el-row>
         <el-form-item label="绑定主机名" prop="hostname">
-          <el-input v-model="form.hostname" placeholder="请输入绑定主机名"/>
+          <el-input v-model="formAccount.hostname" placeholder="请输入绑定主机名"/>
         </el-form-item>
         <el-form-item label="是否启用">
-          <el-radio-group v-model="form.enable">
+          <el-radio-group v-model="formAccount.enable">
             <el-radio
               :label="true"
             >启用
@@ -299,17 +299,17 @@
           </el-radio-group>
         </el-form-item>
         <el-form-item label="备注" prop="description">
-          <el-input v-model="form.description" type="textarea" placeholder="请输入内容"></el-input>
+          <el-input v-model="formAccount.description" type="textarea" placeholder="请输入内容"></el-input>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="submitFormAccount">确 定</el-button>
-        <el-button @click="cancel">取 消</el-button>
+        <el-button @click="cancelAccount">取 消</el-button>
       </div>
     </el-dialog>
 
     <!-- 客户端平台账号列表对话框 -->
-    <el-dialog :title="title" :visible.sync="openAccountList" width="750px" append-to-body>
+    <el-dialog :title="title" :visible.sync="openAccountList" width="900px" append-to-body>
       <el-row :gutter="10" class="mb8">
         <el-col :span="1.5">
           <el-button
@@ -360,9 +360,9 @@
       </el-row>
       <el-table v-loading="loadingAccount" :data="clientPlatformAccountList" @selection-change="handleSelectionChange">
         <el-table-column type="selection" width="55" align="center"/>
-        <el-table-column label="用户名" prop="username" width="170"/>
-        <el-table-column label="密码" align="center" prop="password" width="80"/>
-        <el-table-column label="绑定主机名" prop="hostname" width="80"/>
+        <el-table-column label="用户名" prop="username" width="100"/>
+        <el-table-column label="密码" align="center" prop="password" width="100"/>
+        <el-table-column label="绑定主机名" prop="hostname"/>
         <el-table-column label="是否启用" align="center" width="100">
           <template slot-scope="scope">
             <el-switch
@@ -625,6 +625,10 @@ export default {
       this.open = false;
       this.reset();
     },
+    cancelAccount() {
+      this.openAccount = false;
+      this.resetAccount();
+    },
     /** 关闭节点列表按钮 */
     closeNode() {
       this.openNode = false;
@@ -638,6 +642,12 @@ export default {
         description: undefined
       };
       this.resetForm("form");
+    },
+    resetAccount() {
+      this.formAccount = {
+        description: undefined
+      };
+      this.resetForm("formAccount");
     },
     /** 搜索按钮操作 */
     handleQuery() {
