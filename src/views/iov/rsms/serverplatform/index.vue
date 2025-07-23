@@ -188,7 +188,7 @@
                   v-for="dict in dict.type.iov_rsms_protocol_type"
                   :key="dict.value"
                   :label="dict.label"
-                  :value="parseInt(dict.value)"
+                  :value="dict.value"
                 />
               </el-select>
             </el-form-item>
