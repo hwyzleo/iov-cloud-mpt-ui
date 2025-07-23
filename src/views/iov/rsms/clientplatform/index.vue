@@ -309,7 +309,7 @@
     </el-dialog>
 
     <!-- 客户端平台账号列表对话框 -->
-    <el-dialog :title="title" :visible.sync="openAccountList" width="1000px" append-to-body>
+    <el-dialog :title="title" :visible.sync="openAccountList" width="1100px" append-to-body>
       <el-row :gutter="10" class="mb8">
         <el-col :span="1.5">
           <el-button
@@ -336,7 +336,6 @@
       </el-row>
       <el-table v-loading="loadingAccount" :data="clientPlatformAccountList">
         <el-table-column label="用户名" prop="username" width="100"/>
-        <el-table-column label="密码" prop="password" width="100"/>
         <el-table-column label="绑定主机名" prop="hostname"/>
         <el-table-column label="是否启用" align="center" width="100">
           <template slot-scope="scope">
@@ -368,7 +367,7 @@
               size="mini"
               type="text"
               icon="el-icon-delete"
-              @click="handleDelete(scope.row)"
+              @click="handleDeleteAccount(scope.row)"
               v-hasPermi="['iov:rsms:clientPlatform:removeAccount']"
             >删除
             </el-button>
