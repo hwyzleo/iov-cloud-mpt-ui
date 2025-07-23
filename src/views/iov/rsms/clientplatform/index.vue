@@ -123,7 +123,7 @@
           <span>{{ parseTime(scope.row.createTime) }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="操作" align="center" width="350" class-name="small-padding fixed-width">
+      <el-table-column label="操作" align="center" width="380" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
             size="mini"
@@ -309,7 +309,7 @@
     </el-dialog>
 
     <!-- 客户端平台账号列表对话框 -->
-    <el-dialog :title="title" :visible.sync="openAccount" width="750px" append-to-body>
+    <el-dialog :title="title" :visible.sync="openAccountList" width="750px" append-to-body>
       <el-row :gutter="10" class="mb8">
         <el-col :span="1.5">
           <el-button
