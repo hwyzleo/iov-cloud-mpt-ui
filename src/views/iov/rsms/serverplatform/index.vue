@@ -125,18 +125,12 @@
           {{ scope.row.heartbeat ? '是' : '否' }}
         </template>
       </el-table-column>
-      <el-table-column label="加密方式" prop="encryptType" align="center" width="120">
-        <template slot-scope="scope">
-          <span>{{ getDataEncryptType(scope.row.encryptType) }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="注册车辆数" prop="vehicleCount" align="center" width="90"/>
       <el-table-column label="创建时间" align="center" prop="createTime" width="180">
         <template slot-scope="scope">
           <span>{{ parseTime(scope.row.createTime) }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="操作" align="center" width="300" class-name="small-padding fixed-width">
+      <el-table-column label="操作" align="center" width="260" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
             size="mini"
@@ -161,14 +155,6 @@
             @click="handleSyncPlatform(scope.row)"
             v-hasPermi="['iov:rsms:serverPlatform:syncPlatform']"
           >同步平台
-          </el-button>
-          <el-button
-            size="mini"
-            type="text"
-            icon="el-icon-s-promotion"
-            @click="handleSyncVehicle(scope.row)"
-            v-hasPermi="['iov:rsms:serverPlatform:syncVehicle']"
-          >同步车辆
           </el-button>
         </template>
       </el-table-column>
@@ -274,29 +260,6 @@
             </el-form-item>
           </el-col>
         </el-row>
-        <el-row>
-          <el-col :span="12">
-            <el-form-item label="数据加密方式" prop="encryptType">
-              <el-select
-                v-model="form.encryptType"
-                placeholder="数据加密方式"
-                clearable
-              >
-                <el-option
-                  v-for="dict in dict.type.iov_rsms_data_encrypt_type"
-                  :key="dict.value"
-                  :label="dict.label"
-                  :value="parseInt(dict.value)"
-                />
-              </el-select>
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="数据加密KEY" prop="encryptKey">
-              <el-input v-model="form.encryptKey" placeholder="请输入数据加密KEY"/>
-            </el-form-item>
-          </el-col>
-        </el-row>
         <el-form-item label="备注" prop="description">
           <el-input v-model="form.description" type="textarea" placeholder="请输入内容"></el-input>
         </el-form-item>
@@ -315,12 +278,13 @@ import {
   getServerPlatform,
   addServerPlatform,
   updateServerPlatform,
-  delServerPlatform, syncServerPlatformVehicle, syncServerPlatformInfo
+  delServerPlatform,
+  syncServerPlatformInfo
 } from "@/api/iov/rsms/serverplatform";
 
 export default {
   name: "ServerPlatform",
-  dicts: ['iov_rsms_server_platform_type','iov_rsms_data_encrypt_type'],
+  dicts: ['iov_rsms_server_platform_type'],
   data() {
     return {
       // 遮罩层
@@ -375,9 +339,6 @@ export default {
         ],
         reportFrequency: [
           {required: true, message: "上报频率不能为空", trigger: "blur"}
-        ],
-        encryptType: [
-          {required: true, message: "数据加密方式不能为空", trigger: "blur"}
         ]
       },
     };
@@ -505,15 +466,6 @@ export default {
     handleSyncPlatform(row) {
       this.$modal.confirm('是否确认同步服务端平台ID为"' + row.id + '"的信息？').then(function () {
         return syncServerPlatformInfo(row.id);
-      }).then(() => {
-        this.$modal.msgSuccess("同步成功");
-      }).catch(() => {
-      });
-    },
-    /** 同步车辆按钮操作 */
-    handleSyncVehicle(row) {
-      this.$modal.confirm('是否确认同步服务端平台ID为"' + row.id + '"的车辆？').then(function () {
-        return syncServerPlatformVehicle(row.id);
       }).then(() => {
         this.$modal.msgSuccess("同步成功");
       }).catch(() => {

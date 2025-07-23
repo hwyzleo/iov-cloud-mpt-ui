@@ -58,11 +58,3 @@ export function syncServerPlatformInfo(serverPlatformId) {
     method: 'post'
   })
 }
-
-// 同步服务端平台车辆
-export function syncServerPlatformVehicle(serverPlatformId) {
-  return request({
-    url: '/tsp-rsms/mpt/serverPlatform/' + serverPlatformId + '/action/syncVehicle',
-    method: 'post'
-  })
-}
