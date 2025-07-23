@@ -99,7 +99,7 @@
           <span>{{ getServerPlatformName(scope.row.serverPlatformCode) }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="企业编码" prop="uniqueCode" width="150"/>
+      <el-table-column label="企业编码" prop="uniqueCode" width="170"/>
       <el-table-column label="采集频率" align="center" prop="collectFrequency" width="80"/>
       <el-table-column label="上报频率" align="center" prop="reportFrequency" width="80"/>
       <el-table-column label="数据加密方式" align="center" prop="encryptType" width="100">
@@ -140,6 +140,14 @@
             @click="handleDelete(scope.row)"
             v-hasPermi="['iov:rsms:clientPlatform:remove']"
           >删除
+          </el-button>
+          <el-button
+            size="mini"
+            type="text"
+            icon="el-icon-menu"
+            @click="handleAccount(scope.row)"
+            v-hasPermi="['iov:rsms:clientPlatform:listAccount']"
+          >账号管理
           </el-button>
           <el-button
             size="mini"
@@ -260,6 +268,164 @@
       </div>
     </el-dialog>
 
+    <!-- 添加或修改客户端平台账号对话框 -->
+    <el-dialog :title="title" :visible.sync="openAccount" width="750px" append-to-body>
+      <el-form ref="form" :model="formAccount" :rules="rulesAccount" label-width="130px">
+        <el-row>
+          <el-col :span="12">
+            <el-form-item label="用户名" prop="username">
+              <el-input v-model="form.username" placeholder="请输入用户名"/>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="密码" prop="password">
+              <el-input v-model="form.password" placeholder="请输入密码"/>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-form-item label="绑定主机名" prop="hostname">
+          <el-input v-model="form.hostname" placeholder="请输入绑定主机名"/>
+        </el-form-item>
+        <el-form-item label="是否启用">
+          <el-radio-group v-model="form.enable">
+            <el-radio
+              :label="true"
+            >启用
+            </el-radio>
+            <el-radio
+              :label="false"
+            >停用
+            </el-radio>
+          </el-radio-group>
+        </el-form-item>
+        <el-form-item label="备注" prop="description">
+          <el-input v-model="form.description" type="textarea" placeholder="请输入内容"></el-input>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="submitFormAccount">确 定</el-button>
+        <el-button @click="cancel">取 消</el-button>
+      </div>
+    </el-dialog>
+
+    <!-- 客户端平台账号列表对话框 -->
+    <el-dialog :title="title" :visible.sync="openAccount" width="750px" append-to-body>
+      <el-row :gutter="10" class="mb8">
+        <el-col :span="1.5">
+          <el-button
+            type="primary"
+            plain
+            icon="el-icon-plus"
+            size="mini"
+            @click="handleAddAccount"
+            v-hasPermi="['iov:rsms:clientPlatform:addAccount']"
+          >新增
+          </el-button>
+        </el-col>
+        <el-col :span="1.5">
+          <el-button
+            type="success"
+            plain
+            icon="el-icon-edit"
+            size="mini"
+            :disabled="single"
+            @click="handleUpdate"
+            v-hasPermi="['iov:rsms:clientPlatform:editAccount']"
+          >修改
+          </el-button>
+        </el-col>
+        <el-col :span="1.5">
+          <el-button
+            type="danger"
+            plain
+            icon="el-icon-delete"
+            size="mini"
+            :disabled="multiple"
+            @click="handleDelete"
+            v-hasPermi="['iov:rsms:clientPlatform:removeAccount']"
+          >删除
+          </el-button>
+        </el-col>
+        <el-col :span="1.5">
+          <el-button
+            type="warning"
+            plain
+            icon="el-icon-download"
+            size="mini"
+            @click="handleExport"
+            v-hasPermi="['iov:rsms:clientPlatform:exportAccount']"
+          >导出
+          </el-button>
+        </el-col>
+      </el-row>
+      <el-table v-loading="loadingAccount" :data="clientPlatformAccountList" @selection-change="handleSelectionChange">
+        <el-table-column type="selection" width="55" align="center"/>
+        <el-table-column label="用户名" prop="username" width="170"/>
+        <el-table-column label="密码" align="center" prop="password" width="80"/>
+        <el-table-column label="绑定主机名" prop="hostname" width="80"/>
+        <el-table-column label="是否启用" align="center" width="100">
+          <template slot-scope="scope">
+            <el-switch
+              v-model="scope.row.enable"
+              :active-value="true"
+              :inactive-value="false"
+            ></el-switch>
+          </template>
+        </el-table-column>
+        <el-table-column label="连接状态" align="center" prop="connectStat" width="120"/>
+        <el-table-column label="登录状态" align="center" prop="loginStat" width="120"/>
+        <el-table-column label="创建时间" align="center" prop="createTime" width="180">
+          <template slot-scope="scope">
+            <span>{{ parseTime(scope.row.createTime) }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="操作" align="center" width="350" class-name="small-padding fixed-width">
+          <template slot-scope="scope">
+            <el-button
+              size="mini"
+              type="text"
+              icon="el-icon-edit"
+              @click="handleUpdate(scope.row)"
+              v-hasPermi="['iov:rsms:clientPlatform:edit']"
+            >修改
+            </el-button>
+            <el-button
+              size="mini"
+              type="text"
+              icon="el-icon-delete"
+              @click="handleDelete(scope.row)"
+              v-hasPermi="['iov:rsms:clientPlatform:remove']"
+            >删除
+            </el-button>
+            <el-button
+              size="mini"
+              type="text"
+              icon="el-icon-menu"
+              @click="handleNode(scope.row)"
+              v-hasPermi="['iov:rsms:clientPlatform:listNode']"
+            >节点管理
+            </el-button>
+            <el-button
+              size="mini"
+              type="text"
+              icon="el-icon-info"
+              @click="handleLoginHistory(scope.row)"
+              v-hasPermi="['iov:rsms:clientPlatform:listLoginHistory']"
+            >登录历史
+            </el-button>
+            <el-button
+              size="mini"
+              type="text"
+              icon="el-icon-s-promotion"
+              @click="handleSyncPlatform(scope.row)"
+              v-hasPermi="['iov:rsms:clientPlatform:syncPlatform']"
+            >同步平台
+            </el-button>
+          </template>
+        </el-table-column>
+      </el-table>
+    </el-dialog>
+
     <!-- 客户端平台节点 -->
     <el-drawer title="节点列表" :visible.sync="openNode" direction="rtl" size="30%" :modal="true"
                :append-to-body="true" :before-close="closeNode">
@@ -318,14 +484,17 @@
 <script>
 import {
   addClientPlatform,
+  addClientPlatformAccount,
+  updateClientPlatform,
+  updateClientPlatformAccount,
   delClientPlatform,
   getClientPlatform,
   listClientPlatform,
+  listClientPlatformAccount,
   listClientPlatformLoginHistory,
   login,
   logout,
-  syncClientPlatformInfo,
-  updateClientPlatform
+  syncClientPlatformInfo
 } from "@/api/iov/rsms/clientplatform";
 import {listAllServerPlatform} from "@/api/iov/rsms/serverplatform";
 
@@ -336,6 +505,7 @@ export default {
     return {
       // 遮罩层
       loading: true,
+      loadingAccount: true,
       loadingLoginHistory: true,
       // 选中数组
       ids: [],
@@ -349,6 +519,7 @@ export default {
       total: 0,
       // 客户端平台表格数据
       clientPlatformList: [],
+      clientPlatformAccountList: [],
       clientPlatformNodeList: [],
       clientPlatformLoginHistoryList: [],
       // 服务端平台表格数据
@@ -357,6 +528,8 @@ export default {
       title: "",
       // 是否显示弹出层
       open: false,
+      openAccount: false,
+      openAccountList: false,
       openNode: false,
       openLoginHistory: false,
       // 日期范围
@@ -368,6 +541,7 @@ export default {
       },
       // 表单参数
       form: {},
+      formAccount: {},
       // 表单校验
       rules: {
         serverPlatformCode: [
@@ -386,6 +560,14 @@ export default {
           {required: true, message: "数据加密方式不能为空", trigger: "blur"}
         ]
       },
+      rulesAccount: {
+        username: [
+          {required: true, message: "用户名不能为空", trigger: "blur"}
+        ],
+        password: [
+          {required: true, message: "密码不能为空", trigger: "blur"}
+        ]
+      },
     };
   },
   created() {
@@ -402,6 +584,15 @@ export default {
           this.loading = false;
         }
       );
+    },
+    /** 查询客户端平台账号列表 */
+    getClientPlatformAccountList(clientPlatformId) {
+      this.openAccountList = true;
+      this.loadingAccount = true;
+      listClientPlatformAccount(clientPlatformId).then(response => {
+        this.clientPlatformAccountList = response.data;
+        this.loadingAccount = false;
+      });
     },
     /** 获取所有服务端平台列表 */
     getAllServerPlatform() {
@@ -474,6 +665,15 @@ export default {
         enable: true
       };
     },
+    /** 新增账号按钮操作 */
+    handleAddAccount() {
+      this.reset();
+      this.openAccount = true;
+      this.title = "添加客户端平台账号";
+      this.formAccount = {
+        enable: true
+      };
+    },
     /** 修改按钮操作 */
     handleUpdate(row) {
       this.reset();
@@ -504,6 +704,26 @@ export default {
         }
       });
     },
+    /** 账号提交按钮 */
+    submitFormAccount: function () {
+      this.$refs["formAccount"].validate(valid => {
+        if (valid) {
+          if (this.formAccount.id !== undefined) {
+            updateClientPlatformAccount(this.formAccount).then(response => {
+              this.$modal.msgSuccess("修改成功");
+              this.openAccount = false;
+              this.getClientPlatformAccountList(this.form.id);
+            });
+          } else {
+            addClientPlatformAccount(this.formAccount).then(response => {
+              this.$modal.msgSuccess("新增成功");
+              this.openAccount = false;
+              this.getClientPlatformAccountList(this.form.id);
+            });
+          }
+        }
+      });
+    },
     /** 删除按钮操作 */
     handleDelete(row) {
       const clientPlatformIds = row.id || this.ids;
@@ -514,6 +734,11 @@ export default {
         this.$modal.msgSuccess("删除成功");
       }).catch(() => {
       });
+    },
+    /** 账号管理按钮操作 */
+    handleAccount(row) {
+      this.form.id = row.id;
+      this.getClientPlatformAccountList(row.id);
     },
     /** 节点管理按钮操作 */
     handleNode(row) {

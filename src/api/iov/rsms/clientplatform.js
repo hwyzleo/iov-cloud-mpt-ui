@@ -9,6 +9,14 @@ export function listClientPlatform(query) {
   })
 }
 
+// 查询客户端平台账号列表
+export function listClientPlatformAccount(clientPlatformId) {
+  return request({
+    url: '/tsp-rsms/mpt/clientPlatform/' + clientPlatformId + '/account',
+    method: 'get'
+  })
+}
+
 // 查询客户端平台登录历史列表
 export function listClientPlatformLoginHistory(clientPlatformId) {
   return request({
@@ -34,8 +42,26 @@ export function addClientPlatform(data) {
   })
 }
 
+// 新增客户端平台账号
+export function addClientPlatformAccount(data) {
+  return request({
+    url: '/tsp-rsms/mpt/clientPlatform',
+    method: 'post',
+    data: data
+  })
+}
+
 // 修改客户端平台
 export function updateClientPlatform(data) {
+  return request({
+    url: '/tsp-rsms/mpt/clientPlatform',
+    method: 'put',
+    data: data
+  })
+}
+
+// 修改客户端平台账号
+export function updateClientPlatformAccount(data) {
   return request({
     url: '/tsp-rsms/mpt/clientPlatform',
     method: 'put',
