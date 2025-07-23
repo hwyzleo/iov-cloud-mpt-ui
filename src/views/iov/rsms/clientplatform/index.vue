@@ -728,6 +728,7 @@ export default {
         this.getList();
         this.$modal.msgSuccess("删除成功");
       }).catch(() => {
+        this.$modal.msgError("删除失败");
       });
     },
     /** 删除账号按钮操作 */
@@ -738,6 +739,7 @@ export default {
         this.getClientPlatformAccountList(this.form.id);
         this.$modal.msgSuccess("删除成功");
       }).catch(() => {
+        this.$modal.msgError("删除失败");
       });
     },
     /** 账号管理按钮操作 */
