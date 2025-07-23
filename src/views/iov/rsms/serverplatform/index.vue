@@ -117,8 +117,6 @@
           <span>{{ getProtocolType(scope.row.protocol) }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="采集频率" align="center" prop="collectFrequency" width="80"/>
-      <el-table-column label="上报频率" align="center" prop="reportFrequency" width="80"/>
       <el-table-column label="读写同步" align="center" prop="readWriteSync" width="80">
         <template slot-scope="scope">
           {{ scope.row.readWriteSync ? '是' : '否' }}
@@ -235,18 +233,6 @@
         </el-row>
         <el-row>
           <el-col :span="12">
-            <el-form-item label="采集频率" prop="collectFrequency">
-              <el-input-number v-model="form.collectFrequency" controls-position="right" :min="1"/>
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="上报频率" prop="reportFrequency">
-              <el-input-number v-model="form.reportFrequency" controls-position="right" :min="1"/>
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <el-row>
-          <el-col :span="12">
             <el-form-item label="是否读写同步">
               <el-radio-group v-model="form.readWriteSync">
                 <el-radio
@@ -348,12 +334,6 @@ export default {
         ],
         protocol: [
           {required: true, message: "平台协议不能为空", trigger: "blur"}
-        ],
-        collectFrequency: [
-          {required: true, message: "采集频率不能为空", trigger: "blur"}
-        ],
-        reportFrequency: [
-          {required: true, message: "上报频率不能为空", trigger: "blur"}
         ]
       },
     };
