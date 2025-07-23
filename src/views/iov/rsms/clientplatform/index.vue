@@ -100,8 +100,13 @@
         </template>
       </el-table-column>
       <el-table-column label="企业编码" prop="uniqueCode" width="120"/>
-      <el-table-column label="用户名" prop="username" width="100"/>
-      <el-table-column label="绑定主机名" prop="hostname"/>
+      <el-table-column label="采集频率" align="center" prop="collectFrequency" width="80"/>
+      <el-table-column label="上报频率" align="center" prop="reportFrequency" width="80"/>
+      <el-table-column label="数据加密方式" prop="encryptType" width="100">
+        <template slot-scope="scope">
+          <span>{{ getDataEncryptType(scope.row.encryptType) }}</span>
+        </template>
+      </el-table-column>
       <el-table-column label="是否启用" align="center" width="100">
         <template slot-scope="scope">
           <el-switch
@@ -192,15 +197,41 @@
         <el-form-item label="企业编码" prop="uniqueCode">
           <el-input v-model="form.uniqueCode" :readonly="form.id !== undefined" placeholder="请输入企业编码"/>
         </el-form-item>
-        <el-form-item label="用户名" prop="username">
-          <el-input v-model="form.username" placeholder="请输入用户名"/>
-        </el-form-item>
-        <el-form-item label="密码" prop="password">
-          <el-input v-model="form.password" placeholder="请输入密码"/>
-        </el-form-item>
-        <el-form-item label="绑定主机名" prop="hostname">
-          <el-input v-model="form.hostname" placeholder="请输入绑定主机名"/>
-        </el-form-item>
+        <el-row>
+          <el-col :span="12">
+            <el-form-item label="采集频率" prop="collectFrequency">
+              <el-input-number v-model="form.collectFrequency" controls-position="right" :min="1"/>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="上报频率" prop="reportFrequency">
+              <el-input-number v-model="form.reportFrequency" controls-position="right" :min="1"/>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="12">
+            <el-form-item label="数据加密方式" prop="encryptType">
+              <el-select
+                v-model="form.encryptType"
+                placeholder="数据加密方式"
+                clearable
+              >
+                <el-option
+                  v-for="dict in dict.type.iov_rsms_data_encrypt_type"
+                  :key="dict.value"
+                  :label="dict.label"
+                  :value="parseInt(dict.value)"
+                />
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="数据加密KEY" prop="encryptKey">
+              <el-input v-model="form.encryptKey" placeholder="请输入数据加密KEY"/>
+            </el-form-item>
+          </el-col>
+        </el-row>
         <el-form-item label="是否启用">
           <el-radio-group v-model="form.enable">
             <el-radio
@@ -294,7 +325,7 @@ import {listAllServerPlatform} from "@/api/iov/rsms/serverplatform";
 
 export default {
   name: "ClientPlatform",
-  dicts: [],
+  dicts: ['iov_rsms_data_encrypt_type'],
   data() {
     return {
       // 遮罩层
@@ -344,6 +375,12 @@ export default {
         ],
         password: [
           {required: true, message: "密码不能为空", trigger: "blur"}
+        ],
+        collectFrequency: [
+          {required: true, message: "采集频率不能为空", trigger: "blur"}
+        ],
+        reportFrequency: [
+          {required: true, message: "上报频率不能为空", trigger: "blur"}
         ]
       },
     };
@@ -378,6 +415,16 @@ export default {
         serverPlatform => serverPlatform.code === serverPlatformCode
       )
       return item ? item.name : serverPlatformCode
+    },
+    /** 获取数据加密类型 */
+    getDataEncryptType(dataEncryptType) {
+      if (!this.dict || !this.dict.type || !this.dict.type.iov_rsms_data_encrypt_type) {
+        return dataEncryptType;
+      }
+      const item = this.dict.type.iov_rsms_data_encrypt_type.find(
+        dict => parseInt(dict.value) === dataEncryptType
+      )
+      return item ? item.label : dataEncryptType
     },
     /** 取消按钮 */
     cancel() {
