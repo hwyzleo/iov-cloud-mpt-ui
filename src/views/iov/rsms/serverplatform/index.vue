@@ -179,7 +179,18 @@
           </el-col>
           <el-col :span="12">
             <el-form-item label="平台协议" prop="protocol">
-              <el-input v-model="form.protocol" placeholder="请输入平台协议"/>
+              <el-select
+                v-model="form.protocol"
+                placeholder="平台协议"
+                clearable
+              >
+                <el-option
+                  v-for="dict in dict.type.iov_rsms_protocol_type"
+                  :key="dict.value"
+                  :label="dict.label"
+                  :value="parseInt(dict.value)"
+                />
+              </el-select>
             </el-form-item>
           </el-col>
         </el-row>
@@ -284,7 +295,7 @@ import {
 
 export default {
   name: "ServerPlatform",
-  dicts: ['iov_rsms_server_platform_type'],
+  dicts: ['iov_rsms_server_platform_type','iov_rsms_protocol_type'],
   data() {
     return {
       // 遮罩层
