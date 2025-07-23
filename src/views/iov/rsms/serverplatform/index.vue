@@ -103,16 +103,20 @@
 
     <el-table v-loading="loading" :data="serverPlatformList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center"/>
-      <el-table-column label="平台代码" align="center" prop="code" width="80"/>
+      <el-table-column label="平台代码" align="center" prop="code" width="100"/>
       <el-table-column label="平台名称" prop="name"/>
       <el-table-column label="平台类型" align="center" prop="type" width="80">
         <template slot-scope="scope">
           <span>{{ getServerPlatformType(scope.row.type) }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="平台地址" prop="url" width="120"/>
+      <el-table-column label="平台地址" prop="url" width="140"/>
       <el-table-column label="平台端口" align="center" prop="port" width="80"/>
-      <el-table-column label="平台协议" align="center" prop="protocol" width="80"/>
+      <el-table-column label="平台协议" align="center" prop="protocol" width="80">
+        <template slot-scope="scope">
+          <span>{{ getProtocolType(scope.row.protocol) }}</span>
+        </template>
+      </el-table-column>
       <el-table-column label="采集频率" align="center" prop="collectFrequency" width="80"/>
       <el-table-column label="上报频率" align="center" prop="reportFrequency" width="80"/>
       <el-table-column label="读写同步" align="center" prop="readWriteSync" width="80">
@@ -130,7 +134,7 @@
           <span>{{ parseTime(scope.row.createTime) }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="操作" align="center" width="260" class-name="small-padding fixed-width">
+      <el-table-column label="操作" align="center" width="240" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
             size="mini"
@@ -378,15 +382,15 @@ export default {
       )
       return item ? item.label : serverPlatformType
     },
-    /** 获取数据加密类型 */
-    getDataEncryptType(dataEncryptType) {
-      if (!this.dict || !this.dict.type || !this.dict.type.iov_rsms_data_encrypt_type) {
-        return dataEncryptType;
+    /** 获取协议类型 */
+    getProtocolType(protocol) {
+      if (!this.dict || !this.dict.type || !this.dict.type.iov_rsms_protocol_type) {
+        return protocol;
       }
-      const item = this.dict.type.iov_rsms_data_encrypt_type.find(
-        dict => parseInt(dict.value) === dataEncryptType
+      const item = this.dict.type.iov_rsms_protocol_type.find(
+        dict => dict.value === protocol
       )
-      return item ? item.label : dataEncryptType
+      return item ? item.label : protocol
     },
     /** 取消按钮 */
     cancel() {
