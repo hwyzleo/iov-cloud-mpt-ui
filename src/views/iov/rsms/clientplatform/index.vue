@@ -309,7 +309,7 @@
     </el-dialog>
 
     <!-- 客户端平台账号列表对话框 -->
-    <el-dialog :title="title" :visible.sync="openAccountList" width="900px" append-to-body>
+    <el-dialog :title="title" :visible.sync="openAccountList" width="1000px" append-to-body>
       <el-row :gutter="10" class="mb8">
         <el-col :span="1.5">
           <el-button
@@ -324,30 +324,6 @@
         </el-col>
         <el-col :span="1.5">
           <el-button
-            type="success"
-            plain
-            icon="el-icon-edit"
-            size="mini"
-            :disabled="single"
-            @click="handleUpdate"
-            v-hasPermi="['iov:rsms:clientPlatform:editAccount']"
-          >修改
-          </el-button>
-        </el-col>
-        <el-col :span="1.5">
-          <el-button
-            type="danger"
-            plain
-            icon="el-icon-delete"
-            size="mini"
-            :disabled="multiple"
-            @click="handleDelete"
-            v-hasPermi="['iov:rsms:clientPlatform:removeAccount']"
-          >删除
-          </el-button>
-        </el-col>
-        <el-col :span="1.5">
-          <el-button
             type="warning"
             plain
             icon="el-icon-download"
@@ -358,10 +334,9 @@
           </el-button>
         </el-col>
       </el-row>
-      <el-table v-loading="loadingAccount" :data="clientPlatformAccountList" @selection-change="handleSelectionChange">
-        <el-table-column type="selection" width="55" align="center"/>
+      <el-table v-loading="loadingAccount" :data="clientPlatformAccountList">
         <el-table-column label="用户名" prop="username" width="100"/>
-        <el-table-column label="密码" align="center" prop="password" width="100"/>
+        <el-table-column label="密码" prop="password" width="100"/>
         <el-table-column label="绑定主机名" prop="hostname"/>
         <el-table-column label="是否启用" align="center" width="100">
           <template slot-scope="scope">
@@ -385,8 +360,8 @@
               size="mini"
               type="text"
               icon="el-icon-edit"
-              @click="handleUpdate(scope.row)"
-              v-hasPermi="['iov:rsms:clientPlatform:edit']"
+              @click="handleUpdateAccount(scope.row)"
+              v-hasPermi="['iov:rsms:clientPlatform:editAccount']"
             >修改
             </el-button>
             <el-button
@@ -394,7 +369,7 @@
               type="text"
               icon="el-icon-delete"
               @click="handleDelete(scope.row)"
-              v-hasPermi="['iov:rsms:clientPlatform:remove']"
+              v-hasPermi="['iov:rsms:clientPlatform:removeAccount']"
             >删除
             </el-button>
             <el-button
@@ -488,7 +463,9 @@ import {
   updateClientPlatform,
   updateClientPlatformAccount,
   delClientPlatform,
+  delClientPlatformAccount,
   getClientPlatform,
+  getClientPlatformAccount,
   listClientPlatform,
   listClientPlatformAccount,
   listClientPlatformLoginHistory,
@@ -694,6 +671,15 @@ export default {
       });
       this.title = "修改客户端平台";
     },
+    /** 修改账号按钮操作 */
+    handleUpdateAccount(row) {
+      this.resetAccount();
+      getClientPlatformAccount(this.form.id, row.id).then(response => {
+        this.formAccount = response.data;
+        this.openAccount = true;
+      });
+      this.title = "修改客户端平台账号";
+    },
     /** 提交按钮 */
     submitForm: function () {
       this.$refs["form"].validate(valid => {
@@ -739,6 +725,16 @@ export default {
       const clientPlatformIds = row.id || this.ids;
       this.$modal.confirm('是否确认删除客户端平台ID为"' + clientPlatformIds + '"的数据项？').then(function () {
         return delClientPlatform(clientPlatformIds);
+      }).then(() => {
+        this.getList();
+        this.$modal.msgSuccess("删除成功");
+      }).catch(() => {
+      });
+    },
+    /** 删除账号按钮操作 */
+    handleDeleteAccount(row) {
+      this.$modal.confirm('是否确认删除客户端平台账号ID为"' + row.id + '"的数据项？').then(function () {
+        return delClientPlatformAccount(this.form.id, row.id);
       }).then(() => {
         this.getList();
         this.$modal.msgSuccess("删除成功");

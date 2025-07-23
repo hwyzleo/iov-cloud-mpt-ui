@@ -33,6 +33,14 @@ export function getClientPlatform(clientPlatformId) {
   })
 }
 
+// 查询客户端平台详细
+export function getClientPlatformAccount(clientPlatformId, clientPlatformAccountId) {
+  return request({
+    url: '/tsp-rsms/mpt/clientPlatform/' + clientPlatformId + '/' + clientPlatformAccountId,
+    method: 'get'
+  })
+}
+
 // 新增客户端平台
 export function addClientPlatform(data) {
   return request({
@@ -73,6 +81,14 @@ export function updateClientPlatformAccount(clientPlatformId, data) {
 export function delClientPlatform(clientPlatformIds) {
   return request({
     url: '/tsp-rsms/mpt/clientPlatform/' + clientPlatformIds,
+    method: 'delete'
+  })
+}
+
+// 删除客户端平台账号
+export function delClientPlatformAccount(clientPlatformId, clientPlatformAccountIds) {
+  return request({
+    url: '/tsp-rsms/mpt/clientPlatform/' + clientPlatformId + '/' + clientPlatformAccountIds,
     method: 'delete'
   })
 }
