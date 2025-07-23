@@ -94,15 +94,15 @@
 
     <el-table v-loading="loading" :data="clientPlatformList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center"/>
-      <el-table-column label="服务端平台" prop="serverPlatformCode" width="150">
+      <el-table-column label="服务端平台" prop="serverPlatformCode">
         <template slot-scope="scope">
           <span>{{ getServerPlatformName(scope.row.serverPlatformCode) }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="企业编码" prop="uniqueCode" width="120"/>
+      <el-table-column label="企业编码" prop="uniqueCode" width="150"/>
       <el-table-column label="采集频率" align="center" prop="collectFrequency" width="80"/>
       <el-table-column label="上报频率" align="center" prop="reportFrequency" width="80"/>
-      <el-table-column label="数据加密方式" prop="encryptType" width="100">
+      <el-table-column label="数据加密方式" align="center" prop="encryptType" width="100">
         <template slot-scope="scope">
           <span>{{ getDataEncryptType(scope.row.encryptType) }}</span>
         </template>
@@ -116,8 +116,8 @@
           ></el-switch>
         </template>
       </el-table-column>
-      <el-table-column label="连接状态" align="center" prop="connectStat" width="150"/>
-      <el-table-column label="登录状态" align="center" prop="loginStat" width="150"/>
+      <el-table-column label="连接状态" align="center" prop="connectStat" width="120"/>
+      <el-table-column label="登录状态" align="center" prop="loginStat" width="120"/>
       <el-table-column label="创建时间" align="center" prop="createTime" width="180">
         <template slot-scope="scope">
           <span>{{ parseTime(scope.row.createTime) }}</span>
@@ -180,23 +180,29 @@
     <!-- 添加或修改客户端平台对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="750px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="130px">
-        <el-form-item label="服务端平台" prop="serverPlatformCode">
-          <el-select
-            v-model="form.serverPlatformCode"
-            placeholder="服务端平台"
-            clearable
-          >
-            <el-option
-              v-for="serverPlatform in this.serverPlatformList"
-              :key="serverPlatform.code"
-              :label="serverPlatform.name"
-              :value="serverPlatform.code"
-            />
-          </el-select>
-        </el-form-item>
-        <el-form-item label="企业编码" prop="uniqueCode">
-          <el-input v-model="form.uniqueCode" :readonly="form.id !== undefined" placeholder="请输入企业编码"/>
-        </el-form-item>
+        <el-row>
+          <el-col :span="12">
+            <el-form-item label="服务端平台" prop="serverPlatformCode">
+              <el-select
+                v-model="form.serverPlatformCode"
+                placeholder="服务端平台"
+                clearable
+              >
+                <el-option
+                  v-for="serverPlatform in this.serverPlatformList"
+                  :key="serverPlatform.code"
+                  :label="serverPlatform.name"
+                  :value="serverPlatform.code"
+                />
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="企业编码" prop="uniqueCode">
+              <el-input v-model="form.uniqueCode" :readonly="form.id !== undefined" placeholder="请输入企业编码"/>
+            </el-form-item>
+          </el-col>
+        </el-row>
         <el-row>
           <el-col :span="12">
             <el-form-item label="采集频率" prop="collectFrequency">
@@ -370,17 +376,14 @@ export default {
         uniqueCode: [
           {required: true, message: "企业编码不能为空", trigger: "blur"}
         ],
-        username: [
-          {required: true, message: "用户名不能为空", trigger: "blur"}
-        ],
-        password: [
-          {required: true, message: "密码不能为空", trigger: "blur"}
-        ],
         collectFrequency: [
           {required: true, message: "采集频率不能为空", trigger: "blur"}
         ],
         reportFrequency: [
           {required: true, message: "上报频率不能为空", trigger: "blur"}
+        ],
+        encryptType: [
+          {required: true, message: "数据加密方式不能为空", trigger: "blur"}
         ]
       },
     };
