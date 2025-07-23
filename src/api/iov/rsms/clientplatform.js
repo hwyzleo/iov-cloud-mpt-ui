@@ -43,9 +43,9 @@ export function addClientPlatform(data) {
 }
 
 // 新增客户端平台账号
-export function addClientPlatformAccount(data) {
+export function addClientPlatformAccount(clientPlatformId, data) {
   return request({
-    url: '/tsp-rsms/mpt/clientPlatform',
+    url: '/tsp-rsms/mpt/clientPlatform/' + clientPlatformId,
     method: 'post',
     data: data
   })
@@ -61,9 +61,9 @@ export function updateClientPlatform(data) {
 }
 
 // 修改客户端平台账号
-export function updateClientPlatformAccount(data) {
+export function updateClientPlatformAccount(clientPlatformId, data) {
   return request({
-    url: '/tsp-rsms/mpt/clientPlatform',
+    url: '/tsp-rsms/mpt/clientPlatform/' + clientPlatformId,
     method: 'put',
     data: data
   })

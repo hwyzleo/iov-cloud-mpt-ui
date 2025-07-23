@@ -719,13 +719,13 @@ export default {
       this.$refs["formAccount"].validate(valid => {
         if (valid) {
           if (this.formAccount.id !== undefined) {
-            updateClientPlatformAccount(this.formAccount).then(response => {
+            updateClientPlatformAccount(this.form.id, this.formAccount).then(response => {
               this.$modal.msgSuccess("修改成功");
               this.openAccount = false;
               this.getClientPlatformAccountList(this.form.id);
             });
           } else {
-            addClientPlatformAccount(this.formAccount).then(response => {
+            addClientPlatformAccount(this.form.id, this.formAccount).then(response => {
               this.$modal.msgSuccess("新增成功");
               this.openAccount = false;
               this.getClientPlatformAccountList(this.form.id);
