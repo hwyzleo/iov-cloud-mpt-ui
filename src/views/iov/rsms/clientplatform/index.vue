@@ -270,7 +270,7 @@
 
     <!-- 添加或修改客户端平台账号对话框 -->
     <el-dialog :title="title" :visible.sync="openAccount" width="750px" append-to-body>
-      <el-form ref="form" :model="formAccount" :rules="rulesAccount" label-width="130px">
+      <el-form ref="formAccount" :model="formAccount" :rules="rulesAccount" label-width="130px">
         <el-row>
           <el-col :span="12">
             <el-form-item label="用户名" prop="username">
