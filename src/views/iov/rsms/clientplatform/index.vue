@@ -425,6 +425,13 @@
           </template>
         </el-table-column>
       </el-table>
+      <pagination
+        v-show="totalLoginHistory>0"
+        :total="totalLoginHistory"
+        :page.sync="queryParamsLoginHistory.pageNum"
+        :limit.sync="queryParamsLoginHistory.pageSize"
+        @pagination="getList"
+      />
     </el-drawer>
 
     <!-- 客户端平台登录历史 -->
@@ -493,6 +500,7 @@ export default {
       showSearch: true,
       // 总条数
       total: 0,
+      totalLoginHistory: 0,
       // 客户端平台表格数据
       clientPlatformList: [],
       clientPlatformAccountList: [],
@@ -512,6 +520,10 @@ export default {
       dateRange: [],
       // 查询参数
       queryParams: {
+        pageNum: 1,
+        pageSize: 10
+      },
+      queryParamsLoginHistory: {
         pageNum: 1,
         pageSize: 10
       },
@@ -767,7 +779,7 @@ export default {
       this.loadingLoginHistory = true;
       listClientPlatformLoginHistory(row.id).then(response => {
           this.clientPlatformLoginHistoryList = response.rows;
-          this.total = response.total;
+          this.totalLoginHistory = response.total;
           this.loadingLoginHistory = false;
         }
       );
