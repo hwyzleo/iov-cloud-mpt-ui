@@ -155,7 +155,7 @@
                   v-for="dict in dict.type.iov_rsms_vehicle_report_state"
                   :key="dict.value"
                   :label="dict.label"
-                  :value="dict.value"
+                  :value="parseInt(dict.value)"
                 />
               </el-select>
             </el-form-item>
