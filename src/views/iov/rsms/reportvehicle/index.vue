@@ -25,21 +25,6 @@
           />
         </el-select>
       </el-form-item>
-      <el-form-item label="已注册平台" prop="serverPlatformCode">
-        <el-select
-          v-model="queryParams.serverPlatformCode"
-          placeholder="已注册平台"
-          clearable
-          style="width: 140px"
-        >
-          <el-option
-            v-for="serverPlatform in this.serverPlatformList"
-            :key="serverPlatform.code"
-            :label="serverPlatform.name"
-            :value="serverPlatform.code"
-          />
-        </el-select>
-      </el-form-item>
       <el-form-item label="创建时间">
         <el-date-picker
           v-model="dateRange"
@@ -65,7 +50,7 @@
           icon="el-icon-plus"
           size="mini"
           @click="handleAdd"
-          v-hasPermi="['iov:rsms:registeredVehicle:add']"
+          v-hasPermi="['iov:rsms:reportVehicle:add']"
         >新增
         </el-button>
       </el-col>
@@ -77,7 +62,7 @@
           size="mini"
           :disabled="single"
           @click="handleUpdate"
-          v-hasPermi="['iov:rsms:registeredVehicle:edit']"
+          v-hasPermi="['iov:rsms:reportVehicle:edit']"
         >修改
         </el-button>
       </el-col>
@@ -89,7 +74,7 @@
           size="mini"
           :disabled="multiple"
           @click="handleDelete"
-          v-hasPermi="['iov:rsms:registeredVehicle:remove']"
+          v-hasPermi="['iov:rsms:reportVehicle:remove']"
         >删除
         </el-button>
       </el-col>
@@ -100,20 +85,15 @@
           icon="el-icon-download"
           size="mini"
           @click="handleExport"
-          v-hasPermi="['iov:rsms:registeredVehicle:export']"
+          v-hasPermi="['iov:rsms:reportVehicle:export']"
         >导出
         </el-button>
       </el-col>
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
-    <el-table v-loading="loading" :data="registeredVehicleList" @selection-change="handleSelectionChange">
+    <el-table v-loading="loading" :data="reportVehicleList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center"/>
-      <el-table-column label="已注册平台" align="center" prop="serverPlatformCode" width="150">
-        <template slot-scope="scope">
-          <span>{{ getServerPlatformName(scope.row.serverPlatformCode) }}</span>
-        </template>
-      </el-table-column>
       <el-table-column label="车架号" prop="vin"/>
       <el-table-column label="车辆上报状态" align="center" prop="reportState" width="150">
         <template slot-scope="scope">
@@ -133,7 +113,7 @@
             type="text"
             icon="el-icon-edit"
             @click="handleUpdate(scope.row)"
-            v-hasPermi="['iov:rsms:registeredVehicle:edit']"
+            v-hasPermi="['iov:rsms:reportVehicle:edit']"
           >修改
           </el-button>
           <el-button
@@ -141,7 +121,7 @@
             type="text"
             icon="el-icon-delete"
             @click="handleDelete(scope.row)"
-            v-hasPermi="['iov:rsms:registeredVehicle:remove']"
+            v-hasPermi="['iov:rsms:reportVehicle:remove']"
           >删除
           </el-button>
         </template>
@@ -156,32 +136,12 @@
       @pagination="getList"
     />
 
-    <!-- 添加或修改已注册车辆对话框 -->
+    <!-- 添加或修改上报车辆对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="750px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="130px">
-        <el-row>
-          <el-col :span="12">
-            <el-form-item label="已注册平台" prop="serverPlatformCode">
-              <el-select
-                v-model="form.serverPlatformCode"
-                placeholder="已注册平台"
-                clearable
-              >
-                <el-option
-                  v-for="serverPlatform in this.serverPlatformList"
-                  :key="serverPlatform.code"
-                  :label="serverPlatform.name"
-                  :value="serverPlatform.code"
-                />
-              </el-select>
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="车架号" prop="vin">
-              <el-input v-model="form.vin" :readonly="form.id !== undefined" placeholder="请输入车架号"/>
-            </el-form-item>
-          </el-col>
-        </el-row>
+        <el-form-item label="车架号" prop="vin">
+          <el-input v-model="form.vin" :readonly="form.id !== undefined" placeholder="请输入车架号"/>
+        </el-form-item>
         <el-row>
           <el-col :span="12">
             <el-form-item label="车辆上报状态" prop="reportState">
@@ -283,16 +243,15 @@
 
 <script>
 import {
-  addRegisteredVehicle,
-  delRegisteredVehicle,
-  getRegisteredVehicle,
-  listRegisteredVehicle,
-  updateRegisteredVehicle
-} from "@/api/iov/rsms/registeredvehicle";
-import {listAllServerPlatform} from "@/api/iov/rsms/serverplatform";
+  addReportVehicle,
+  updateReportVehicle,
+  delReportVehicle,
+  getReportVehicle,
+  listReportVehicle
+} from "@/api/iov/rsms/reportvehicle";
 
 export default {
-  name: "RegisteredVehicle",
+  name: "ReportVehicle",
   dicts: ['iov_rsms_vehicle_report_state'],
   data() {
     return {
@@ -308,10 +267,8 @@ export default {
       showSearch: true,
       // 总条数
       total: 0,
-      // 已注册车辆表格数据
-      registeredVehicleList: [],
-      // 服务端平台表格数据
-      serverPlatformList: [],
+      // 上报车辆表格数据
+      reportVehicleList: [],
       // 弹出层标题
       title: "",
       // 是否显示弹出层
@@ -327,9 +284,6 @@ export default {
       form: {},
       // 表单校验
       rules: {
-        serverPlatformCode: [
-          {required: true, message: "已注册平台不能为空", trigger: "blur"}
-        ],
         vin: [
           {required: true, message: "车架号不能为空", trigger: "blur"}
         ],
@@ -340,35 +294,18 @@ export default {
     };
   },
   created() {
-    this.getAllServerPlatform();
     this.getList();
   },
   methods: {
-    /** 查询已注册车辆列表 */
+    /** 查询上报车辆列表 */
     getList() {
       this.loading = true;
-      listRegisteredVehicle(this.addDateRange(this.queryParams, this.dateRange)).then(response => {
-          this.registeredVehicleList = response.rows;
+      listReportVehicle(this.addDateRange(this.queryParams, this.dateRange)).then(response => {
+          this.reportVehicleList = response.rows;
           this.total = response.total;
           this.loading = false;
         }
       );
-    },
-    /** 获取所有服务端平台列表 */
-    getAllServerPlatform() {
-      this.loading = true;
-      listAllServerPlatform().then(response => {
-          this.serverPlatformList = response;
-          this.loading = false;
-        }
-      );
-    },
-    /** 获取服务端平台名称 */
-    getServerPlatformName(serverPlatformCode) {
-      const item = this.serverPlatformList.find(
-        serverPlatform => serverPlatform.code === serverPlatformCode
-      )
-      return item ? item.name : serverPlatformCode
     },
     /** 获取车辆上报状态 */
     getReportState(reportState) {
@@ -415,32 +352,32 @@ export default {
     handleAdd() {
       this.reset();
       this.open = true;
-      this.title = "添加已注册车辆";
+      this.title = "添加上报车辆";
       this.form = {
       };
     },
     /** 修改按钮操作 */
     handleUpdate(row) {
       this.reset();
-      const registeredVehicleId = row.id || this.ids
-      getRegisteredVehicle(registeredVehicleId).then(response => {
+      const reportVehicleId = row.id || this.ids
+      getReportVehicle(reportVehicleId).then(response => {
         this.form = response.data;
         this.open = true;
       });
-      this.title = "修改已注册车辆";
+      this.title = "修改上报车辆";
     },
     /** 提交按钮 */
     submitForm: function () {
       this.$refs["form"].validate(valid => {
         if (valid) {
           if (this.form.id !== undefined) {
-            updateRegisteredVehicle(this.form).then(response => {
+            updateReportVehicle(this.form).then(response => {
               this.$modal.msgSuccess("修改成功");
               this.open = false;
               this.getList();
             });
           } else {
-            addRegisteredVehicle(this.form).then(response => {
+            addReportVehicle(this.form).then(response => {
               this.$modal.msgSuccess("新增成功");
               this.open = false;
               this.getList();
@@ -451,9 +388,9 @@ export default {
     },
     /** 删除按钮操作 */
     handleDelete(row) {
-      const registeredVehicleIds = row.id || this.ids;
-      this.$modal.confirm('是否确认删除已注册车辆ID为"' + registeredVehicleIds + '"的数据项？').then(function () {
-        return delRegisteredVehicle(registeredVehicleIds);
+      const reportVehicleIds = row.id || this.ids;
+      this.$modal.confirm('是否确认删除上报车辆ID为"' + reportVehicleIds + '"的数据项？').then(function () {
+        return delReportVehicle(reportVehicleIds);
       }).then(() => {
         this.getList();
         this.$modal.msgSuccess("删除成功");
@@ -462,9 +399,9 @@ export default {
     },
     /** 导出按钮操作 */
     handleExport() {
-      this.download('tsp-rsms/mpt/registeredVehicle/export', {
+      this.download('tsp-rsms/mpt/reportVehicle/export', {
         ...this.queryParams
-      }, `registered_vehicle_${new Date().getTime()}.xlsx`)
+      }, `report_vehicle_${new Date().getTime()}.xlsx`)
     }
   }
 };
