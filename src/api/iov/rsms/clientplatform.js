@@ -18,10 +18,11 @@ export function listClientPlatformAccount(clientPlatformId) {
 }
 
 // 查询客户端平台登录历史列表
-export function listClientPlatformLoginHistory(clientPlatformId) {
+export function listClientPlatformLoginHistory(clientPlatformId, query) {
   return request({
     url: '/tsp-rsms/mpt/clientPlatform/' + clientPlatformId + '/loginHistory',
-    method: 'get'
+    method: 'get',
+    params: query
   })
 }
 

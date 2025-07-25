@@ -433,7 +433,7 @@
         :total="totalLoginHistory"
         :page.sync="queryParamsLoginHistory.pageNum"
         :limit.sync="queryParamsLoginHistory.pageSize"
-        @pagination="getLoginHistoryList(this.form.id)"
+        @pagination="getLoginHistoryList"
       />
     </el-drawer>
   </div>
@@ -562,9 +562,9 @@ export default {
       });
     },
     /** 查询登录历史 */
-    getLoginHistoryList(clientPlatformId) {
+    getLoginHistoryList() {
       this.loadingLoginHistory = true;
-      listClientPlatformLoginHistory(clientPlatformId).then(response => {
+      listClientPlatformLoginHistory(this.queryParamsLoginHistory.clientPlatformId, this.queryParamsLoginHistory).then(response => {
           this.clientPlatformLoginHistoryList = response.rows;
           this.totalLoginHistory = response.total;
           this.loadingLoginHistory = false;
@@ -770,9 +770,9 @@ export default {
     },
     /** 登录历史按钮操作 */
     handleLoginHistory(row) {
-      this.form.id = row.id;
+      this.queryParamsLoginHistory.clientPlatformId = row.id;
       this.openLoginHistory = true;
-      this.getLoginHistoryList(row.id);
+      this.getLoginHistoryList();
     },
     /** 同步平台按钮操作 */
     handleSyncPlatform(row) {
