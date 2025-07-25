@@ -258,6 +258,9 @@
             </el-radio>
           </el-radio-group>
         </el-form-item>
+        <el-form-item label="绑定主机名" prop="hostname">
+          <el-input v-model="form.hostname" placeholder="请输入绑定主机名"/>
+        </el-form-item>
         <el-form-item label="备注" prop="description">
           <el-input v-model="form.description" type="textarea" placeholder="请输入内容"></el-input>
         </el-form-item>
@@ -283,21 +286,29 @@
             </el-form-item>
           </el-col>
         </el-row>
-        <el-form-item label="绑定主机名" prop="hostname">
-          <el-input v-model="formAccount.hostname" placeholder="请输入绑定主机名"/>
-        </el-form-item>
-        <el-form-item label="是否启用">
-          <el-radio-group v-model="formAccount.enable">
-            <el-radio
-              :label="true"
-            >启用
-            </el-radio>
-            <el-radio
-              :label="false"
-            >停用
-            </el-radio>
-          </el-radio-group>
-        </el-form-item>
+        <el-row>
+          <el-col :span="12">
+            <el-form-item label="是否启用">
+              <el-radio-group v-model="formAccount.enable">
+                <el-radio
+                  :label="true"
+                >启用
+                </el-radio>
+                <el-radio
+                  :label="false"
+                >停用
+                </el-radio>
+              </el-radio-group>
+            </el-form-item>
+            <el-col :span="12">
+              <el-col :span="12">
+                <el-form-item label="排序" prop="sort">
+                  <el-input-number v-model="formAccount.sort" controls-position="right" :min="1"/>
+                </el-form-item>
+              </el-col>
+            </el-col>
+          </el-col>
+        </el-row>
         <el-form-item label="备注" prop="description">
           <el-input v-model="formAccount.description" type="textarea" placeholder="请输入内容"></el-input>
         </el-form-item>
@@ -309,7 +320,8 @@
     </el-dialog>
 
     <!-- 客户端平台账号列表对话框 -->
-    <el-dialog :title="title" :visible.sync="openAccountList" width="1100px" append-to-body>
+    <el-drawer title="账号列表" :visible.sync="openAccountList" direction="rtl" size="50%" :modal="true"
+               :append-to-body="true" :before-close="closeAccount">
       <el-row :gutter="10" class="mb8">
         <el-col :span="1.5">
           <el-button
@@ -336,7 +348,6 @@
       </el-row>
       <el-table v-loading="loadingAccount" :data="clientPlatformAccountList">
         <el-table-column label="用户名" prop="username" width="100"/>
-        <el-table-column label="绑定主机名" prop="hostname"/>
         <el-table-column label="是否启用" align="center" width="100">
           <template slot-scope="scope">
             <el-switch
@@ -346,8 +357,7 @@
             ></el-switch>
           </template>
         </el-table-column>
-        <el-table-column label="连接状态" align="center" prop="connectStat" width="120"/>
-        <el-table-column label="登录状态" align="center" prop="loginStat" width="120"/>
+        <el-table-column label="排序" align="center" prop="sort" width="100"/>
         <el-table-column label="创建时间" align="center" prop="createTime" width="180">
           <template slot-scope="scope">
             <span>{{ parseTime(scope.row.createTime) }}</span>
@@ -371,34 +381,10 @@
               v-hasPermi="['iov:rsms:clientPlatform:removeAccount']"
             >删除
             </el-button>
-            <el-button
-              size="mini"
-              type="text"
-              icon="el-icon-menu"
-              @click="handleNode(scope.row)"
-              v-hasPermi="['iov:rsms:clientPlatform:listNode']"
-            >节点管理
-            </el-button>
-            <el-button
-              size="mini"
-              type="text"
-              icon="el-icon-info"
-              @click="handleLoginHistory(scope.row)"
-              v-hasPermi="['iov:rsms:clientPlatform:listLoginHistory']"
-            >登录历史
-            </el-button>
-            <el-button
-              size="mini"
-              type="text"
-              icon="el-icon-s-promotion"
-              @click="handleSyncPlatform(scope.row)"
-              v-hasPermi="['iov:rsms:clientPlatform:syncPlatform']"
-            >同步平台
-            </el-button>
           </template>
         </el-table-column>
       </el-table>
-    </el-dialog>
+    </el-drawer>
 
     <!-- 客户端平台节点 -->
     <el-drawer title="节点列表" :visible.sync="openNode" direction="rtl" size="30%" :modal="true"
@@ -466,8 +452,6 @@
 import {
   addClientPlatform,
   addClientPlatformAccount,
-  updateClientPlatform,
-  updateClientPlatformAccount,
   delClientPlatform,
   delClientPlatformAccount,
   getClientPlatform,
@@ -477,7 +461,9 @@ import {
   listClientPlatformLoginHistory,
   login,
   logout,
-  syncClientPlatformInfo
+  syncClientPlatformInfo,
+  updateClientPlatform,
+  updateClientPlatformAccount
 } from "@/api/iov/rsms/clientplatform";
 import {listAllServerPlatform} from "@/api/iov/rsms/serverplatform";
 
