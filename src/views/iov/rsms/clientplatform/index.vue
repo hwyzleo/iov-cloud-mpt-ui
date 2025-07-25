@@ -123,7 +123,7 @@
           <span>{{ parseTime(scope.row.createTime) }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="操作" align="center" width="430" class-name="small-padding fixed-width">
+      <el-table-column label="操作" align="center" width="250" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
             size="mini"
@@ -443,8 +443,20 @@
           >新增
           </el-button>
         </el-col>
+        <el-col :span="1.5">
+          <el-button
+            type="danger"
+            plain
+            icon="el-icon-delete"
+            size="mini"
+            :disabled="multiple"
+            @click="handleDeleteVehicle"
+            v-hasPermi="['iov:rsms:clientPlatform:removeVehicle']"
+          >删除
+          </el-button>
+        </el-col>
       </el-row>
-      <el-table v-loading="loadingVehicle" :data="clientPlatformVehicleList" @selection-change="handleSelectionChange">
+      <el-table v-loading="loadingVehicle" :data="clientPlatformVehicleList" @selection-change="handleSelectionChangeVehicle">
         <el-table-column type="selection" width="55" align="center"/>
         <el-table-column label="车架号" prop="vin"/>
         <el-table-column label="创建时间" align="center" prop="createTime" width="160">
@@ -514,7 +526,7 @@ import {
   addClientPlatform,
   addClientPlatformAccount, addRegisteredVehicle,
   delClientPlatform,
-  delClientPlatformAccount,
+  delClientPlatformAccount, delRegisteredVehicle,
   getClientPlatform,
   getClientPlatformAccount,
   listClientPlatform,
@@ -540,10 +552,13 @@ export default {
       loadingLoginHistory: true,
       // 选中数组
       ids: [],
+      idsVehicle: [],
       // 非单个禁用
       single: true,
+      singleVehicle: true,
       // 非多个禁用
       multiple: true,
+      multipleVehicle: true,
       // 显示搜索条件
       showSearch: true,
       // 总条数
@@ -751,6 +766,11 @@ export default {
       this.single = selection.length != 1
       this.multiple = !selection.length
     },
+    handleSelectionChangeVehicle(selection) {
+      this.idsVehicle = selection.map(item => item.id)
+      this.singleVehicle = selection.length != 1
+      this.multipleVehicle = !selection.length
+    },
     /** 新增按钮操作 */
     handleAdd() {
       this.reset();
@@ -877,14 +897,13 @@ export default {
     },
     /** 删除车辆按钮操作 */
     handleDeleteVehicle(row) {
-      const clientPlatformId = this.form.id;
-      this.$modal.confirm('是否确认删除客户端平台账号ID为"' + row.id + '"的数据项？').then(function () {
-        return delClientPlatformAccount(clientPlatformId, row.id);
+      const vehicleIds = row.id || this.idsVehicle;
+      this.$modal.confirm('是否确认删除已注册车辆ID为"' + vehicleIds + '"的数据项？').then(function () {
+        return delRegisteredVehicle(this.queryParamsVehicle.clientPlatformId, vehicleIds);
       }).then(() => {
-        this.getClientPlatformAccountList(clientPlatformId);
+        this.getVehicleList();
         this.$modal.msgSuccess("删除成功");
       }).catch(() => {
-        this.$modal.msgError("删除失败");
       });
     },
     /** 账号管理按钮操作 */

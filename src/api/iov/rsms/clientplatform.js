@@ -112,6 +112,14 @@ export function delClientPlatformAccount(clientPlatformId, clientPlatformAccount
   })
 }
 
+// 删除注册车辆
+export function delRegisteredVehicle(clientPlatformId, vehicleIds) {
+  return request({
+    url: '/tsp-rsms/mpt/clientPlatform/' + clientPlatformId + '/registeredVehicle/' + vehicleIds,
+    method: 'delete'
+  })
+}
+
 // 同步客户端平台信息
 export function syncClientPlatformInfo(clientPlatformId) {
   return request({
