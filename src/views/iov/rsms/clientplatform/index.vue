@@ -123,7 +123,7 @@
           <span>{{ parseTime(scope.row.createTime) }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="操作" align="center" width="390" class-name="small-padding fixed-width">
+      <el-table-column label="操作" align="center" width="430" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
             size="mini"
@@ -842,7 +842,7 @@ export default {
       this.$refs["formVehicle"].validate(valid => {
         if (valid) {
           if (this.formVehicle.id === undefined) {
-            addRegisteredVehicle(this.form.id, this.formVehicle).then(response => {
+            addRegisteredVehicle(this.queryParamsVehicle.clientPlatformId, this.formVehicle).then(response => {
               this.$modal.msgSuccess("新增成功");
               this.openVehicle = false;
               this.getVehicleList();
