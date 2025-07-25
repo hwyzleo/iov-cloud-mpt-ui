@@ -288,27 +288,28 @@
         </el-row>
         <el-row>
           <el-col :span="12">
-            <el-form-item label="是否启用">
-              <el-radio-group v-model="formAccount.enable">
-                <el-radio
-                  :label="true"
-                >启用
-                </el-radio>
-                <el-radio
-                  :label="false"
-                >停用
-                </el-radio>
-              </el-radio-group>
+            <el-form-item label="使用上限" prop="useLimit">
+              <el-input-number v-model="formAccount.useLimit" controls-position="right" :min="0"/>
             </el-form-item>
-            <el-col :span="12">
-              <el-col :span="12">
-                <el-form-item label="排序" prop="sort">
-                  <el-input-number v-model="formAccount.sort" controls-position="right" :min="1"/>
-                </el-form-item>
-              </el-col>
-            </el-col>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="排序" prop="sort">
+              <el-input-number v-model="formAccount.sort" controls-position="right" :min="1"/>
+            </el-form-item>
           </el-col>
         </el-row>
+        <el-form-item label="是否启用">
+          <el-radio-group v-model="formAccount.enable">
+            <el-radio
+              :label="true"
+            >启用
+            </el-radio>
+            <el-radio
+              :label="false"
+            >停用
+            </el-radio>
+          </el-radio-group>
+        </el-form-item>
         <el-form-item label="备注" prop="description">
           <el-input v-model="formAccount.description" type="textarea" placeholder="请输入内容"></el-input>
         </el-form-item>
@@ -320,7 +321,7 @@
     </el-dialog>
 
     <!-- 客户端平台账号列表对话框 -->
-    <el-drawer title="账号列表" :visible.sync="openAccountList" direction="rtl" size="50%" :modal="true"
+    <el-drawer title="账号列表" :visible.sync="openAccountList" direction="rtl" size="40%" :modal="true"
                :append-to-body="true" :before-close="closeAccount">
       <el-row :gutter="10" class="mb8">
         <el-col :span="1.5">
@@ -334,20 +335,10 @@
           >新增
           </el-button>
         </el-col>
-        <el-col :span="1.5">
-          <el-button
-            type="warning"
-            plain
-            icon="el-icon-download"
-            size="mini"
-            @click="handleExport"
-            v-hasPermi="['iov:rsms:clientPlatform:exportAccount']"
-          >导出
-          </el-button>
-        </el-col>
       </el-row>
       <el-table v-loading="loadingAccount" :data="clientPlatformAccountList">
-        <el-table-column label="用户名" prop="username" width="100"/>
+        <el-table-column label="用户名" prop="username"/>
+        <el-table-column label="使用上限" prop="useLimit" width="100"/>
         <el-table-column label="是否启用" align="center" width="100">
           <template slot-scope="scope">
             <el-switch
@@ -363,7 +354,7 @@
             <span>{{ parseTime(scope.row.createTime) }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="操作" align="center" width="350" class-name="small-padding fixed-width">
+        <el-table-column label="操作" align="center" width="200" class-name="small-padding fixed-width">
           <template slot-scope="scope">
             <el-button
               size="mini"
@@ -540,6 +531,9 @@ export default {
         ],
         password: [
           {required: true, message: "密码不能为空", trigger: "blur"}
+        ],
+        useLimit: [
+          {required: true, message: "使用上限不能为空", trigger: "blur"}
         ]
       },
     };
@@ -603,7 +597,10 @@ export default {
       this.openAccount = false;
       this.resetAccount();
     },
-    /** 关闭节点列表按钮 */
+    /** 关闭按钮 */
+    closeAccount() {
+      this.openAccountList = false;
+    },
     closeNode() {
       this.openNode = false;
       this.getList();
@@ -655,7 +652,9 @@ export default {
       this.openAccount = true;
       this.title = "添加客户端平台账号";
       this.formAccount = {
-        enable: true
+        useLimit: 0,
+        enable: true,
+        sort: 99
       };
     },
     /** 修改按钮操作 */
