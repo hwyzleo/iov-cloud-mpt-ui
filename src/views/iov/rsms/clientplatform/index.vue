@@ -402,13 +402,6 @@
           </template>
         </el-table-column>
       </el-table>
-      <pagination
-        v-show="totalLoginHistory>0"
-        :total="totalLoginHistory"
-        :page.sync="queryParamsLoginHistory.pageNum"
-        :limit.sync="queryParamsLoginHistory.pageSize"
-        @pagination="getList"
-      />
     </el-drawer>
 
     <!-- 客户端平台登录历史 -->
@@ -435,6 +428,13 @@
           </template>
         </el-table-column>
       </el-table>
+      <pagination
+        v-show="totalLoginHistory>0"
+        :total="totalLoginHistory"
+        :page.sync="queryParamsLoginHistory.pageNum"
+        :limit.sync="queryParamsLoginHistory.pageSize"
+        @pagination="getLoginHistoryList(this.form.id)"
+      />
     </el-drawer>
   </div>
 </template>
@@ -555,12 +555,21 @@ export default {
     },
     /** 查询客户端平台账号列表 */
     getClientPlatformAccountList(clientPlatformId) {
-      this.openAccountList = true;
       this.loadingAccount = true;
       listClientPlatformAccount(clientPlatformId).then(response => {
         this.clientPlatformAccountList = response;
         this.loadingAccount = false;
       });
+    },
+    /** 查询登录历史 */
+    getLoginHistoryList(clientPlatformId) {
+      this.loadingLoginHistory = true;
+      listClientPlatformLoginHistory(clientPlatformId).then(response => {
+          this.clientPlatformLoginHistoryList = response.rows;
+          this.totalLoginHistory = response.total;
+          this.loadingLoginHistory = false;
+        }
+      );
     },
     /** 获取所有服务端平台列表 */
     getAllServerPlatform() {
@@ -743,6 +752,7 @@ export default {
     /** 账号管理按钮操作 */
     handleAccount(row) {
       this.form.id = row.id;
+      this.openAccountList = true;
       this.getClientPlatformAccountList(row.id);
     },
     /** 节点管理按钮操作 */
@@ -760,14 +770,9 @@ export default {
     },
     /** 登录历史按钮操作 */
     handleLoginHistory(row) {
+      this.form.id = row.id;
       this.openLoginHistory = true;
-      this.loadingLoginHistory = true;
-      listClientPlatformLoginHistory(row.id).then(response => {
-          this.clientPlatformLoginHistoryList = response.rows;
-          this.totalLoginHistory = response.total;
-          this.loadingLoginHistory = false;
-        }
-      );
+      this.getLoginHistoryList(row.id);
     },
     /** 同步平台按钮操作 */
     handleSyncPlatform(row) {
