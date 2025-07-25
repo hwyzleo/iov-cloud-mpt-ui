@@ -321,7 +321,7 @@
     </el-dialog>
 
     <!-- 客户端平台账号列表对话框 -->
-    <el-drawer title="账号列表" :visible.sync="openAccountList" direction="rtl" size="30%" :modal="true"
+    <el-drawer title="账号列表" :visible.sync="openAccountList" direction="rtl" size="40%" :modal="true"
                :append-to-body="true" :before-close="closeAccount">
       <el-row :gutter="10" class="mb8">
         <el-col :span="1.5">
