@@ -321,7 +321,7 @@
     </el-dialog>
 
     <!-- 客户端平台账号列表对话框 -->
-    <el-drawer title="账号列表" :visible.sync="openAccountList" direction="rtl" size="40%" :modal="true"
+    <el-drawer title="账号列表" :visible.sync="openAccountList" direction="rtl" size="30%" :modal="true"
                :append-to-body="true" :before-close="closeAccount">
       <el-row :gutter="10" class="mb8">
         <el-col :span="1.5">
@@ -338,8 +338,8 @@
       </el-row>
       <el-table v-loading="loadingAccount" :data="clientPlatformAccountList">
         <el-table-column label="用户名" prop="username"/>
-        <el-table-column label="使用上限" prop="useLimit" width="100"/>
-        <el-table-column label="是否启用" align="center" width="100">
+        <el-table-column label="使用上限" align="center" prop="useLimit" width="80"/>
+        <el-table-column label="是否启用" align="center" width="80">
           <template slot-scope="scope">
             <el-switch
               v-model="scope.row.enable"
@@ -348,8 +348,8 @@
             ></el-switch>
           </template>
         </el-table-column>
-        <el-table-column label="排序" align="center" prop="sort" width="100"/>
-        <el-table-column label="创建时间" align="center" prop="createTime" width="180">
+        <el-table-column label="排序" align="center" prop="sort" width="80"/>
+        <el-table-column label="创建时间" align="center" prop="createTime" width="150">
           <template slot-scope="scope">
             <span>{{ parseTime(scope.row.createTime) }}</span>
           </template>
