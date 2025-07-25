@@ -160,6 +160,14 @@
           <el-button
             size="mini"
             type="text"
+            icon="el-icon-menu"
+            @click="handleVehicle(scope.row)"
+            v-hasPermi="['iov:rsms:clientPlatform:listVehicle']"
+          >车辆管理
+          </el-button>
+          <el-button
+            size="mini"
+            type="text"
             icon="el-icon-info"
             @click="handleLoginHistory(scope.row)"
             v-hasPermi="['iov:rsms:clientPlatform:listLoginHistory']"
@@ -320,6 +328,22 @@
       </div>
     </el-dialog>
 
+    <!-- 添加或修改已注册车辆对话框 -->
+    <el-dialog :title="title" :visible.sync="openVehicle" width="750px" append-to-body>
+      <el-form ref="formVehicle" :model="formVehicle" :rules="rulesVehicle" label-width="130px">
+        <el-form-item label="车架号" prop="vin">
+          <el-input v-model="formVehicle.vin" placeholder="请输入车架号"/>
+        </el-form-item>
+        <el-form-item label="备注" prop="description">
+          <el-input v-model="formVehicle.description" type="textarea" placeholder="请输入内容"></el-input>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="submitFormVehicle">确 定</el-button>
+        <el-button @click="cancelVehicle">取 消</el-button>
+      </div>
+    </el-dialog>
+
     <!-- 客户端平台账号列表对话框 -->
     <el-drawer title="账号列表" :visible.sync="openAccountList" direction="rtl" size="40%" :modal="true"
                :append-to-body="true" :before-close="closeAccount">
@@ -404,6 +428,52 @@
       </el-table>
     </el-drawer>
 
+    <!-- 客户端平台已注册车辆 -->
+    <el-drawer title="已注册车辆" :visible.sync="openVehicleList" direction="rtl" size="40%" :modal="true"
+               :append-to-body="true">
+      <el-row :gutter="10" class="mb8">
+        <el-col :span="1.5">
+          <el-button
+            type="primary"
+            plain
+            icon="el-icon-plus"
+            size="mini"
+            @click="handleAddVehicle"
+            v-hasPermi="['iov:rsms:clientPlatform:addVehicle']"
+          >新增
+          </el-button>
+        </el-col>
+      </el-row>
+      <el-table v-loading="loadingVehicle" :data="clientPlatformVehicleList" @selection-change="handleSelectionChange">
+        <el-table-column type="selection" width="55" align="center"/>
+        <el-table-column label="车架号" prop="vin"/>
+        <el-table-column label="创建时间" align="center" prop="createTime" width="160">
+          <template slot-scope="scope">
+            <span>{{ parseTime(scope.row.createTime) }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="操作" align="center" width="100" class-name="small-padding fixed-width">
+          <template slot-scope="scope">
+            <el-button
+              size="mini"
+              type="text"
+              icon="el-icon-delete"
+              @click="handleDeleteVehicle(scope.row)"
+              v-hasPermi="['iov:rsms:clientPlatform:removeVehicle']"
+            >删除
+            </el-button>
+          </template>
+        </el-table-column>
+      </el-table>
+      <pagination
+        v-show="totalVehicle>0"
+        :total="totalVehicle"
+        :page.sync="queryParamsVehicle.pageNum"
+        :limit.sync="queryParamsVehicle.pageSize"
+        @pagination="getVehicleList"
+      />
+    </el-drawer>
+
     <!-- 客户端平台登录历史 -->
     <el-drawer title="登录历史" :visible.sync="openLoginHistory" direction="rtl" size="50%" :modal="true"
                :append-to-body="true">
@@ -442,14 +512,14 @@
 <script>
 import {
   addClientPlatform,
-  addClientPlatformAccount,
+  addClientPlatformAccount, addRegisteredVehicle,
   delClientPlatform,
   delClientPlatformAccount,
   getClientPlatform,
   getClientPlatformAccount,
   listClientPlatform,
   listClientPlatformAccount,
-  listClientPlatformLoginHistory,
+  listClientPlatformLoginHistory, listRegisteredVehicle,
   login,
   logout,
   syncClientPlatformInfo,
@@ -466,6 +536,7 @@ export default {
       // 遮罩层
       loading: true,
       loadingAccount: true,
+      loadingVehicle: true,
       loadingLoginHistory: true,
       // 选中数组
       ids: [],
@@ -477,11 +548,13 @@ export default {
       showSearch: true,
       // 总条数
       total: 0,
+      totalVehicle: 0,
       totalLoginHistory: 0,
       // 客户端平台表格数据
       clientPlatformList: [],
       clientPlatformAccountList: [],
       clientPlatformNodeList: [],
+      clientPlatformVehicleList: [],
       clientPlatformLoginHistoryList: [],
       // 服务端平台表格数据
       serverPlatformList: [],
@@ -492,11 +565,17 @@ export default {
       openAccount: false,
       openAccountList: false,
       openNode: false,
+      openVehicle: false,
+      openVehicleList: false,
       openLoginHistory: false,
       // 日期范围
       dateRange: [],
       // 查询参数
       queryParams: {
+        pageNum: 1,
+        pageSize: 10
+      },
+      queryParamsVehicle: {
         pageNum: 1,
         pageSize: 10
       },
@@ -507,6 +586,7 @@ export default {
       // 表单参数
       form: {},
       formAccount: {},
+      formVehicle: {},
       // 表单校验
       rules: {
         serverPlatformCode: [
@@ -536,6 +616,11 @@ export default {
           {required: true, message: "使用上限不能为空", trigger: "blur"}
         ]
       },
+      rulesVehicle: {
+        vin: [
+          {required: true, message: "车架号不能为空", trigger: "blur"}
+        ]
+      }
     };
   },
   created() {
@@ -560,6 +645,16 @@ export default {
         this.clientPlatformAccountList = response;
         this.loadingAccount = false;
       });
+    },
+    /** 查询车辆 */
+    getVehicleList() {
+      this.loadingVehicle = true;
+      listRegisteredVehicle(this.queryParamsVehicle.clientPlatformId, this.queryParamsVehicle).then(response => {
+          this.clientPlatformVehicleList = response.rows;
+          this.totalVehicle = response.total;
+          this.loadingVehicle = false;
+        }
+      );
     },
     /** 查询登录历史 */
     getLoginHistoryList() {
@@ -606,6 +701,10 @@ export default {
       this.openAccount = false;
       this.resetAccount();
     },
+    cancelVehicle() {
+      this.openVehicle = false;
+      this.resetVehicle();
+    },
     /** 关闭按钮 */
     closeAccount() {
       this.openAccountList = false;
@@ -625,6 +724,12 @@ export default {
     },
     resetAccount() {
       this.formAccount = {
+        description: undefined
+      };
+      this.resetForm("formAccount");
+    },
+    resetVehicle() {
+      this.formVehicle = {
         description: undefined
       };
       this.resetForm("formAccount");
@@ -665,6 +770,13 @@ export default {
         enable: true,
         sort: 99
       };
+    },
+    /** 新增车辆按钮操作 */
+    handleAddVehicle() {
+      this.resetVehicle();
+      this.openVehicle = true;
+      this.title = "添加已注册车辆";
+      this.formVehicle = {};
     },
     /** 修改按钮操作 */
     handleUpdate(row) {
@@ -725,6 +837,20 @@ export default {
         }
       });
     },
+    /** 车辆提交按钮 */
+    submitFormVehicle: function () {
+      this.$refs["formVehicle"].validate(valid => {
+        if (valid) {
+          if (this.formVehicle.id === undefined) {
+            addRegisteredVehicle(this.form.id, this.formVehicle).then(response => {
+              this.$modal.msgSuccess("新增成功");
+              this.openVehicle = false;
+              this.getVehicleList();
+            });
+          }
+        }
+      });
+    },
     /** 删除按钮操作 */
     handleDelete(row) {
       const clientPlatformIds = row.id || this.ids;
@@ -739,6 +865,18 @@ export default {
     },
     /** 删除账号按钮操作 */
     handleDeleteAccount(row) {
+      const clientPlatformId = this.form.id;
+      this.$modal.confirm('是否确认删除客户端平台账号ID为"' + row.id + '"的数据项？').then(function () {
+        return delClientPlatformAccount(clientPlatformId, row.id);
+      }).then(() => {
+        this.getClientPlatformAccountList(clientPlatformId);
+        this.$modal.msgSuccess("删除成功");
+      }).catch(() => {
+        this.$modal.msgError("删除失败");
+      });
+    },
+    /** 删除车辆按钮操作 */
+    handleDeleteVehicle(row) {
       const clientPlatformId = this.form.id;
       this.$modal.confirm('是否确认删除客户端平台账号ID为"' + row.id + '"的数据项？').then(function () {
         return delClientPlatformAccount(clientPlatformId, row.id);
@@ -767,6 +905,12 @@ export default {
         })
       });
       this.openNode = true;
+    },
+    /** 车辆管理按钮操作 */
+    handleVehicle(row) {
+      this.queryParamsVehicle.clientPlatformId = row.id;
+      this.openVehicleList = true;
+      this.getVehicleList();
     },
     /** 登录历史按钮操作 */
     handleLoginHistory(row) {

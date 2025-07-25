@@ -17,6 +17,15 @@ export function listClientPlatformAccount(clientPlatformId) {
   })
 }
 
+// 查询注册车辆列表
+export function listRegisteredVehicle(clientPlatformId, query) {
+  return request({
+    url: '/tsp-rsms/mpt/clientPlatform/' + clientPlatformId + '/registeredVehicle',
+    method: 'get',
+    params: query
+  })
+}
+
 // 查询客户端平台登录历史列表
 export function listClientPlatformLoginHistory(clientPlatformId, query) {
   return request({
@@ -54,7 +63,16 @@ export function addClientPlatform(data) {
 // 新增客户端平台账号
 export function addClientPlatformAccount(clientPlatformId, data) {
   return request({
-    url: '/tsp-rsms/mpt/clientPlatform/' + clientPlatformId,
+    url: '/tsp-rsms/mpt/clientPlatform/' + clientPlatformId + '/account',
+    method: 'post',
+    data: data
+  })
+}
+
+// 新增注册车辆
+export function addRegisteredVehicle(clientPlatformId, data) {
+  return request({
+    url: '/tsp-rsms/mpt/clientPlatform/' + clientPlatformId + '/registeredVehicle',
     method: 'post',
     data: data
   })
@@ -72,7 +90,7 @@ export function updateClientPlatform(data) {
 // 修改客户端平台账号
 export function updateClientPlatformAccount(clientPlatformId, data) {
   return request({
-    url: '/tsp-rsms/mpt/clientPlatform/' + clientPlatformId,
+    url: '/tsp-rsms/mpt/clientPlatform/' + clientPlatformId + '/account',
     method: 'put',
     data: data
   })
@@ -89,7 +107,7 @@ export function delClientPlatform(clientPlatformIds) {
 // 删除客户端平台账号
 export function delClientPlatformAccount(clientPlatformId, clientPlatformAccountIds) {
   return request({
-    url: '/tsp-rsms/mpt/clientPlatform/' + clientPlatformId + '/' + clientPlatformAccountIds,
+    url: '/tsp-rsms/mpt/clientPlatform/' + clientPlatformId + '/account/' + clientPlatformAccountIds,
     method: 'delete'
   })
 }
