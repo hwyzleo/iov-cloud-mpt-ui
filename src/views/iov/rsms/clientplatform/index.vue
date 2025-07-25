@@ -449,7 +449,7 @@
             plain
             icon="el-icon-delete"
             size="mini"
-            :disabled="multiple"
+            :disabled="multipleVehicle"
             @click="handleDeleteVehicle"
             v-hasPermi="['iov:rsms:clientPlatform:removeVehicle']"
           >删除
@@ -898,8 +898,9 @@ export default {
     /** 删除车辆按钮操作 */
     handleDeleteVehicle(row) {
       const vehicleIds = row.id || this.idsVehicle;
+      const clientPlatformId = this.queryParamsVehicle.clientPlatformId;
       this.$modal.confirm('是否确认删除已注册车辆ID为"' + vehicleIds + '"的数据项？').then(function () {
-        return delRegisteredVehicle(this.queryParamsVehicle.clientPlatformId, vehicleIds);
+        return delRegisteredVehicle(clientPlatformId, vehicleIds);
       }).then(() => {
         this.getVehicleList();
         this.$modal.msgSuccess("删除成功");
