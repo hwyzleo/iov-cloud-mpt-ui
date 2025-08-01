@@ -343,7 +343,7 @@ export default {
       const item = this.reportTypeList.find(
         dict => dict.code === reportType
       )
-      return item ? item.label : reportType
+      return item ? item.name : reportType
     },
     /** 获取报告状态列表 */
     getReportStateList() {
@@ -356,7 +356,7 @@ export default {
       const item = this.reportStateList.find(
         dict => dict.code === reportState
       )
-      return item ? item.label : reportState
+      return item ? item.name : reportState
     },
     /** 获取场景列表 */
     getSceneList() {
@@ -369,7 +369,7 @@ export default {
       const item = this.sceneList.find(
         dict => dict.code === scene
       )
-      return item ? item.label : scene
+      return item ? item.name : scene
     },
     /** 取消按钮 */
     cancel() {
