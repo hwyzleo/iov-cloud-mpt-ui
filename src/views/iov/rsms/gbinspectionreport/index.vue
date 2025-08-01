@@ -135,10 +135,10 @@
           <span>{{ getScene(scope.row.scene) }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="车型或车架号" prop="vin"/>
+      <el-table-column label="车型或车架号" prop="vehicle"/>
       <el-table-column label="报告状态" align="center" prop="reportState" width="150">
         <template slot-scope="scope">
-          <span>{{ getReportType(scope.row.reportState) }}</span>
+          <span>{{ getReportState(scope.row.reportState) }}</span>
         </template>
       </el-table-column>
       <el-table-column label="创建时间" align="center" prop="createTime" width="180">
