@@ -455,6 +455,17 @@
           >删除
           </el-button>
         </el-col>
+        <el-col :span="1.5">
+          <el-button
+            type="warning"
+            plain
+            icon="el-icon-download"
+            size="mini"
+            @click="handleExport"
+            v-hasPermi="['iov:rsms:clientPlatform:exportVehicle']"
+          >导出为《车辆静态信息导入表》
+          </el-button>
+        </el-col>
       </el-row>
       <el-table v-loading="loadingVehicle" :data="clientPlatformVehicleList" @selection-change="handleSelectionChangeVehicle">
         <el-table-column type="selection" width="55" align="center"/>
