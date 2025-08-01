@@ -16,6 +16,21 @@
           />
         </el-select>
       </el-form-item>
+      <el-form-item label="报告场景" prop="reportScene">
+        <el-select
+          v-model="queryParams.reportScene"
+          placeholder="报告场景"
+          clearable
+          style="width: 140px"
+        >
+          <el-option
+            v-for="reportScene in this.reportSceneList"
+            :key="reportScene.code"
+            :label="reportScene.name"
+            :value="reportScene.code"
+          />
+        </el-select>
+      </el-form-item>
       <el-form-item label="报告状态" prop="reportState">
         <el-select
           v-model="queryParams.reportState"
@@ -115,6 +130,11 @@
           <span>{{ getReportType(scope.row.reportType) }}</span>
         </template>
       </el-table-column>
+      <el-table-column label="报告场景" align="center" prop="reportScene" width="150">
+        <template slot-scope="scope">
+          <span>{{ getReportScene(scope.row.reportScene) }}</span>
+        </template>
+      </el-table-column>
       <el-table-column label="车型或车架号" prop="vin"/>
       <el-table-column label="报告状态" align="center" prop="reportState" width="150">
         <template slot-scope="scope">
@@ -202,11 +222,26 @@
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="车型或车架号" prop="vehicle">
-              <el-input v-model="form.vehicle" :readonly="form.id !== undefined" placeholder="请输入车架号"/>
+            <el-form-item label="报告场景" prop="reportScene">
+              <el-select
+                v-model="form.reportScene"
+                placeholder="报告场景"
+                clearable
+                style="width: 140px"
+              >
+                <el-option
+                  v-for="reportScene in this.reportSceneList"
+                  :key="reportScene.code"
+                  :label="reportScene.name"
+                  :value="reportScene.code"
+                />
+              </el-select>
             </el-form-item>
           </el-col>
         </el-row>
+        <el-form-item label="车型或车架号" prop="vehicle">
+          <el-input v-model="form.vehicle" :readonly="form.id !== undefined" placeholder="请输入车型或车架号"/>
+        </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="submitForm">确 定</el-button>
@@ -224,7 +259,8 @@ import {
   getGbInspectionReport,
   listGbInspectionReport,
   listGbInspectionReportType,
-  listGbInspectionReportState
+  listGbInspectionReportState,
+  listGbInspectionReportScene
 } from "@/api/iov/rsms/gbinspectionreport";
 
 export default {
@@ -248,6 +284,7 @@ export default {
       gbInspectionReportList: [],
       reportTypeList: [],
       reportStateList: [],
+      reportSceneList: [],
       // 弹出层标题
       title: "",
       // 是否显示弹出层
@@ -281,6 +318,7 @@ export default {
   created() {
     this.getReportTypeList();
     this.getReportStateList();
+    this.getReportSceneList();
     this.getList();
   },
   methods: {
@@ -319,6 +357,19 @@ export default {
         dict => dict.code === reportState
       )
       return item ? item.label : reportState
+    },
+    /** 获取报告场景列表 */
+    getReportSceneList() {
+      listGbInspectionReportScene().then(response => {
+        this.reportSceneList = response.data;
+      });
+    },
+    /** 获取报告场景 */
+    getReportScene(reportScene) {
+      const item = this.reportSceneList.find(
+        dict => dict.code === reportScene
+      )
+      return item ? item.label : reportScene
     },
     /** 取消按钮 */
     cancel() {

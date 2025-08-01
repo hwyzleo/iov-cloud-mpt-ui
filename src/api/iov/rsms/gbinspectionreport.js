@@ -25,6 +25,14 @@ export function listGbInspectionReportState() {
   })
 }
 
+// 获取国标检测报告场景列表
+export function listGbInspectionReportScene() {
+  return request({
+    url: '/tsp-rsms/mpt/gbInspectionReport/listGbInspectionReportScene',
+    method: 'get'
+  })
+}
+
 // 查询国标检测报告详细
 export function getGbInspectionReport(gbInspectionReportId) {
   return request({
