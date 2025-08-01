@@ -16,18 +16,18 @@
           />
         </el-select>
       </el-form-item>
-      <el-form-item label="报告场景" prop="reportScene">
+      <el-form-item label="场景" prop="scene">
         <el-select
-          v-model="queryParams.reportScene"
-          placeholder="报告场景"
+          v-model="queryParams.scene"
+          placeholder="场景"
           clearable
           style="width: 140px"
         >
           <el-option
-            v-for="reportScene in this.reportSceneList"
-            :key="reportScene.code"
-            :label="reportScene.name"
-            :value="reportScene.code"
+            v-for="scene in this.sceneList"
+            :key="scene.code"
+            :label="scene.name"
+            :value="scene.code"
           />
         </el-select>
       </el-form-item>
@@ -130,9 +130,9 @@
           <span>{{ getReportType(scope.row.reportType) }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="报告场景" align="center" prop="reportScene" width="150">
+      <el-table-column label="场景" align="center" prop="scene" width="150">
         <template slot-scope="scope">
-          <span>{{ getReportScene(scope.row.reportScene) }}</span>
+          <span>{{ getScene(scope.row.scene) }}</span>
         </template>
       </el-table-column>
       <el-table-column label="车型或车架号" prop="vin"/>
@@ -222,18 +222,18 @@
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="报告场景" prop="reportScene">
+            <el-form-item label="场景" prop="scene">
               <el-select
-                v-model="form.reportScene"
-                placeholder="报告场景"
+                v-model="form.scene"
+                placeholder="场景"
                 clearable
                 style="width: 140px"
               >
                 <el-option
-                  v-for="reportScene in this.reportSceneList"
-                  :key="reportScene.code"
-                  :label="reportScene.name"
-                  :value="reportScene.code"
+                  v-for="scene in this.sceneList"
+                  :key="scene.code"
+                  :label="scene.name"
+                  :value="scene.code"
                 />
               </el-select>
             </el-form-item>
@@ -284,7 +284,7 @@ export default {
       gbInspectionReportList: [],
       reportTypeList: [],
       reportStateList: [],
-      reportSceneList: [],
+      sceneList: [],
       // 弹出层标题
       title: "",
       // 是否显示弹出层
@@ -358,18 +358,18 @@ export default {
       )
       return item ? item.label : reportState
     },
-    /** 获取报告场景列表 */
-    getReportSceneList() {
+    /** 获取场景列表 */
+    getSceneList() {
       listGbInspectionReportScene().then(response => {
-        this.reportSceneList = response.data;
+        this.sceneList = response.data;
       });
     },
-    /** 获取报告场景 */
-    getReportScene(reportScene) {
-      const item = this.reportSceneList.find(
-        dict => dict.code === reportScene
+    /** 获取场景 */
+    getScene(scene) {
+      const item = this.sceneList.find(
+        dict => dict.code === scene
       )
-      return item ? item.label : reportScene
+      return item ? item.label : scene
     },
     /** 取消按钮 */
     cancel() {
