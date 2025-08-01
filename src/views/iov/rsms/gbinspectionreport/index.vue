@@ -318,7 +318,7 @@ export default {
   created() {
     this.getReportTypeList();
     this.getReportStateList();
-    this.getReportSceneList();
+    this.getSceneList();
     this.getList();
   },
   methods: {
