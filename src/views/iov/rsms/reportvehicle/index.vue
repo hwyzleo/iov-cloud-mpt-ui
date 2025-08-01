@@ -25,6 +25,9 @@
           />
         </el-select>
       </el-form-item>
+      <el-form-item label="离线天数">
+        <el-input-number v-model="queryParams.offlineDays" controls-position="right" :min="1"/>
+      </el-form-item>
       <el-form-item label="创建时间">
         <el-date-picker
           v-model="dateRange"
@@ -101,6 +104,11 @@
         </template>
       </el-table-column>
       <el-table-column label="备案型号" prop="model" width="150"/>
+      <el-table-column label="车辆更新时间" align="center" prop="vehicleTime" width="180">
+        <template slot-scope="scope">
+          <span>{{ parseTime(scope.row.vehicleTime) }}</span>
+        </template>
+      </el-table-column>
       <el-table-column label="创建时间" align="center" prop="createTime" width="180">
         <template slot-scope="scope">
           <span>{{ parseTime(scope.row.createTime) }}</span>
