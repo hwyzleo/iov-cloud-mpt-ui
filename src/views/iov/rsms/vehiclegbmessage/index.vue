@@ -10,6 +10,21 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
+      <el-form-item label="命令标识" prop="commandFlag">
+        <el-select
+          v-model="queryParams.commandFlag"
+          placeholder="命令标识"
+          clearable
+          style="width: 140px"
+        >
+          <el-option
+            v-for="commandFlag in this.commandFlagList"
+            :key="commandFlag.code"
+            :label="commandFlag.label"
+            :value="commandFlag.code"
+          />
+        </el-select>
+      </el-form-item>
       <el-form-item label="消息时间">
         <el-date-picker
           v-model="dateRange"
@@ -164,10 +179,10 @@
                 clearable
               >
                 <el-option
-                  v-for="dict in dict.type.iov_rsms_command_flag_type"
-                  :key="dict.value"
-                  :label="dict.label"
-                  :value="dict.value"
+                  v-for="commandFlag in this.commandFlagList"
+                  :key="commandFlag.code"
+                  :label="commandFlag.label"
+                  :value="commandFlag.code"
                 />
               </el-select>
             </el-form-item>
@@ -211,11 +226,12 @@
     </el-dialog>
 
     <!-- 国标消息解析层 -->
-    <el-drawer title="国标消息详细信息" :visible.sync="openParse" direction="rtl" size="80%" :modal="true" :append-to-body="true" @opened="initChart">
+    <el-drawer title="国标消息详细信息" :visible.sync="openParse" direction="rtl" size="80%" :modal="true"
+               :append-to-body="true" @opened="initChart">
       <div class="drawer-content">
         <el-row class="drawer-row">
           <el-col :span="3">消息数据:</el-col>
-          <el-col :span="21" style="word-break: break-word">{{form.messageData}}</el-col>
+          <el-col :span="21" style="word-break: break-word">{{ form.messageData }}</el-col>
         </el-row>
         <el-row class="drawer-row">
           <el-col :span="3">消息时间:</el-col>
@@ -226,27 +242,29 @@
             <el-divider></el-divider>
             <div class="drawer-title">整车数据</div>
             <el-row class="drawer-row">
-              <el-col :span="6">车辆状态: {{formParse.VEHICLE.vehicleState}}</el-col>
-              <el-col :span="6">充电状态: {{formParse.VEHICLE.chargingState}}</el-col>
-              <el-col :span="6">运行模式: {{formParse.VEHICLE.runningMode}}</el-col>
-              <el-col :span="6">车速: {{formParse.VEHICLE.speed}} km/h</el-col>
+              <el-col :span="6">车辆状态: {{ formParse.VEHICLE.vehicleState }}</el-col>
+              <el-col :span="6">充电状态: {{ formParse.VEHICLE.chargingState }}</el-col>
+              <el-col :span="6">运行模式: {{ formParse.VEHICLE.runningMode }}</el-col>
+              <el-col :span="6">车速: {{ formParse.VEHICLE.speed }} km/h</el-col>
             </el-row>
             <el-row class="drawer-row">
-              <el-col :span="6">累计里程: {{formParse.VEHICLE.totalOdometer}} km</el-col>
-              <el-col :span="6">总电压: {{formParse.VEHICLE.totalVoltage}} V</el-col>
-              <el-col :span="6">总电流: {{formParse.VEHICLE.totalCurrent}} A</el-col>
-              <el-col :span="6">SOC: {{formParse.VEHICLE.soc}} %</el-col>
+              <el-col :span="6">累计里程: {{ formParse.VEHICLE.totalOdometer }} km</el-col>
+              <el-col :span="6">总电压: {{ formParse.VEHICLE.totalVoltage }} V</el-col>
+              <el-col :span="6">总电流: {{ formParse.VEHICLE.totalCurrent }} A</el-col>
+              <el-col :span="6">SOC: {{ formParse.VEHICLE.soc }} %</el-col>
             </el-row>
             <el-row class="drawer-row">
-              <el-col :span="6">DC/DC状态: {{formParse.VEHICLE.dcdcState}}</el-col>
-              <el-col :span="6">驱动力: <span v-if="formParse.VEHICLE.driving">有驱动力</span><span v-else>无驱动力</span></el-col>
-              <el-col :span="6">制动力: <span v-if="formParse.VEHICLE.braking">有制动力</span><span v-else>无制动力</span></el-col>
-              <el-col :span="6">挡位: {{formParse.VEHICLE.gear}}</el-col>
+              <el-col :span="6">DC/DC状态: {{ formParse.VEHICLE.dcdcState }}</el-col>
+              <el-col :span="6">驱动力: <span v-if="formParse.VEHICLE.driving">有驱动力</span><span
+                v-else>无驱动力</span></el-col>
+              <el-col :span="6">制动力: <span v-if="formParse.VEHICLE.braking">有制动力</span><span
+                v-else>无制动力</span></el-col>
+              <el-col :span="6">挡位: {{ formParse.VEHICLE.gear }}</el-col>
             </el-row>
             <el-row class="drawer-row">
-              <el-col :span="6">绝缘电阻: {{formParse.VEHICLE.insulationResistance}} kΩ</el-col>
-              <el-col :span="6">加速踏板行程值: {{formParse.VEHICLE.acceleratorPedalPosition}} %</el-col>
-              <el-col :span="6">制动踏板状态: {{formParse.VEHICLE.brakePedalPosition}} %</el-col>
+              <el-col :span="6">绝缘电阻: {{ formParse.VEHICLE.insulationResistance }} kΩ</el-col>
+              <el-col :span="6">加速踏板行程值: {{ formParse.VEHICLE.acceleratorPedalPosition }} %</el-col>
+              <el-col :span="6">制动踏板状态: {{ formParse.VEHICLE.brakePedalPosition }} %</el-col>
               <el-col :span="6"></el-col>
             </el-row>
           </div>
@@ -255,16 +273,16 @@
             <div class="drawer-title">驱动电机数据</div>
             <div v-for="(item, index) in formParse.DRIVE_MOTOR">
               <el-row class="drawer-row">
-                <el-col :span="6">驱动电机序号: {{item.sn}}</el-col>
-                <el-col :span="6">驱动电机状态: {{item.state}}</el-col>
-                <el-col :span="6">驱动电机控制器温度: {{item.controllerTemperature}} ℃</el-col>
-                <el-col :span="6">驱动电机转速: {{item.speed}} r/min</el-col>
+                <el-col :span="6">驱动电机序号: {{ item.sn }}</el-col>
+                <el-col :span="6">驱动电机状态: {{ item.state }}</el-col>
+                <el-col :span="6">驱动电机控制器温度: {{ item.controllerTemperature }} ℃</el-col>
+                <el-col :span="6">驱动电机转速: {{ item.speed }} r/min</el-col>
               </el-row>
               <el-row class="drawer-row">
-                <el-col :span="6">驱动电机转矩: {{item.torque}} N·m</el-col>
-                <el-col :span="6">驱动电机温度: {{item.temperature}} ℃</el-col>
-                <el-col :span="6">电机控制器输入电压: {{item.controllerInputVoltage}} V</el-col>
-                <el-col :span="6">电机控制器直流母线电流: {{item.controllerDcBusCurrent}} A</el-col>
+                <el-col :span="6">驱动电机转矩: {{ item.torque }} N·m</el-col>
+                <el-col :span="6">驱动电机温度: {{ item.temperature }} ℃</el-col>
+                <el-col :span="6">电机控制器输入电压: {{ item.controllerInputVoltage }} V</el-col>
+                <el-col :span="6">电机控制器直流母线电流: {{ item.controllerDcBusCurrent }} A</el-col>
               </el-row>
             </div>
           </div>
@@ -272,31 +290,31 @@
             <el-divider></el-divider>
             <div class="drawer-title">燃料电池数据</div>
             <el-row class="drawer-row">
-              <el-col :span="6">燃料电池电压: {{item.voltage}} V</el-col>
-              <el-col :span="6">燃料电池电流: {{item.current}} A</el-col>
-              <el-col :span="6">燃料消耗率: {{item.consumptionRate}} kg/100km</el-col>
-              <el-col :span="6">燃料电池温度探针总数: {{item.temperatureProbeCount}}</el-col>
+              <el-col :span="6">燃料电池电压: {{ item.voltage }} V</el-col>
+              <el-col :span="6">燃料电池电流: {{ item.current }} A</el-col>
+              <el-col :span="6">燃料消耗率: {{ item.consumptionRate }} kg/100km</el-col>
+              <el-col :span="6">燃料电池温度探针总数: {{ item.temperatureProbeCount }}</el-col>
             </el-row>
             <el-row class="drawer-row">
-              <el-col :span="6">探针温度值: {{item.probeTemperature}}</el-col>
-              <el-col :span="6">氢系统中最高温度: {{item.hydrogenSystemMaxTemperature}} ℃</el-col>
-              <el-col :span="6">氢系统中最高温度探针代号: {{item.hydrogenSystemMaxTemperatureProbe}}</el-col>
-              <el-col :span="6">氢气最高浓度: {{item.hydrogenMaxConcentration}} mg/kg</el-col>
+              <el-col :span="6">探针温度值: {{ item.probeTemperature }}</el-col>
+              <el-col :span="6">氢系统中最高温度: {{ item.hydrogenSystemMaxTemperature }} ℃</el-col>
+              <el-col :span="6">氢系统中最高温度探针代号: {{ item.hydrogenSystemMaxTemperatureProbe }}</el-col>
+              <el-col :span="6">氢气最高浓度: {{ item.hydrogenMaxConcentration }} mg/kg</el-col>
             </el-row>
             <el-row class="drawer-row">
-              <el-col :span="6">氢气最高浓度传感器代号: {{item.hydrogenMaxConcentrationSensor}}</el-col>
-              <el-col :span="6">氢气最高压力: {{item.hydrogenMaxPressure}} MPa</el-col>
-              <el-col :span="6">氢气最高压力传感器代号: {{item.hydrogenMaxPressureSensor}}</el-col>
-              <el-col :span="6">高压DC/DC状态: {{item.highPressureDcdcState}}</el-col>
+              <el-col :span="6">氢气最高浓度传感器代号: {{ item.hydrogenMaxConcentrationSensor }}</el-col>
+              <el-col :span="6">氢气最高压力: {{ item.hydrogenMaxPressure }} MPa</el-col>
+              <el-col :span="6">氢气最高压力传感器代号: {{ item.hydrogenMaxPressureSensor }}</el-col>
+              <el-col :span="6">高压DC/DC状态: {{ item.highPressureDcdcState }}</el-col>
             </el-row>
           </div>
           <div v-if="formParse.ENGINE">
             <el-divider></el-divider>
             <div class="drawer-title">发动机数据</div>
             <el-row class="drawer-row">
-              <el-col :span="6">发动机状态: {{formParse.ENGINE.state}}</el-col>
-              <el-col :span="6">曲轴转速: {{formParse.ENGINE.crankshaftSpeed}} r/min</el-col>
-              <el-col :span="6">燃料消耗率: {{formParse.ENGINE.consumptionRate}} L/100km</el-col>
+              <el-col :span="6">发动机状态: {{ formParse.ENGINE.state }}</el-col>
+              <el-col :span="6">曲轴转速: {{ formParse.ENGINE.crankshaftSpeed }} r/min</el-col>
+              <el-col :span="6">燃料消耗率: {{ formParse.ENGINE.consumptionRate }} L/100km</el-col>
               <el-col :span="6"></el-col>
             </el-row>
           </div>
@@ -304,9 +322,14 @@
             <el-divider></el-divider>
             <div class="drawer-title">车辆位置</div>
             <el-row class="drawer-row">
-              <el-col :span="6">定位状态: <span v-if="formParse.POSITION.positionValid">有效定位</span><span v-else>无效定位</span></el-col>
-              <el-col :span="6"><span v-if="formParse.POSITION.westLongitude">西经</span><span v-else>东经</span>: {{formParse.POSITION.longitude}}</el-col>
-              <el-col :span="6"><span v-if="formParse.POSITION.southLatitude">南纬</span><span v-else>北纬</span>: {{formParse.POSITION.latitude}}</el-col>
+              <el-col :span="6">定位状态: <span v-if="formParse.POSITION.positionValid">有效定位</span><span
+                v-else>无效定位</span></el-col>
+              <el-col :span="6"><span v-if="formParse.POSITION.westLongitude">西经</span><span v-else>东经</span>:
+                {{ formParse.POSITION.longitude }}
+              </el-col>
+              <el-col :span="6"><span v-if="formParse.POSITION.southLatitude">南纬</span><span v-else>北纬</span>:
+                {{ formParse.POSITION.latitude }}
+              </el-col>
               <el-col :span="6"></el-col>
             </el-row>
           </div>
@@ -314,46 +337,46 @@
             <el-divider></el-divider>
             <div class="drawer-title">极值数据</div>
             <el-row class="drawer-row">
-              <el-col :span="6">最高电压电池子系统号: {{formParse.EXTREMUM.maxVoltageBatteryDeviceNo}}</el-col>
-              <el-col :span="6">最低电压电池子系统号: {{formParse.EXTREMUM.minVoltageBatteryDeviceNo}}</el-col>
-              <el-col :span="6">最高温度子系统号: {{formParse.EXTREMUM.maxTemperatureDeviceNo}}</el-col>
-              <el-col :span="6">最低温度子系统号: {{formParse.EXTREMUM.minTemperatureDeviceNo}}</el-col>
+              <el-col :span="6">最高电压电池子系统号: {{ formParse.EXTREMUM.maxVoltageBatteryDeviceNo }}</el-col>
+              <el-col :span="6">最低电压电池子系统号: {{ formParse.EXTREMUM.minVoltageBatteryDeviceNo }}</el-col>
+              <el-col :span="6">最高温度子系统号: {{ formParse.EXTREMUM.maxTemperatureDeviceNo }}</el-col>
+              <el-col :span="6">最低温度子系统号: {{ formParse.EXTREMUM.minTemperatureDeviceNo }}</el-col>
             </el-row>
             <el-row class="drawer-row">
-              <el-col :span="6">最高电压电池单体代号: {{formParse.EXTREMUM.maxVoltageCellNo}}</el-col>
-              <el-col :span="6">最低电压电池单体代号: {{formParse.EXTREMUM.minVoltageCellNo}}</el-col>
-              <el-col :span="6">最高温度探针序号: {{formParse.EXTREMUM.maxTemperatureProbeNo}}</el-col>
-              <el-col :span="6">最低温度探针序号: {{formParse.EXTREMUM.minTemperatureProbeNo}}</el-col>
+              <el-col :span="6">最高电压电池单体代号: {{ formParse.EXTREMUM.maxVoltageCellNo }}</el-col>
+              <el-col :span="6">最低电压电池单体代号: {{ formParse.EXTREMUM.minVoltageCellNo }}</el-col>
+              <el-col :span="6">最高温度探针序号: {{ formParse.EXTREMUM.maxTemperatureProbeNo }}</el-col>
+              <el-col :span="6">最低温度探针序号: {{ formParse.EXTREMUM.minTemperatureProbeNo }}</el-col>
             </el-row>
             <el-row class="drawer-row">
-              <el-col :span="6">电池单体电压最高值: {{formParse.EXTREMUM.cellMaxVoltage}} V</el-col>
-              <el-col :span="6">电池单体电压最低值: {{formParse.EXTREMUM.cellMinVoltage}} V</el-col>
-              <el-col :span="6">最高温度值: {{formParse.EXTREMUM.maxTemperature}} ℃</el-col>
-              <el-col :span="6">最低温度值: {{formParse.EXTREMUM.minTemperature}} ℃</el-col>
+              <el-col :span="6">电池单体电压最高值: {{ formParse.EXTREMUM.cellMaxVoltage }} V</el-col>
+              <el-col :span="6">电池单体电压最低值: {{ formParse.EXTREMUM.cellMinVoltage }} V</el-col>
+              <el-col :span="6">最高温度值: {{ formParse.EXTREMUM.maxTemperature }} ℃</el-col>
+              <el-col :span="6">最低温度值: {{ formParse.EXTREMUM.minTemperature }} ℃</el-col>
             </el-row>
           </div>
           <div v-if="formParse.ALARM">
             <el-divider></el-divider>
             <div class="drawer-title">报警数据</div>
             <el-row class="drawer-row">
-              <el-col :span="6">最高报警等级: {{formParse.ALARM.maxAlarmLevel}}</el-col>
-              <el-col :span="18">通用报警标志: {{formParse.ALARM.alarmFlagMap}}</el-col>
+              <el-col :span="6">最高报警等级: {{ formParse.ALARM.maxAlarmLevel }}</el-col>
+              <el-col :span="18">通用报警标志: {{ formParse.ALARM.alarmFlagMap }}</el-col>
             </el-row>
             <el-row class="drawer-row">
-              <el-col :span="6">可充电储能装置故障总数: {{formParse.ALARM.batteryFaultCount}}</el-col>
-              <el-col :span="18">可充电储能装置故障列表: {{formParse.ALARM.batteryFaultList}}</el-col>
+              <el-col :span="6">可充电储能装置故障总数: {{ formParse.ALARM.batteryFaultCount }}</el-col>
+              <el-col :span="18">可充电储能装置故障列表: {{ formParse.ALARM.batteryFaultList }}</el-col>
             </el-row>
             <el-row class="drawer-row">
-              <el-col :span="6">驱动电机故障总数: {{formParse.ALARM.driveMotorFaultCount}}</el-col>
-              <el-col :span="18">驱动电机故障列表: {{formParse.ALARM.driveMotorFaultList}}</el-col>
+              <el-col :span="6">驱动电机故障总数: {{ formParse.ALARM.driveMotorFaultCount }}</el-col>
+              <el-col :span="18">驱动电机故障列表: {{ formParse.ALARM.driveMotorFaultList }}</el-col>
             </el-row>
             <el-row class="drawer-row">
-              <el-col :span="6">发动机故障总数: {{formParse.ALARM.engineFaultCount}}</el-col>
-              <el-col :span="18">发动机故障列表: {{formParse.ALARM.engineFaultList}}</el-col>
+              <el-col :span="6">发动机故障总数: {{ formParse.ALARM.engineFaultCount }}</el-col>
+              <el-col :span="18">发动机故障列表: {{ formParse.ALARM.engineFaultList }}</el-col>
             </el-row>
             <el-row class="drawer-row">
-              <el-col :span="6">其他故障总数: {{formParse.ALARM.otherFaultCount}}</el-col>
-              <el-col :span="18">其他故障列表: {{formParse.ALARM.otherFaultList}}</el-col>
+              <el-col :span="6">其他故障总数: {{ formParse.ALARM.otherFaultCount }}</el-col>
+              <el-col :span="18">其他故障列表: {{ formParse.ALARM.otherFaultList }}</el-col>
             </el-row>
           </div>
           <div v-if="formParse.BATTERY_VOLTAGE">
@@ -361,14 +384,14 @@
             <div class="drawer-title">可充电储能装置电压数据</div>
             <div v-for="(item, index) in formParse.BATTERY_VOLTAGE">
               <el-row class="drawer-row">
-                <el-col :span="6">可充电储能子系统号: {{item.sn}}</el-col>
-                <el-col :span="6">可充电储能装置电压: {{item.voltage}} V</el-col>
-                <el-col :span="6">可充电储能装置电流: {{item.current}} A</el-col>
-                <el-col :span="6">单体电池总数: {{item.cellCount}}</el-col>
+                <el-col :span="6">可充电储能子系统号: {{ item.sn }}</el-col>
+                <el-col :span="6">可充电储能装置电压: {{ item.voltage }} V</el-col>
+                <el-col :span="6">可充电储能装置电流: {{ item.current }} A</el-col>
+                <el-col :span="6">单体电池总数: {{ item.cellCount }}</el-col>
               </el-row>
               <el-row class="drawer-row">
-                <el-col :span="6">本帧起始电池序号: {{item.frameStartCellSn}}</el-col>
-                <el-col :span="6">本帧单体电池总数: {{item.frameCellCount}}</el-col>
+                <el-col :span="6">本帧起始电池序号: {{ item.frameStartCellSn }}</el-col>
+                <el-col :span="6">本帧单体电池总数: {{ item.frameCellCount }}</el-col>
                 <el-col :span="12"></el-col>
               </el-row>
               <div :id="'cellVoltageChart' + index" style="width: 100%; height: 300px;"></div>
@@ -379,8 +402,8 @@
             <div class="drawer-title">可充电储能装置温度数据</div>
             <div v-for="(item, index) in formParse.BATTERY_TEMPERATURE">
               <el-row class="drawer-row">
-                <el-col :span="6">可充电储能子系统号: {{item.sn}}</el-col>
-                <el-col :span="6">可充电储能温度探针个数: {{item.probeCount}}</el-col>
+                <el-col :span="6">可充电储能子系统号: {{ item.sn }}</el-col>
+                <el-col :span="6">可充电储能温度探针个数: {{ item.probeCount }}</el-col>
                 <el-col :span="12"></el-col>
               </el-row>
               <div :id="'temperaturesChart' + index" style="width: 100%; height: 300px;"></div>
@@ -402,13 +425,14 @@ import {
   getVehicleGbMessage,
   parseVehicleGbMessage,
   listVehicleGbMessage,
+  listAllCommandFlag,
   updateVehicleGbMessage
 } from "@/api/iov/rsms/vehiclegbmessage";
 import * as echarts from 'echarts';
 
 export default {
   name: "VehicleGbMessage",
-  dicts: ['iov_rsms_command_flag_type'],
+  dicts: [],
   data() {
     return {
       // 遮罩层
@@ -425,6 +449,8 @@ export default {
       total: 0,
       // 车辆国标消息表格数据
       vehicleGbMessageList: [],
+      // 命令标识列表
+      commandFlagList: [],
       // 弹出层标题
       title: "",
       // 是否显示弹出层
@@ -465,6 +491,7 @@ export default {
     };
   },
   created() {
+    this.getCommandFlagList();
     this.getList();
   },
   methods: {
@@ -478,13 +505,19 @@ export default {
         }
       );
     },
+    /** 获取所有命令标识列表 */
+    getCommandFlagList() {
+      listAllCommandFlag().then(response => {
+        this.commandFlagList = response.data;
+      });
+    },
     /** 获取命令标识类型 */
     getCommandFlagType(commandFlag) {
-      if (!this.dict || !this.dict.type || !this.dict.type.iov_rsms_command_flag_type) {
+      if (!this.commandFlagList) {
         return commandFlag;
       }
-      const item = this.dict.type.iov_rsms_command_flag_type.find(
-        dict => dict.value === commandFlag
+      const item = this.commandFlagList.find(
+        dict => dict.code === commandFlag
       )
       return item ? item.label : commandFlag
     },
@@ -583,10 +616,10 @@ export default {
             yAxis: {
               type: 'value',
               name: '电压(V)',
-              min: function(value) {
+              min: function (value) {
                 return Math.floor(value.min * 1000 - 1) / 1000;
               },
-              max: function(value) {
+              max: function (value) {
                 return Math.ceil(value.max * 1000 + 1) / 1000;
               }
             },
@@ -595,7 +628,7 @@ export default {
               type: 'bar',
               name: '电压',
               itemStyle: {
-                color: function(params) {
+                color: function (params) {
                   // 找出最大值和最小值
                   const max = Math.max(...item.cellVoltageList);
                   const min = Math.min(...item.cellVoltageList);
@@ -663,10 +696,10 @@ export default {
             yAxis: {
               type: 'value',
               name: '温度(℃)',
-              min: function(value) {
+              min: function (value) {
                 return value.min - 1;
               },
-              max: function(value) {
+              max: function (value) {
                 return value.max + 1;
               }
             },
@@ -675,7 +708,7 @@ export default {
               type: 'bar',
               name: '温度',
               itemStyle: {
-                color: function(params) {
+                color: function (params) {
                   // 找出最大值和最小值
                   const max = Math.max(...item.temperatures);
                   const min = Math.min(...item.temperatures);
@@ -769,25 +802,30 @@ export default {
   text-overflow: ellipsis;
   max-width: 100%;
 }
+
 .message-cell:hover {
   cursor: pointer;
 }
+
 .my-tooltip {
   max-width: 400px !important;
   white-space: normal !important;
   word-break: break-word !important;
 }
+
 .drawer-content {
   padding: 20px;
   font-size: 14px;
   color: #606266;
 }
+
 .drawer-title {
   font-size: 16px;
   font-weight: bolder;
   margin-top: 20px;
   margin-bottom: 20px;
 }
+
 .drawer-row {
   margin-bottom: 15px;
 }

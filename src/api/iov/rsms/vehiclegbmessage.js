@@ -9,6 +9,14 @@ export function listVehicleGbMessage(query) {
   })
 }
 
+// 列出所有命令标识
+export function listAllCommandFlag() {
+  return request({
+    url: '/tsp-rsms/mpt/vehicleGbMessage/listAllCommandFlag',
+    method: 'get'
+  })
+}
+
 // 查询车辆国标消息详细
 export function getVehicleGbMessage(vehicleGbMessageId) {
   return request({
