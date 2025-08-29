@@ -293,59 +293,59 @@
           <el-col :span="8">错误数据数: {{ formResult.dataErrorCount }}</el-col>
           <el-col :span="8">占比: {{ formResult.dataErrorPercentage }}%</el-col>
         </el-row>
-        <div v-if="formResult">
-          <div v-if="formResult.STANDARD">
+        <div v-if="formResult.items">
+          <div v-if="formResult.items.STANDARD">
             <el-divider></el-divider>
             <div class="drawer-title">标准检测</div>
-            <div v-if="formResult.STANDARD.ABNORMAL">
+            <div v-if="formResult.items.STANDARD.ABNORMAL">
               <div class="drawer-title">- 数据异常</div>
-              <div v-if="formResult.STANDARD.ABNORMAL.SPEED_ABNORMAL">
+              <div v-if="formResult.items.STANDARD.ABNORMAL.SPEED_ABNORMAL">
                 <div class="drawer-title">-- 车速</div>
                 <el-row class="drawer-row">
-                  <el-col :span="6">总数据: {{ formResult.STANDARD.ABNORMAL.SPEED_ABNORMAL.totalDataCount }}</el-col>
-                  <el-col :span="6">错误数据: {{ formResult.STANDARD.ABNORMAL.SPEED_ABNORMAL.errorDataCount }}</el-col>
-                  <el-col :span="6">总车辆: {{ formResult.STANDARD.ABNORMAL.SPEED_ABNORMAL.totalVehicleCount }}</el-col>
+                  <el-col :span="6">总数据: {{ formResult.items.STANDARD.ABNORMAL.SPEED_ABNORMAL.totalDataCount }}</el-col>
+                  <el-col :span="6">错误数据: {{ formResult.items.STANDARD.ABNORMAL.SPEED_ABNORMAL.errorDataCount }}</el-col>
+                  <el-col :span="6">总车辆: {{ formResult.items.STANDARD.ABNORMAL.SPEED_ABNORMAL.totalVehicleCount }}</el-col>
                   <el-col :span="6">错误车辆: {{
-                      formResult.STANDARD.ABNORMAL.SPEED_ABNORMAL.errorVehicleCount
-                    }}
+                      formResult.items.STANDARD.ABNORMAL.SPEED_ABNORMAL.errorVehicleCount
+                      }}
                   </el-col>
                 </el-row>
               </div>
             </div>
           </div>
-          <div v-if="formResult.INTEGRITY">
+          <div v-if="formResult.items.INTEGRITY">
             <el-divider></el-divider>
             <div class="drawer-title">完整性检测</div>
           </div>
-          <div v-if="formResult.ACCURACY">
+          <div v-if="formResult.items.ACCURACY">
             <el-divider></el-divider>
             <div class="drawer-title">准确性检测</div>
           </div>
-          <div v-if="formResult.CONSISTENCY">
+          <div v-if="formResult.items.CONSISTENCY">
             <el-divider></el-divider>
             <div class="drawer-title">一致性检测</div>
-            <div v-if="formResult.CONSISTENCY.INCONSISTENCY">
+            <div v-if="formResult.items.CONSISTENCY.INCONSISTENCY">
               <div class="drawer-title">- 数据不一致</div>
-              <div v-if="formResult.CONSISTENCY.INCONSISTENCY.TOTAL_VOLTAGE_INCONSISTENCY">
+              <div v-if="formResult.items.CONSISTENCY.INCONSISTENCY.TOTAL_VOLTAGE_INCONSISTENCY">
                 <div class="drawer-title">-- 总电压与所有电芯电压累加不一致</div>
                 <el-row class="drawer-row">
                   <el-col :span="6">总数据:
-                    {{ formResult.CONSISTENCY.INCONSISTENCY.TOTAL_VOLTAGE_INCONSISTENCY.totalDataCount }}
+                    {{ formResult.items.CONSISTENCY.INCONSISTENCY.TOTAL_VOLTAGE_INCONSISTENCY.totalDataCount }}
                   </el-col>
                   <el-col :span="6">错误数据:
-                    {{ formResult.CONSISTENCY.INCONSISTENCY.TOTAL_VOLTAGE_INCONSISTENCY.errorDataCount }}
+                    {{ formResult.items.CONSISTENCY.INCONSISTENCY.TOTAL_VOLTAGE_INCONSISTENCY.errorDataCount }}
                   </el-col>
                   <el-col :span="6">总车辆:
-                    {{ formResult.CONSISTENCY.INCONSISTENCY.TOTAL_VOLTAGE_INCONSISTENCY.totalVehicleCount }}
+                    {{ formResult.items.CONSISTENCY.INCONSISTENCY.TOTAL_VOLTAGE_INCONSISTENCY.totalVehicleCount }}
                   </el-col>
                   <el-col :span="6">错误车辆:
-                    {{ formResult.CONSISTENCY.INCONSISTENCY.TOTAL_VOLTAGE_INCONSISTENCY.errorVehicleCount }}
+                    {{ formResult.items.CONSISTENCY.INCONSISTENCY.TOTAL_VOLTAGE_INCONSISTENCY.errorVehicleCount }}
                   </el-col>
                 </el-row>
               </div>
             </div>
           </div>
-          <div v-if="formResult.TIMELINESS">
+          <div v-if="formResult.items.TIMELINESS">
             <el-divider></el-divider>
             <div class="drawer-title">时效性检测</div>
           </div>
@@ -584,3 +584,38 @@ export default {
   }
 };
 </script>
+<style>
+.message-cell {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+
+.message-cell:hover {
+  cursor: pointer;
+}
+
+.my-tooltip {
+  max-width: 400px !important;
+  white-space: normal !important;
+  word-break: break-word !important;
+}
+
+.drawer-content {
+  padding: 20px;
+  font-size: 14px;
+  color: #606266;
+}
+
+.drawer-title {
+  font-size: 16px;
+  font-weight: bolder;
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+
+.drawer-row {
+  margin-bottom: 15px;
+}
+</style>
