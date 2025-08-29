@@ -187,6 +187,7 @@
                 type="datetime"
                 placeholder="请选择检测开始时间"
                 value-format="timestamp"
+                :readonly="form.id !== undefined"
               >
               </el-date-picker>
             </el-form-item>
@@ -198,6 +199,7 @@
                 type="datetime"
                 placeholder="请选择检测结束时间"
                 value-format="timestamp"
+                :readonly="form.id !== undefined"
               >
               </el-date-picker>
             </el-form-item>
@@ -211,6 +213,7 @@
                 placeholder="报告类型"
                 clearable
                 style="width: 140px"
+                :readonly="form.id !== undefined"
               >
                 <el-option
                   v-for="reportType in this.reportTypeList"
@@ -228,6 +231,7 @@
                 placeholder="场景"
                 clearable
                 style="width: 140px"
+                :readonly="form.id !== undefined"
               >
                 <el-option
                   v-for="scene in this.sceneList"
