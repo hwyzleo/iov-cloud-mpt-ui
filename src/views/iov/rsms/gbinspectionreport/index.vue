@@ -267,38 +267,47 @@
                :append-to-body="true">
       <div class="drawer-content">
         <el-row class="drawer-row">
-          <el-col :span="3">报告类型:</el-col>
-          <el-col :span="9">{{ formResult.reportType }}</el-col>
-          <el-col :span="3">车型或车架号:</el-col>
-          <el-col :span="9">{{ formResult.vehicle }}</el-col>
+          <el-col :span="6">报告类型:</el-col>
+          <el-col :span="6">{{ formResult.reportTypeName }}</el-col>
+          <el-col :span="6">车型或车架号:</el-col>
+          <el-col :span="6">{{ formResult.vehicle }}</el-col>
         </el-row>
         <el-row class="drawer-row">
-          <el-col :span="6">检测开始时间: {{ parseTime(formResult.startTime) }}</el-col>
-          <el-col :span="6">检测结束时间: {{ parseTime(formResult.endTime) }}</el-col>
-          <el-col :span="6">数据开始时间: {{ parseTime(formResult.dataStartTime) }}</el-col>
-          <el-col :span="6">数据结束时间: {{ parseTime(formResult.dataEndTime) }}</el-col>
+          <el-col :span="6">检测开始时间:</el-col>
+          <el-col :span="6">{{ parseTime(formResult.startTime) }} </el-col>
+          <el-col :span="6">检测结束时间:</el-col>
+          <el-col :span="6">{{ parseTime(formResult.endTime) }}</el-col>
         </el-row>
         <el-row class="drawer-row">
-          <el-col :span="8">车辆总数: {{ formResult.vehicleCount }}</el-col>
-          <el-col :span="8">错误车辆数: {{ formResult.vehicleErrorCount }}</el-col>
-          <el-col :span="8">占比: {{ formResult.vehicleErrorPercentage }}%</el-col>
+          <el-col :span="6">数据开始时间:</el-col>
+          <el-col :span="6">{{ parseTime(formResult.dataStartTime) }}</el-col>
+          <el-col :span="6">数据结束时间:</el-col>
+          <el-col :span="6">{{ parseTime(formResult.dataEndTime) }}</el-col>
         </el-row>
         <el-row class="drawer-row">
-          <el-col :span="8">消息总数: {{ formResult.messageCount }}</el-col>
-          <el-col :span="8">错误消息数: {{ formResult.messageErrorCount }}</el-col>
-          <el-col :span="8">占比: {{ formResult.messageErrorPercentage }}%</el-col>
+          <el-col :span="6">错误车辆数 / 车辆总数:</el-col>
+          <el-col :span="6">{{ formResult.vehicleErrorCount }} / {{ formResult.vehicleCount }}</el-col>
+          <el-col :span="6">错误占比:</el-col>
+          <el-col :span="6">{{ formResult.vehicleErrorPercentage }}%</el-col>
         </el-row>
         <el-row class="drawer-row">
-          <el-col :span="8">数据总数: {{ formResult.dataCount }}</el-col>
-          <el-col :span="8">错误数据数: {{ formResult.dataErrorCount }}</el-col>
-          <el-col :span="8">占比: {{ formResult.dataErrorPercentage }}%</el-col>
+          <el-col :span="6">错误消息数 / 消息总数:</el-col>
+          <el-col :span="6">{{ formResult.messageErrorCount }} / {{ formResult.messageCount }}</el-col>
+          <el-col :span="6">错误占比:</el-col>
+          <el-col :span="6">{{ formResult.messageErrorPercentage }}%</el-col>
+        </el-row>
+        <el-row class="drawer-row">
+          <el-col :span="6">错误数据数 / 数据总数:</el-col>
+          <el-col :span="6">{{ formResult.dataErrorCount }} / {{ formResult.dataCount }}</el-col>
+          <el-col :span="6">错误占比:</el-col>
+          <el-col :span="6">{{ formResult.dataErrorPercentage }}%</el-col>
         </el-row>
         <div v-if="formResult.items">
           <div v-if="formResult.items.STANDARD">
             <el-divider></el-divider>
             <div class="drawer-title">标准检测</div>
             <div v-if="formResult.items.STANDARD.ABNORMAL">
-              <div class="drawer-title">- 数据异常</div>
+              <div class="drawer-title">数据异常</div>
               <div v-if="formResult.items.STANDARD.ABNORMAL.SPEED_ABNORMAL">
                 <div class="drawer-title">-- 车速</div>
                 <el-row class="drawer-row">
@@ -323,11 +332,11 @@
           </div>
           <div v-if="formResult.items.CONSISTENCY">
             <el-divider></el-divider>
-            <div class="drawer-title">一致性检测</div>
+            <div class="drawer-title">• 一致性检测</div>
             <div v-if="formResult.items.CONSISTENCY.INCONSISTENCY">
-              <div class="drawer-title">- 数据不一致</div>
+              <div class="drawer-title">  ◦ 数据不一致</div>
               <div v-if="formResult.items.CONSISTENCY.INCONSISTENCY.TOTAL_VOLTAGE_INCONSISTENCY">
-                <div class="drawer-title">-- 总电压与所有电芯电压累加不一致</div>
+                <div class="drawer-title">    ▪ 总电压与所有电芯电压累加不一致</div>
                 <el-row class="drawer-row">
                   <el-col :span="6">总数据:
                     {{ formResult.items.CONSISTENCY.INCONSISTENCY.TOTAL_VOLTAGE_INCONSISTENCY.totalDataCount }}
