@@ -152,6 +152,15 @@
             size="mini"
             type="text"
             icon="el-icon-edit"
+            @click="handleResult(scope.row)"
+            :disabled="scope.row.reportState !== 2"
+            v-hasPermi="['iov:rsms:gbInspectionReport:query']"
+          >报告
+          </el-button>
+          <el-button
+            size="mini"
+            type="text"
+            icon="el-icon-edit"
             @click="handleUpdate(scope.row)"
             v-hasPermi="['iov:rsms:gbInspectionReport:edit']"
           >修改
@@ -252,19 +261,114 @@
         <el-button @click="cancel">取 消</el-button>
       </div>
     </el-dialog>
+
+    <!-- 报告结果层 -->
+    <el-drawer title="国标检测报告" :visible.sync="openResult" direction="rtl" size="80%" :modal="true"
+               :append-to-body="true">
+      <div class="drawer-content">
+        <el-row class="drawer-row">
+          <el-col :span="3">报告类型:</el-col>
+          <el-col :span="9">{{ formResult.reportType }}</el-col>
+          <el-col :span="3">车型或车架号:</el-col>
+          <el-col :span="9">{{ formResult.vehicle }}</el-col>
+        </el-row>
+        <el-row class="drawer-row">
+          <el-col :span="6">检测开始时间: {{ parseTime(formResult.startTime) }}</el-col>
+          <el-col :span="6">检测结束时间: {{ parseTime(formResult.endTime) }}</el-col>
+          <el-col :span="6">数据开始时间: {{ parseTime(formResult.dataStartTime) }}</el-col>
+          <el-col :span="6">数据结束时间: {{ parseTime(formResult.dataEndTime) }}</el-col>
+        </el-row>
+        <el-row class="drawer-row">
+          <el-col :span="8">车辆总数: {{ formResult.vehicleCount }}</el-col>
+          <el-col :span="8">错误车辆数: {{ formResult.vehicleErrorCount }}</el-col>
+          <el-col :span="8">占比: {{ formResult.vehicleErrorPercentage }}%</el-col>
+        </el-row>
+        <el-row class="drawer-row">
+          <el-col :span="8">消息总数: {{ formResult.messageCount }}</el-col>
+          <el-col :span="8">错误消息数: {{ formResult.messageErrorCount }}</el-col>
+          <el-col :span="8">占比: {{ formResult.messageErrorPercentage }}%</el-col>
+        </el-row>
+        <el-row class="drawer-row">
+          <el-col :span="8">数据总数: {{ formResult.dataCount }}</el-col>
+          <el-col :span="8">错误数据数: {{ formResult.dataErrorCount }}</el-col>
+          <el-col :span="8">占比: {{ formResult.dataErrorPercentage }}%</el-col>
+        </el-row>
+        <div v-if="formResult">
+          <div v-if="formResult.STANDARD">
+            <el-divider></el-divider>
+            <div class="drawer-title">标准检测</div>
+            <div v-if="formResult.STANDARD.ABNORMAL">
+              <div class="drawer-title">- 数据异常</div>
+              <div v-if="formResult.STANDARD.ABNORMAL.SPEED_ABNORMAL">
+                <div class="drawer-title">-- 车速</div>
+                <el-row class="drawer-row">
+                  <el-col :span="6">总数据: {{ formResult.STANDARD.ABNORMAL.SPEED_ABNORMAL.totalDataCount }}</el-col>
+                  <el-col :span="6">错误数据: {{ formResult.STANDARD.ABNORMAL.SPEED_ABNORMAL.errorDataCount }}</el-col>
+                  <el-col :span="6">总车辆: {{ formResult.STANDARD.ABNORMAL.SPEED_ABNORMAL.totalVehicleCount }}</el-col>
+                  <el-col :span="6">错误车辆: {{
+                      formResult.STANDARD.ABNORMAL.SPEED_ABNORMAL.errorVehicleCount
+                    }}
+                  </el-col>
+                </el-row>
+              </div>
+            </div>
+          </div>
+          <div v-if="formResult.INTEGRITY">
+            <el-divider></el-divider>
+            <div class="drawer-title">完整性检测</div>
+          </div>
+          <div v-if="formResult.ACCURACY">
+            <el-divider></el-divider>
+            <div class="drawer-title">准确性检测</div>
+          </div>
+          <div v-if="formResult.CONSISTENCY">
+            <el-divider></el-divider>
+            <div class="drawer-title">一致性检测</div>
+            <div v-if="formResult.CONSISTENCY.INCONSISTENCY">
+              <div class="drawer-title">- 数据不一致</div>
+              <div v-if="formResult.CONSISTENCY.INCONSISTENCY.TOTAL_VOLTAGE_INCONSISTENCY">
+                <div class="drawer-title">-- 总电压与所有电芯电压累加不一致</div>
+                <el-row class="drawer-row">
+                  <el-col :span="6">总数据:
+                    {{ formResult.CONSISTENCY.INCONSISTENCY.TOTAL_VOLTAGE_INCONSISTENCY.totalDataCount }}
+                  </el-col>
+                  <el-col :span="6">错误数据:
+                    {{ formResult.CONSISTENCY.INCONSISTENCY.TOTAL_VOLTAGE_INCONSISTENCY.errorDataCount }}
+                  </el-col>
+                  <el-col :span="6">总车辆:
+                    {{ formResult.CONSISTENCY.INCONSISTENCY.TOTAL_VOLTAGE_INCONSISTENCY.totalVehicleCount }}
+                  </el-col>
+                  <el-col :span="6">错误车辆:
+                    {{ formResult.CONSISTENCY.INCONSISTENCY.TOTAL_VOLTAGE_INCONSISTENCY.errorVehicleCount }}
+                  </el-col>
+                </el-row>
+              </div>
+            </div>
+          </div>
+          <div v-if="formResult.TIMELINESS">
+            <el-divider></el-divider>
+            <div class="drawer-title">时效性检测</div>
+          </div>
+        </div>
+        <div slot="footer" class="dialog-footer">
+          <el-button @click="closeResult">关 闭</el-button>
+        </div>
+      </div>
+    </el-drawer>
   </div>
 </template>
 
 <script>
 import {
   addGbInspectionReport,
-  updateGbInspectionReport,
   delGbInspectionReport,
   getGbInspectionReport,
+  getGbInspectionReportResult,
   listGbInspectionReport,
-  listGbInspectionReportType,
+  listGbInspectionReportScene,
   listGbInspectionReportState,
-  listGbInspectionReportScene
+  listGbInspectionReportType,
+  updateGbInspectionReport
 } from "@/api/iov/rsms/gbinspectionreport";
 
 export default {
@@ -293,6 +397,7 @@ export default {
       title: "",
       // 是否显示弹出层
       open: false,
+      openResult: false,
       // 日期范围
       dateRange: [],
       // 查询参数
@@ -302,6 +407,7 @@ export default {
       },
       // 表单参数
       form: {},
+      formResult: {},
       // 表单校验
       rules: {
         startTime: [
@@ -380,6 +486,10 @@ export default {
       this.open = false;
       this.reset();
     },
+    closeResult() {
+      this.openResult = false;
+      this.resetResult();
+    },
     /** 表单重置 */
     reset() {
       this.form = {
@@ -387,6 +497,9 @@ export default {
         description: undefined
       };
       this.resetForm("form");
+    },
+    resetResult() {
+      this.formResult = {};
     },
     /** 搜索按钮操作 */
     handleQuery() {
@@ -410,8 +523,16 @@ export default {
       this.reset();
       this.open = true;
       this.title = "添加国标检测报告";
-      this.form = {
-      };
+      this.form = {};
+    },
+    /** 报告按钮操作 */
+    handleResult(row) {
+      this.resetResult();
+      const gbInspectionReportId = row.id
+      getGbInspectionReportResult(gbInspectionReportId).then(response => {
+        this.formResult = response.data;
+        this.openResult = true;
+      });
     },
     /** 修改按钮操作 */
     handleUpdate(row) {

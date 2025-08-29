@@ -41,6 +41,14 @@ export function getGbInspectionReport(gbInspectionReportId) {
   })
 }
 
+// 查询国标检测报告结果详细
+export function getGbInspectionReportResult(gbInspectionReportId) {
+  return request({
+    url: '/tsp-rsms/mpt/gbInspectionReport/' + gbInspectionReportId + '/result',
+    method: 'get'
+  })
+}
+
 // 新增国标检测报告
 export function addGbInspectionReport(data) {
   return request({
