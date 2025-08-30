@@ -305,18 +305,31 @@
         <div v-if="formResult.items">
           <div v-if="formResult.items.STANDARD">
             <el-divider></el-divider>
-            <div class="drawer-title">标准检测</div>
+            <div class="drawer-title">• 标准检测</div>
             <div v-if="formResult.items.STANDARD.ABNORMAL">
-              <div class="drawer-title">数据异常</div>
+              <div class="drawer-title">◦ 数据异常</div>
               <div v-if="formResult.items.STANDARD.ABNORMAL.SPEED_ABNORMAL">
-                <div class="drawer-title">-- 车速</div>
+                <div class="drawer-title">▪ 车速</div>
                 <el-row class="drawer-row">
-                  <el-col :span="6">总数据: {{ formResult.items.STANDARD.ABNORMAL.SPEED_ABNORMAL.totalDataCount }}</el-col>
-                  <el-col :span="6">错误数据: {{ formResult.items.STANDARD.ABNORMAL.SPEED_ABNORMAL.errorDataCount }}</el-col>
-                  <el-col :span="6">总车辆: {{ formResult.items.STANDARD.ABNORMAL.SPEED_ABNORMAL.totalVehicleCount }}</el-col>
-                  <el-col :span="6">错误车辆: {{
-                      formResult.items.STANDARD.ABNORMAL.SPEED_ABNORMAL.errorVehicleCount
-                      }}
+                  <el-col :span="6">错误数据 / 总数据:</el-col>
+                  <el-col :span="6">
+                    {{ formResult.items.STANDARD.ABNORMAL.SPEED_ABNORMAL.errorDataCount }} /
+                    {{ formResult.items.STANDARD.ABNORMAL.SPEED_ABNORMAL.totalDataCount }}
+                  </el-col>
+                  <el-col :span="6">错误占比:</el-col>
+                  <el-col :span="6">
+                    {{ formResult.items.STANDARD.ABNORMAL.SPEED_ABNORMAL.errorVehiclePercentage }}%
+                  </el-col>
+                </el-row>
+                <el-row class="drawer-row">
+                  <el-col :span="6">错误车辆 / 总车辆:</el-col>
+                  <el-col :span="6">
+                    {{ formResult.items.STANDARD.ABNORMAL.SPEED_ABNORMAL.errorVehicleCount }} /
+                    {{ formResult.items.STANDARD.ABNORMAL.SPEED_ABNORMAL.totalVehicleCount }}
+                  </el-col>
+                  <el-col :span="6">错误占比:</el-col>
+                  <el-col :span="6">
+                    {{ formResult.items.STANDARD.ABNORMAL.SPEED_ABNORMAL.errorVehiclePercentage }}%
                   </el-col>
                 </el-row>
               </div>
@@ -334,21 +347,29 @@
             <el-divider></el-divider>
             <div class="drawer-title">• 一致性检测</div>
             <div v-if="formResult.items.CONSISTENCY.INCONSISTENCY">
-              <div class="drawer-title">  ◦ 数据不一致</div>
+              <div class="drawer-title">◦ 数据不一致</div>
               <div v-if="formResult.items.CONSISTENCY.INCONSISTENCY.TOTAL_VOLTAGE_INCONSISTENCY">
-                <div class="drawer-title">    ▪ 总电压与所有电芯电压累加不一致</div>
+                <div class="drawer-title">▪ 总电压与所有电芯电压累加不一致</div>
                 <el-row class="drawer-row">
-                  <el-col :span="6">总数据:
+                  <el-col :span="6">错误数据 / 总数据:</el-col>
+                  <el-col :span="6">
+                    {{ formResult.items.CONSISTENCY.INCONSISTENCY.TOTAL_VOLTAGE_INCONSISTENCY.errorDataCount }} /
                     {{ formResult.items.CONSISTENCY.INCONSISTENCY.TOTAL_VOLTAGE_INCONSISTENCY.totalDataCount }}
                   </el-col>
-                  <el-col :span="6">错误数据:
-                    {{ formResult.items.CONSISTENCY.INCONSISTENCY.TOTAL_VOLTAGE_INCONSISTENCY.errorDataCount }}
+                  <el-col :span="6">错误占比:</el-col>
+                  <el-col :span="6">
+                    {{ formResult.items.CONSISTENCY.INCONSISTENCY.TOTAL_VOLTAGE_INCONSISTENCY.errorVehiclePercentage }}%
                   </el-col>
-                  <el-col :span="6">总车辆:
+                </el-row>
+                <el-row class="drawer-row">
+                  <el-col :span="6">错误车辆 / 总车辆:</el-col>
+                  <el-col :span="6">
+                    {{ formResult.items.CONSISTENCY.INCONSISTENCY.TOTAL_VOLTAGE_INCONSISTENCY.errorVehicleCount }} /
                     {{ formResult.items.CONSISTENCY.INCONSISTENCY.TOTAL_VOLTAGE_INCONSISTENCY.totalVehicleCount }}
                   </el-col>
-                  <el-col :span="6">错误车辆:
-                    {{ formResult.items.CONSISTENCY.INCONSISTENCY.TOTAL_VOLTAGE_INCONSISTENCY.errorVehicleCount }}
+                  <el-col :span="6">错误占比:</el-col>
+                  <el-col :span="6">
+                    {{ formResult.items.CONSISTENCY.INCONSISTENCY.TOTAL_VOLTAGE_INCONSISTENCY.errorVehiclePercentage }}%
                   </el-col>
                 </el-row>
               </div>
