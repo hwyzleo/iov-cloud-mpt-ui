@@ -380,28 +380,28 @@
             <div class="drawer-title">时效性检测</div>
             <div v-if="formResult.items.TIMELINESS.DUPLICATE">
               <div class="drawer-title">◦ 重复性检测</div>
-              <div v-if="formResult.items.TIMELINESS.TIMELINESS.MESSAGE_TIME_DUPLICATE">
+              <div v-if="formResult.items.TIMELINESS.DUPLICATE.MESSAGE_TIME_DUPLICATE">
                 <div class="drawer-title">▪ 消息时间重复</div>
                 <el-row class="drawer-row">
                   <el-col :span="6">错误数据 / 总数据:</el-col>
                   <el-col :span="6">
-                    {{ formResult.items.TIMELINESS.TIMELINESS.MESSAGE_TIME_DUPLICATE.errorDataCount }} /
-                    {{ formResult.items.TIMELINESS.TIMELINESS.MESSAGE_TIME_DUPLICATE.totalDataCount }}
+                    {{ formResult.items.TIMELINESS.DUPLICATE.MESSAGE_TIME_DUPLICATE.errorDataCount }} /
+                    {{ formResult.items.TIMELINESS.DUPLICATE.MESSAGE_TIME_DUPLICATE.totalDataCount }}
                   </el-col>
                   <el-col :span="6">错误占比:</el-col>
                   <el-col :span="6">
-                    {{ formResult.items.TIMELINESS.TIMELINESS.MESSAGE_TIME_DUPLICATE.errorVehiclePercentage }}%
+                    {{ formResult.items.TIMELINESS.DUPLICATE.MESSAGE_TIME_DUPLICATE.errorVehiclePercentage }}%
                   </el-col>
                 </el-row>
                 <el-row class="drawer-row">
                   <el-col :span="6">错误车辆 / 总车辆:</el-col>
                   <el-col :span="6">
-                    {{ formResult.items.TIMELINESS.TIMELINESS.MESSAGE_TIME_DUPLICATE.errorVehicleCount }} /
-                    {{ formResult.items.TIMELINESS.TIMELINESS.MESSAGE_TIME_DUPLICATE.totalVehicleCount }}
+                    {{ formResult.items.TIMELINESS.DUPLICATE.MESSAGE_TIME_DUPLICATE.errorVehicleCount }} /
+                    {{ formResult.items.TIMELINESS.DUPLICATE.MESSAGE_TIME_DUPLICATE.totalVehicleCount }}
                   </el-col>
                   <el-col :span="6">错误占比:</el-col>
                   <el-col :span="6">
-                    {{ formResult.items.TIMELINESS.TIMELINESS.MESSAGE_TIME_DUPLICATE.errorVehiclePercentage }}%
+                    {{ formResult.items.TIMELINESS.DUPLICATE.MESSAGE_TIME_DUPLICATE.errorVehiclePercentage }}%
                   </el-col>
                 </el-row>
               </div>
