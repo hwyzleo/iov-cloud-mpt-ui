@@ -358,7 +358,7 @@
                   </el-col>
                   <el-col :span="6">错误占比:</el-col>
                   <el-col :span="6">
-                    {{ formResult.items.CONSISTENCY.INCONSISTENCY.TOTAL_VOLTAGE_INCONSISTENCY.errorVehiclePercentage }}%
+                    {{ formResult.items.CONSISTENCY.INCONSISTENCY.TOTAL_VOLTAGE_INCONSISTENCY.errorDataPercentage }}%
                   </el-col>
                 </el-row>
                 <el-row class="drawer-row">
@@ -390,7 +390,7 @@
                   </el-col>
                   <el-col :span="6">错误占比:</el-col>
                   <el-col :span="6">
-                    {{ formResult.items.TIMELINESS.DUPLICATE.MESSAGE_TIME_DUPLICATE.errorVehiclePercentage }}%
+                    {{ formResult.items.TIMELINESS.DUPLICATE.MESSAGE_TIME_DUPLICATE.errorDataPercentage }}%
                   </el-col>
                 </el-row>
                 <el-row class="drawer-row">
