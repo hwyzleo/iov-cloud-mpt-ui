@@ -31,6 +31,9 @@
       <el-form-item label="30天内频繁报警">
         <el-checkbox v-model="queryParams.frequentAlarmIn30Days" />
       </el-form-item>
+      <el-form-item label="大面积聚集停放">
+        <el-checkbox v-model="queryParams.highDensityParking" />
+      </el-form-item>
       <el-form-item label="创建时间">
         <el-date-picker
           v-model="dateRange"
