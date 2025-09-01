@@ -28,6 +28,9 @@
       <el-form-item label="离线天数">
         <el-input-number v-model="queryParams.offlineDays" controls-position="right" :min="1"/>
       </el-form-item>
+      <el-form-item label="30天内频繁报警">
+        <el-checkbox v-model="queryParams.frequentAlarmIn30Days" />
+      </el-form-item>
       <el-form-item label="创建时间">
         <el-date-picker
           v-model="dateRange"
