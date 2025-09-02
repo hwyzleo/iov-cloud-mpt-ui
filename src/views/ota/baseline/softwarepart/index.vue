@@ -141,6 +141,7 @@
             v-model="form.ecuCode"
             placeholder="ECU"
             clearable
+            @change="handleEcuChange"
           >
             <el-option
               v-for="ecu in this.ecuList"
@@ -309,6 +310,16 @@ export default {
         this.open = true;
       });
       this.title = "修改软件零件信息";
+    },
+    handleEcuChange(value) {
+      if (value) {
+        const selectedEcu = this.ecuList.find(ecu => ecu.code === value);
+        if (selectedEcu) {
+          this.form.softwareName = selectedEcu.label;
+        }
+      } else {
+        this.form.softwareName = '';
+      }
     },
     /** 提交按钮 */
     submitForm: function () {
