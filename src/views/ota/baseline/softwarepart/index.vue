@@ -134,8 +134,8 @@
     />
 
     <!-- 添加或修改软件零件信息对话框 -->
-    <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
-      <el-form ref="form" :model="form" :rules="rules" label-width="120px">
+    <el-dialog :title="title" :visible.sync="open" width="600px" append-to-body>
+      <el-form ref="form" :model="form" :rules="rules" label-width="150px">
         <el-form-item label="ECU" prop="type">
           <el-select
             v-model="form.ecuCode"
