@@ -136,7 +136,7 @@
     <!-- 添加或修改软件零件信息对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="600px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="150px">
-        <el-form-item label="ECU" prop="type">
+        <el-form-item label="ECU" prop="ecuCode">
           <el-select
             v-model="form.ecuCode"
             placeholder="ECU"
@@ -157,8 +157,8 @@
         <el-form-item label="软件零件名称" prop="softwareName">
           <el-input v-model="form.softwareName" placeholder="请输入软件零件名称"/>
         </el-form-item>
-        <el-form-item label="软件零件号版本范围" prop="software_no_ver_range">
-          <el-input v-model="form.software_no_ver_range" type="textarea" placeholder="请输入软件零件号版本范围"/>
+        <el-form-item label="软件零件号版本范围" prop="softwareNoVerRange">
+          <el-input v-model="form.softwareNoVerRange" type="textarea" placeholder="请输入软件零件号版本范围"/>
         </el-form-item>
         <el-form-item label="是否支持OTA">
           <el-radio-group v-model="form.ota">
@@ -229,11 +229,14 @@ export default {
       form: {},
       // 表单校验
       rules: {
-        softwareNo: [
-          {required: true, message: "软件零件好不能为空", trigger: "blur"}
-        ],
         ecuCode: [
           {required: true, message: "ECU不能为空", trigger: "blur"}
+        ],
+        softwareNo: [
+          {required: true, message: "软件零件号不能为空", trigger: "blur"}
+        ],
+        softwareNoVerRange: [
+          {required: true, message: "软件零件号版本范围不能为空", trigger: "blur"}
         ]
       },
     };
