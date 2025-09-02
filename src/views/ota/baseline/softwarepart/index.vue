@@ -97,7 +97,11 @@
       <el-table-column label="ECU" prop="ecuCode" width="100"/>
       <el-table-column label="软件零件号" prop="softwareNo"/>
       <el-table-column label="软件零件号版本范围" prop="softwareNoVerRange"/>
-      <el-table-column label="是否支持OTA" prop="ota"/>
+      <el-table-column label="是否支持OTA" prop="ota">
+        <template slot-scope="scope">
+          <span>{{ scope.row.ota ? '支持' : '不支持' }}</span>
+        </template>
+      </el-table-column>
       <el-table-column label="创建时间" align="center" prop="createTime" width="180">
         <template slot-scope="scope">
           <span>{{ parseTime(scope.row.createTime) }}</span>
