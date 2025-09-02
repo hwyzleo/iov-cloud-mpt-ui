@@ -97,7 +97,7 @@
       <el-table-column label="ECU" prop="ecuCode" width="100"/>
       <el-table-column label="软件零件号" prop="softwareNo"/>
       <el-table-column label="软件零件号版本范围" prop="softwareNoVerRange"/>
-      <el-table-column label="是否支持OTA" prop="ota">
+      <el-table-column label="是否支持OTA" prop="ota" width="120" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.ota ? '支持' : '不支持' }}</span>
         </template>
