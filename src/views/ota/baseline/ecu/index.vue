@@ -19,6 +19,21 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
+      <el-form-item label="ECU类型" prop="type">
+        <el-select
+          v-model="queryParams.type"
+          placeholder="ECU类型"
+          clearable
+          style="width: 140px"
+        >
+          <el-option
+            v-for="ecuType in this.ecuTypeList"
+            :key="ecuType.code"
+            :label="ecuType.code + '(' + ecuType.label + ')'"
+            :value="ecuType.code"
+          />
+        </el-select>
+      </el-form-item>
       <el-form-item label="创建时间">
         <el-date-picker
           v-model="dateRange"
@@ -88,7 +103,7 @@
 
     <el-table v-loading="loading" :data="brandList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center"/>
-      <el-table-column label="ECU代码" prop="code"  width="100"/>
+      <el-table-column label="ECU代码" prop="code" width="100"/>
       <el-table-column label="ECU名称" prop="name"/>
       <el-table-column label="ECU英文名称" prop="nameEn"/>
       <el-table-column label="ECU类型" prop="type"/>
@@ -149,7 +164,7 @@
             <el-option
               v-for="ecuType in this.ecuTypeList"
               :key="ecuType.code"
-              :label="ecuType.label"
+              :label="ecuType.code + '(' + ecuType.label + ')'"
               :value="ecuType.code"
             />
           </el-select>
