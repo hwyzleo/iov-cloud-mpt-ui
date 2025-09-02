@@ -101,7 +101,7 @@
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
-    <el-table v-loading="loading" :data="brandList" @selection-change="handleSelectionChange">
+    <el-table v-loading="loading" :data="ecuList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center"/>
       <el-table-column label="ECU代码" prop="code" width="100"/>
       <el-table-column label="ECU名称" prop="name"/>
