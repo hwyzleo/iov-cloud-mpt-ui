@@ -3,7 +3,7 @@
     <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch">
       <el-form-item label="软件零件号" prop="softwareNo">
         <el-input
-          v-model="queryParams.softwareNo"
+          v-model="queryParams.softwarePn"
           placeholder="请输入软件零件号"
           clearable
           style="width: 140px"
@@ -95,8 +95,8 @@
     <el-table v-loading="loading" :data="softwarePartList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center"/>
       <el-table-column label="ECU" prop="ecuCode" width="100"/>
-      <el-table-column label="软件零件号" prop="softwareNo"/>
-      <el-table-column label="软件零件号版本范围" prop="softwareNoVerRange"/>
+      <el-table-column label="软件零件号" prop="softwarePn"/>
+      <el-table-column label="软件零件版本范围" prop="softwarePartVerRange"/>
       <el-table-column label="是否支持OTA" prop="ota" width="120" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.ota ? '支持' : '不支持' }}</span>
@@ -156,13 +156,13 @@
           </el-select>
         </el-form-item>
         <el-form-item label="软件零件号" prop="softwareNo">
-          <el-input v-model="form.softwareNo" :readonly="form.id !== undefined" placeholder="请输入软件零件号"/>
+          <el-input v-model="form.softwarePn" :readonly="form.id !== undefined" placeholder="请输入软件零件号"/>
         </el-form-item>
-        <el-form-item label="软件零件名称" prop="softwareName">
-          <el-input v-model="form.softwareName" placeholder="请输入软件零件名称"/>
+        <el-form-item label="软件零件名称" prop="softwarePartName">
+          <el-input v-model="form.softwarePartName" placeholder="请输入软件零件名称"/>
         </el-form-item>
-        <el-form-item label="软件零件号版本范围" prop="softwareNoVerRange">
-          <el-input v-model="form.softwareNoVerRange" type="textarea" placeholder="请输入软件零件号版本范围"/>
+        <el-form-item label="软件零件版本范围" prop="softwarePartVerRange">
+          <el-input v-model="form.softwarePartVerRange" type="textarea" placeholder="请输入软件零件版本范围"/>
         </el-form-item>
         <el-form-item label="是否支持OTA">
           <el-radio-group v-model="form.ota">
@@ -240,7 +240,7 @@ export default {
           {required: true, message: "软件零件号不能为空", trigger: "blur"}
         ],
         softwareNoVerRange: [
-          {required: true, message: "软件零件号版本范围不能为空", trigger: "blur"}
+          {required: true, message: "软件零件版本范围不能为空", trigger: "blur"}
         ]
       },
     };
