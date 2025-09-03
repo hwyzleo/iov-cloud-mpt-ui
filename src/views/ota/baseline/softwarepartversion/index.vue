@@ -96,7 +96,7 @@
       <el-table-column type="selection" width="55" align="center"/>
       <el-table-column label="ECU" prop="ecuCode" width="100"/>
       <el-table-column label="软件零件号" prop="softwarePn"/>
-      <el-table-column label="软件零件版本" prop="softwarePartVer"/>
+      <el-table-column label="软件零件版本" prop="softwarePartVer" width="120"/>
       <el-table-column label="测试报告" prop="softwareReport" width="80" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.softwareReport && scope.row.softwareReport.trim() ? '已上传' : '未上传' }}</span>
@@ -107,9 +107,9 @@
           <span>{{ scope.row.softwareSource===1 ? 'BOM' : 'OTA' }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="适配的总成硬件零件号" prop="adaptedHardwarePn"/>
-      <el-table-column label="适配的总成软件零件号" prop="adaptedSoftwarePn"/>
-      <el-table-column label="发布日期" align="center" prop="createTime" width="180">
+      <el-table-column label="适配的总成硬件零件号" prop="adaptedHardwarePn" width="150"/>
+      <el-table-column label="适配的总成软件零件号" prop="adaptedSoftwarePn" width="150"/>
+      <el-table-column label="发布日期" align="center" prop="createTime" width="120">
         <template slot-scope="scope">
           <span>{{ parseTime(scope.row.publishDate, '{y}-{m}-{d}') }}</span>
         </template>
