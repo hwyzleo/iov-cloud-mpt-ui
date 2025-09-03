@@ -99,7 +99,7 @@
       <el-table-column label="软件零件版本" prop="softwarePartVer"/>
       <el-table-column label="测试报告" prop="softwareReport" width="80" align="center">
         <template slot-scope="scope">
-          <span>{{ scope.row.softwareReport ? '未上传' : '已上传' }}</span>
+          <span>{{ scope.row.softwareReport && scope.row.softwareReport.trim() ? '已上传' : '未上传' }}</span>
         </template>
       </el-table-column>
       <el-table-column label="软件来源" prop="softwareSource" width="80" align="center">
@@ -151,7 +151,7 @@
 
     <!-- 添加或修改软件零件版本信息对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="600px" append-to-body>
-      <el-form ref="form" :model="form" :rules="rules" label-width="150px">
+      <el-form ref="form" :model="form" :rules="rules" label-width="160px">
         <el-form-item label="ECU" prop="ecuCode">
           <el-select
             v-model="form.ecuCode"
@@ -170,7 +170,7 @@
           <el-input v-model="form.softwarePn" :readonly="form.id !== undefined" placeholder="请输入软件零件号"/>
         </el-form-item>
         <el-form-item label="软件零件版本" prop="softwarePartVer">
-          <el-input v-model="form.softwarePartVer" type="textarea" placeholder="请输入软件零件版本"/>
+          <el-input v-model="form.softwarePartVer" placeholder="请输入软件零件版本"/>
         </el-form-item>
         <el-form-item label="软件测试报告" prop="softwareReport">
           <el-input v-model="form.softwareReport" placeholder="请输入软件测试报告"/>
@@ -188,10 +188,10 @@
             <el-option key="2" label="OTA" value="2" />
           </el-select>
         </el-form-item>
-        <el-form-item label="适配的总成硬件零件号" prop="softwareReport">
+        <el-form-item label="适配的总成硬件零件号" prop="adaptedHardwarePn">
           <el-input v-model="form.adaptedHardwarePn" placeholder="请输入适配的总成硬件零件号"/>
         </el-form-item>
-        <el-form-item label="适配的总成软件零件号" prop="softwareReport">
+        <el-form-item label="适配的总成软件零件号" prop="adaptedSoftwarePn">
           <el-input v-model="form.adaptedSoftwarePn" placeholder="请输入适配的总成软件零件号"/>
         </el-form-item>
         <el-form-item label="发布时间" prop="publishDate">
