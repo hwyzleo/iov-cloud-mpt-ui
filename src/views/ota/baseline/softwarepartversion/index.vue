@@ -111,7 +111,7 @@
       <el-table-column label="适配的总成软件零件号" prop="adaptedSoftwarePn"/>
       <el-table-column label="发布日期" align="center" prop="createTime" width="180">
         <template slot-scope="scope">
-          <span>{{ parseDate(scope.row.publishDate) }}</span>
+          <span>{{ parseTime(scope.row.publishDate, '{y}-{m}-{d}') }}</span>
         </template>
       </el-table-column>
       <el-table-column label="创建时间" align="center" prop="createTime" width="180">
