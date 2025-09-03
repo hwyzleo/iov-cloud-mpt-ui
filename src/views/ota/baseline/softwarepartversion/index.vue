@@ -111,7 +111,7 @@
       <el-table-column label="适配的总成软件零件号" prop="adaptedSoftwarePn"/>
       <el-table-column label="发布日期" align="center" prop="createTime" width="180">
         <template slot-scope="scope">
-          <span>{{ parseTime(scope.row.publishDate) }}</span>
+          <span>{{ parseDate(scope.row.publishDate) }}</span>
         </template>
       </el-table-column>
       <el-table-column label="创建时间" align="center" prop="createTime" width="180">
@@ -151,7 +151,7 @@
 
     <!-- 添加或修改软件零件版本信息对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="600px" append-to-body>
-      <el-form ref="form" :model="form" :rules="rules" label-width="160px">
+      <el-form ref="form" :model="form" :rules="rules" label-width="180px">
         <el-form-item label="ECU" prop="ecuCode">
           <el-select
             v-model="form.ecuCode"
