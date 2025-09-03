@@ -236,10 +236,10 @@ export default {
         ecuCode: [
           {required: true, message: "ECU不能为空", trigger: "blur"}
         ],
-        softwareNo: [
+        softwarePn: [
           {required: true, message: "软件零件号不能为空", trigger: "blur"}
         ],
-        softwareNoVerRange: [
+        softwarePartVerRange: [
           {required: true, message: "软件零件版本范围不能为空", trigger: "blur"}
         ]
       },
@@ -322,10 +322,10 @@ export default {
       if (value) {
         const selectedEcu = this.ecuList.find(ecu => ecu.code === value);
         if (selectedEcu) {
-          this.form.softwareName = selectedEcu.label;
+          this.form.softwarePartName = selectedEcu.label;
         }
       } else {
-        this.form.softwareName = '';
+        this.form.softwarePartName = '';
       }
     },
     /** 提交按钮 */
