@@ -82,8 +82,6 @@
       <el-table-column label="软件包代码" prop="packageCode" width="100"/>
       <el-table-column label="软件包名称" prop="packageName"/>
       <el-table-column label="软件包类型" prop="packageType" width="120"/>
-      <el-table-column label="软件包大小" prop="packageSize" width="120"/>
-      <el-table-column label="软件包MD5" prop="packageMd5" width="120"/>
       <el-table-column label="软件包来源" prop="packageSource" width="80" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.packageSource===1 ? 'BOM' : 'OTA' }}</span>
@@ -144,89 +142,110 @@
     />
 
     <!-- 添加或修改软件包信息对话框 -->
-    <el-dialog :title="title" :visible.sync="open" width="600px" append-to-body>
-      <el-form ref="form" :model="form" :rules="rules" label-width="180px">
-        <el-form-item label="ECU" prop="softwarePartVersionId">
-          <el-select
-            v-model="form.softwarePartVersionId"
-            placeholder="软件零件版本"
-            clearable
-          >
-            <el-option
-              v-for="softwarePartVersion in this.softwarePartVersionList"
-              :key="softwarePartVersion.id"
-              :label="softwarePartVersion.code + '(' + softwarePartVersion.label + ')'"
-              :value="softwarePartVersion.id"
-            />
-          </el-select>
-        </el-form-item>
-        <el-form-item label="软件包代码" prop="packageCode">
-          <el-input v-model="form.packageCode" :readonly="form.id !== undefined" placeholder="请输入软件包代码"/>
-        </el-form-item>
+    <el-dialog :title="title" :visible.sync="open" width="700px" append-to-body>
+      <el-form ref="form" :model="form" :rules="rules" label-width="150px">
+        <el-row>
+          <el-col :span="12">
+            <el-form-item label="软件零件版本" prop="softwarePartVersionId">
+              <el-select
+                v-model="form.softwarePartVersionId"
+                placeholder="软件零件版本"
+                clearable
+              >
+                <el-option
+                  v-for="softwarePartVersion in this.softwarePartVersionList"
+                  :key="softwarePartVersion.id"
+                  :label="softwarePartVersion.ecuCode + '-' + softwarePartVersion.softwarePn + '-' + softwarePartVersion.softwarePartVer"
+                  :value="softwarePartVersion.id"
+                />
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="软件包代码" prop="packageCode">
+              <el-input v-model="form.packageCode" :readonly="form.id !== undefined" placeholder="请输入软件包代码"/>
+            </el-form-item>
+          </el-col>
+        </el-row>
         <el-form-item label="软件包名称" prop="packageName">
           <el-input v-model="form.packageName" placeholder="请输入软件包名称"/>
         </el-form-item>
-        <el-form-item label="软件包类型" prop="packageType">
-          <el-select
-            v-model="form.packageType"
-            placeholder="软件包类型"
-            clearable
-          >
-            <el-option key="1" label="全量" value="1" />
-            <el-option key="2" label="差分" value="2" />
-          </el-select>
-        </el-form-item>
-        <el-form-item label="软件包大小" prop="packageSize">
-          <el-input-number v-model="form.packageSize" controls-position="right" :min="0"/>
-        </el-form-item>
-        <el-form-item label="软件包MD5" prop="packageMd5">
-          <el-input v-model="form.packageMd5" placeholder="请输入软件包MD5"/>
-        </el-form-item>
-        <el-form-item label="软件包说明" prop="packageDesc">
-          <el-input v-model="form.packageDesc" type="textarea" placeholder="请输入软件包说明"></el-input>
-        </el-form-item>
-        <el-form-item label="软件包来源" prop="softwareSource">
-          <el-select
-            v-model="form.packageSource"
-            placeholder="软件包来源"
-            clearable
-          >
-            <el-option key="1" label="BOM" value="1" />
-            <el-option key="2" label="OTA" value="2" />
-          </el-select>
-        </el-form-item>
-        <el-form-item label="基础软件零件号" prop="baseSoftwarePn">
-          <el-input v-model="form.baseSoftwarePn" placeholder="请输入基础软件零件号"/>
-        </el-form-item>
-        <el-form-item label="基础软件版本" prop="baseSoftwareVer">
-          <el-input v-model="form.baseSoftwareVer" placeholder="请输入基础软件版本"/>
-        </el-form-item>
-        <el-form-item label="软件包适配级别" prop="packageAdaptionLevel">
-          <el-select
-            v-model="form.packageAdaptionLevel"
-            placeholder="软件包适配级别"
-            clearable
-          >
-            <el-option key="1" label="基础版本及以下" value="1" />
-            <el-option key="2" label="基础版本及以上" value="2" />
-            <el-option key="3" label="与基础版本一致" value="3" />
-          </el-select>
-        </el-form-item>
-        <el-form-item label="适配的总成软件零件号" prop="adaptedSoftwarePn">
-          <el-input v-model="form.adaptedSoftwarePn" placeholder="请输入适配的总成软件零件号"/>
-        </el-form-item>
-        <el-form-item label="发布日期" prop="publishDate">
-          <el-date-picker
-            v-model="form.publishDate"
-            type="date"
-            placeholder="请选择发布日期"
-            value-format="timestamp"
-          >
-          </el-date-picker>
-        </el-form-item>
-        <el-form-item label="预计升级时间" prop="estimatedInstallTime">
-          <el-input-number v-model="form.estimatedInstallTime" controls-position="right" :min="0"/>
-        </el-form-item>
+        <el-row>
+          <el-col :span="12">
+            <el-form-item label="软件包类型" prop="packageType">
+              <el-select
+                v-model="form.packageType"
+                placeholder="软件包类型"
+                clearable
+              >
+                <el-option key="1" label="全量" value="1" />
+                <el-option key="2" label="差分" value="2" />
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="软件包来源" prop="softwareSource">
+              <el-select
+                v-model="form.packageSource"
+                placeholder="软件包来源"
+                clearable
+              >
+                <el-option key="1" label="BOM" value="1" />
+                <el-option key="2" label="OTA" value="2" />
+              </el-select>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="12">
+            <el-form-item label="基础软件零件号" prop="baseSoftwarePn">
+              <el-input v-model="form.baseSoftwarePn" placeholder="请输入基础软件零件号"/>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="基础软件版本" prop="baseSoftwareVer">
+              <el-input v-model="form.baseSoftwareVer" placeholder="请输入基础软件版本"/>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="12">
+            <el-form-item label="软件包适配级别" prop="packageAdaptionLevel">
+              <el-select
+                v-model="form.packageAdaptionLevel"
+                placeholder="软件包适配级别"
+                clearable
+              >
+                <el-option key="1" label="基础版本及以下" value="1" />
+                <el-option key="2" label="基础版本及以上" value="2" />
+                <el-option key="3" label="与基础版本一致" value="3" />
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="适配的总成软件零件号" prop="adaptedSoftwarePn">
+              <el-input v-model="form.adaptedSoftwarePn" placeholder="请输入适配的总成软件零件号"/>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="12">
+            <el-form-item label="发布日期" prop="publishDate">
+              <el-date-picker
+                v-model="form.publishDate"
+                type="date"
+                placeholder="请选择发布日期"
+                value-format="timestamp"
+              >
+              </el-date-picker>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="预计升级时间" prop="estimatedInstallTime">
+              <el-input-number v-model="form.estimatedInstallTime" controls-position="right" :min="0"/>
+            </el-form-item>
+          </el-col>
+        </el-row>
         <el-form-item label="是否是OTA包">
           <el-radio-group v-model="form.ota">
             <el-radio
