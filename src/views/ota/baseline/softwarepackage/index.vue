@@ -82,14 +82,14 @@
       <el-table-column label="软件包代码" prop="packageCode" width="100"/>
       <el-table-column label="软件包名称" prop="packageName"/>
       <el-table-column label="软件包类型" prop="packageType" width="120"/>
-      <el-table-column label="软件包来源" prop="packageSource" width="80" align="center">
+      <el-table-column label="软件包来源" prop="packageSource" width="100" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.packageSource===1 ? 'BOM' : 'OTA' }}</span>
         </template>
       </el-table-column>
       <el-table-column label="基础软件零件号" prop="baseSoftwarePn" width="150"/>
       <el-table-column label="基础软件版本" prop="baseSoftwareVer" width="150"/>
-      <el-table-column label="软件包适配级别" prop="packageAdaptionLevel" width="80" align="center">
+      <el-table-column label="适配级别" prop="packageAdaptionLevel" width="100" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.packageAdaptionLevel===1 ? 'BOM' : 'OTA' }}</span>
         </template>
@@ -101,7 +101,7 @@
         </template>
       </el-table-column>
       <el-table-column label="预计升级时间" prop="estimatedInstallTime" width="150"/>
-      <el-table-column label="是否是OTA包" prop="ota" width="80" align="center">
+      <el-table-column label="是否是OTA包" prop="ota" width="120" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.ota ? '是' : '否' }}</span>
         </template>
@@ -142,8 +142,8 @@
     />
 
     <!-- 添加或修改软件包信息对话框 -->
-    <el-dialog :title="title" :visible.sync="open" width="700px" append-to-body>
-      <el-form ref="form" :model="form" :rules="rules" label-width="150px">
+    <el-dialog :title="title" :visible.sync="open" width="800px" append-to-body>
+      <el-form ref="form" :model="form" :rules="rules" label-width="160px">
         <el-row>
           <el-col :span="12">
             <el-form-item label="软件零件版本" prop="softwarePartVersionId">
