@@ -94,13 +94,6 @@
           <span>{{ scope.row.packageAdaptionLevel===1 ? 'BOM' : 'OTA' }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="适配的总成软件零件号" prop="adaptedSoftwarePn" width="150"/>
-      <el-table-column label="发布日期" align="center" prop="createTime" width="120">
-        <template slot-scope="scope">
-          <span>{{ parseTime(scope.row.publishDate, '{y}-{m}-{d}') }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="预计升级时间" prop="estimatedInstallTime" width="150"/>
       <el-table-column label="是否是OTA包" prop="ota" width="120" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.ota ? '是' : '否' }}</span>
@@ -223,7 +216,7 @@
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="适配的总成软件零件号" prop="adaptedSoftwarePn">
+            <el-form-item label="适配总成软件零件号" prop="adaptedSoftwarePn">
               <el-input v-model="form.adaptedSoftwarePn" placeholder="请输入适配的总成软件零件号"/>
             </el-form-item>
           </el-col>
@@ -424,6 +417,7 @@ export default {
       this.open = true;
       this.title = "添加软件包信息";
       this.form = {
+        ota: true
       };
     },
     /** 修改按钮操作 */
