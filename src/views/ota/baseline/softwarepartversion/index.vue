@@ -437,10 +437,13 @@ export default {
       this.selectSoftwarePn = item.softwarePn;
     },
     handleSoftwarePartChange(item) {
-      if(form.softwarePn !== this.selectSoftwarePn) {
+      if(this.form.softwarePn !== this.selectSoftwarePn) {
         this.softwarePartVerRange = [];
-        this.form.softwarePartVer = '';
-        this.selectKey += 1;
+        this.$set(this.form, 'softwarePartVer', '');
+        this.$nextTick(() => {
+          this.selectKey += 1;
+        });
+        this.selectSoftwarePn = "";
       }
     },
     /** 提交按钮 */
