@@ -232,12 +232,14 @@
 <script>
 import {
   listSoftwarePartVersion,
-  listAllEcu,
   getSoftwarePartVersion,
   addSoftwarePartVersion,
   updateSoftwarePartVersion,
   delSoftwarePartVersion
 } from "@/api/ota/baseline/softwarepartversion";
+import {
+  listAllEcu,
+} from "@/api/ota/baseline/ecu";
 import {
   listAllSoftwarePart
 } from "@/api/ota/baseline/softwarepart";
