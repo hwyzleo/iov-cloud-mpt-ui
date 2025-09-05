@@ -402,7 +402,10 @@ export default {
     },
     handleEcuChange(value) {
       if (value) {
-        this.selectEcu = value;
+        const selectedEcu = this.ecuList.find(ecu => ecu.code === value);
+        if (selectedEcu) {
+          this.selectEcu = selectedEcu.code
+        }
       } else {
         this.selectEcu = '';
       }
