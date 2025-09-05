@@ -168,22 +168,34 @@
           </el-select>
         </el-form-item>
         <el-form-item label="软件零件号" prop="softwarePn">
-          <el-autocomplete
-            v-model="form.softwarePn"
-            :fetch-suggestions="querySoftwarePart"
-            placeholder="请输入软件零件号"
-            :readonly="form.id !== undefined"
-            :trigger-on-focus="false"
-            @select="handleSoftwarePartSelect"
-            style="width: 100%"
-          >
-            <template #default="{ item }">
-              <div>{{ item.softwarePn }} - {{ item.softwarePartName }}</div>
-            </template>
-          </el-autocomplete>
-        </el-form-item>
-        <el-form-item label="软件零件版本" prop="softwarePartVer">
-          <el-input v-model="form.softwarePartVer" placeholder="请输入软件零件版本"/>
+          <div style="display: flex; width: 100%;">
+            <el-autocomplete
+              v-model="form.softwarePn"
+              :fetch-suggestions="querySoftwarePart"
+              placeholder="请输入软件零件号"
+              :readonly="form.id !== undefined"
+              :trigger-on-focus="false"
+              @select="handleSoftwarePartSelect"
+              style="flex: 1; margin-right: 10px;"
+            >
+              <template #default="{ item }">
+                <div>{{ item.softwarePn }} - {{ item.softwarePartName }}</div>
+              </template>
+            </el-autocomplete>
+            <el-select
+              v-model="form.softwarePartVer"
+              placeholder="版本"
+              clearable
+              style="width: 80px;"
+            >
+              <el-option
+                v-for="version in this.softwarePartVerRange"
+                :key="version"
+                :label="version"
+                :value="version"
+              />
+            </el-select>
+          </div>
         </el-form-item>
         <el-form-item label="软件测试报告" prop="softwareReport">
           <el-input v-model="form.softwareReport" placeholder="请输入软件测试报告"/>
@@ -263,6 +275,7 @@ export default {
       // 软件零件表格数据
       softwarePartVersionList: [],
       softwarePartList: [],
+      softwarePartVerRange: [],
       ecuList: [],
       selectEcu: "",
       // 弹出层标题
@@ -327,6 +340,7 @@ export default {
         cb([]);
         return;
       }
+      this.softwarePartVerRange = [];
       listAllSoftwarePart({
         ecuCode: this.selectEcu,
         softwarePn: queryString
@@ -412,6 +426,7 @@ export default {
       }
     },
     handleSoftwarePartSelect(item) {
+      this.softwarePartVerRange = item.softwarePartVerRange.split(',');
     },
     /** 提交按钮 */
     submitForm: function () {
