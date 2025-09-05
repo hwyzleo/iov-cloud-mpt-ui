@@ -224,11 +224,11 @@
         <el-form-item label="适配的总成软件零件号" prop="adaptedSoftwarePn">
           <el-input v-model="form.adaptedSoftwarePn" placeholder="请输入适配的总成软件零件号"/>
         </el-form-item>
-        <el-form-item label="发布时间" prop="publishDate">
+        <el-form-item label="发布日期" prop="publishDate">
           <el-date-picker
             v-model="form.publishDate"
             type="date"
-            placeholder="请选择发布时间"
+            placeholder="请选择发布日期"
             value-format="timestamp"
           >
           </el-date-picker>

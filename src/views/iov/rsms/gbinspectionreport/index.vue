@@ -337,11 +337,11 @@
           </div>
           <div v-if="formResult.items.INTEGRITY">
             <el-divider></el-divider>
-            <div class="drawer-title">完整性检测</div>
+            <div class="drawer-title">• 完整性检测</div>
           </div>
           <div v-if="formResult.items.ACCURACY">
             <el-divider></el-divider>
-            <div class="drawer-title">准确性检测</div>
+            <div class="drawer-title">• 准确性检测</div>
           </div>
           <div v-if="formResult.items.CONSISTENCY">
             <el-divider></el-divider>
@@ -377,7 +377,7 @@
           </div>
           <div v-if="formResult.items.TIMELINESS">
             <el-divider></el-divider>
-            <div class="drawer-title">时效性检测</div>
+            <div class="drawer-title">• 时效性检测</div>
             <div v-if="formResult.items.TIMELINESS.DUPLICATE">
               <div class="drawer-title">◦ 重复性检测</div>
               <div v-if="formResult.items.TIMELINESS.DUPLICATE.MESSAGE_TIME_DUPLICATE">

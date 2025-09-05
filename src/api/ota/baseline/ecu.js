@@ -52,9 +52,9 @@ export function updateEcu(data) {
 }
 
 // 删除ECU信息
-export function delEcu(brandIds) {
+export function delEcu(ecuIds) {
   return request({
-    url: '/ota-baseline/mpt/ecu/' + brandIds,
+    url: '/ota-baseline/mpt/ecu/' + ecuIds,
     method: 'delete'
   })
 }
