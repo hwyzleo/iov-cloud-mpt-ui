@@ -173,6 +173,7 @@
               v-model="form.softwarePn"
               :fetch-suggestions="querySoftwarePart"
               placeholder="请输入软件零件号"
+              :disabled="form.ecuCode === undefined"
               :readonly="form.id !== undefined"
               :trigger-on-focus="false"
               @select="handleSoftwarePartSelect"
@@ -341,6 +342,7 @@ export default {
         return;
       }
       this.softwarePartVerRange = [];
+      this.form.softwarePartVer = undefined;
       listAllSoftwarePart({
         ecuCode: this.selectEcu,
         softwarePn: queryString
