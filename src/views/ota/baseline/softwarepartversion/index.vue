@@ -176,10 +176,8 @@
             :trigger-on-focus="false"
             @select="handleSoftwarePartSelect"
           >
-            <template slot-suggestions="props">
-              <li v-for="item in props.suggestions" :key="item.softwarePn" class="el-autocomplete-suggestion__item">
-                <span>{{ item.softwarePn }} - {{ item.softwarePartName }}</span>
-              </li>
+            <template #default="{ item }">
+              <div>{{ item.softwarePn }} - {{ item.softwarePartName }}</div>
             </template>
           </el-autocomplete>
         </el-form-item>
