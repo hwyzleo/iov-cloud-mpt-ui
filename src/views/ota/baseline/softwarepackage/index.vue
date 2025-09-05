@@ -143,19 +143,55 @@
     <!-- 添加或修改软件包信息对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="800px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="160px">
-        <el-form-item label="软件零件版本" prop="softwarePartVersionId">
+        <el-form-item label="ECU" prop="ecuCode">
           <el-select
-            v-model="form.softwarePartVersionId"
-            placeholder="软件零件版本"
+            v-model="form.ecuCode"
+            placeholder="ECU"
             clearable
+            @change="handleEcuChange"
           >
             <el-option
-              v-for="softwarePartVersion in this.softwarePartVersionList"
-              :key="softwarePartVersion.id"
-              :label="softwarePartVersion.ecuCode + '-' + softwarePartVersion.softwarePn + '-' + softwarePartVersion.softwarePartVer"
-              :value="softwarePartVersion.id"
+              v-for="ecu in this.ecuList"
+              :key="ecu.code"
+              :label="ecu.code + '(' + ecu.label + ')'"
+              :value="ecu.code"
             />
           </el-select>
+        </el-form-item>
+        <el-form-item label="软件零件号" prop="softwarePn">
+          <div style="display: flex; width: 100%;">
+            <el-autocomplete
+              v-model="form.softwarePn"
+              :fetch-suggestions="querySoftwarePart"
+              placeholder="请输入软件零件号"
+              :disabled="form.ecuCode === undefined || form.ecuCode === ''"
+              :readonly="softwarePnSelected"
+              :trigger-on-focus="false"
+              clearable
+              @select="handleSoftwarePartSelect"
+              @change="handleSoftwarePartChange"
+              style="flex: 1; margin-right: 10px;"
+            >
+              <template #default="{ item }">
+                <div>{{ item.softwarePn }} - {{ item.softwarePartName }}</div>
+              </template>
+            </el-autocomplete>
+            <el-select
+              :key="selectKey"
+              v-model="form.softwarePartVer"
+              placeholder="版本"
+              :disabled="form.ecuCode === undefined || form.ecuCode === ''"
+              clearable
+              style="width: 80px;"
+            >
+              <el-option
+                v-for="version in this.softwarePartVerRange"
+                :key="version"
+                :label="version"
+                :value="version"
+              />
+            </el-select>
+          </div>
         </el-form-item>
         <el-row>
           <el-col :span="12">
@@ -284,12 +320,17 @@
 <script>
 import {
   listSoftwarePackage,
-  listAllSoftwarePartVersion,
   getSoftwarePackage,
   addSoftwarePackage,
   updateSoftwarePackage,
   delSoftwarePackage
 } from "@/api/ota/baseline/softwarepackage";
+import {
+  listAllEcu,
+} from "@/api/ota/baseline/ecu";
+import {
+  listAllSoftwarePart
+} from "@/api/ota/baseline/softwarepart";
 
 export default {
   name: "SoftwarePackage",
@@ -310,7 +351,12 @@ export default {
       total: 0,
       // 软件包表格数据
       softwarePackageList: [],
-      softwarePartVersionList: [],
+      softwarePartList: [],
+      softwarePartVerRange: [],
+      ecuList: [],
+      selectEcu: "",
+      selectSoftwarePn: "",
+      selectKey: 0,
       // 弹出层标题
       title: "",
       // 是否显示弹出层
@@ -357,7 +403,7 @@ export default {
     };
   },
   created() {
-    this.getSoftwarePartVersionList();
+    this.getEcuList();
     this.getList();
   },
   methods: {
@@ -371,11 +417,36 @@ export default {
         }
       );
     },
-    getSoftwarePartVersionList() {
-      listAllSoftwarePartVersion().then(response => {
-          this.softwarePartVersionList = response.data;
+    getEcuList() {
+      listAllEcu().then(response => {
+          this.ecuList = response.data;
         }
       );
+    },
+    querySoftwarePart(queryString, cb) {
+      if (!this.selectEcu || !queryString) {
+        cb([]);
+        return;
+      }
+      this.softwarePartVerRange = [];
+      listAllSoftwarePart({
+        ecuCode: this.selectEcu,
+        softwarePn: queryString
+      }).then(response => {
+        if (response.data && response.data.length > 0) {
+          const suggestions = response.data.map(item => {
+            return {
+              value: item.softwarePn,
+              ...item
+            };
+          });
+          cb(suggestions);
+        } else {
+          cb([]);
+        }
+      }).catch(() => {
+        cb([]);
+      });
     },
     /** 取消按钮 */
     cancel() {
@@ -438,6 +509,30 @@ export default {
         this.open = true;
       });
       this.title = "修改软件包信息";
+    },
+    handleEcuChange(value) {
+      if (value) {
+        const selectedEcu = this.ecuList.find(ecu => ecu.code === value);
+        if (selectedEcu) {
+          this.selectEcu = selectedEcu.code
+        }
+      } else {
+        this.selectEcu = '';
+      }
+    },
+    handleSoftwarePartSelect(item) {
+      this.softwarePartVerRange = item.softwarePartVerRange.split(',');
+      this.selectSoftwarePn = item.softwarePn;
+    },
+    handleSoftwarePartChange(item) {
+      if(this.form.softwarePn !== this.selectSoftwarePn) {
+        this.softwarePartVerRange = [];
+        this.$set(this.form, 'softwarePartVer', '');
+        this.$nextTick(() => {
+          this.selectKey += 1;
+        });
+        this.selectSoftwarePn = "";
+      }
     },
     /** 提交按钮 */
     submitForm: function () {

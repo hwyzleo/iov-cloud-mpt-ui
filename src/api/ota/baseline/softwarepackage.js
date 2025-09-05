@@ -9,14 +9,6 @@ export function listSoftwarePackage(query) {
   })
 }
 
-// 获取所有软件零件版本
-export function listAllSoftwarePartVersion() {
-  return request({
-    url: '/ota-baseline/mpt/softwarePackage/listAllSoftwarePartVersion',
-    method: 'get'
-  })
-}
-
 // 查询软件包信息详细
 export function getSoftwarePackage(softwarePackageId) {
   return request({
