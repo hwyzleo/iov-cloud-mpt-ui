@@ -342,7 +342,6 @@ export default {
         return;
       }
       this.softwarePartVerRange = [];
-      this.form.softwarePartVer = undefined;
       listAllSoftwarePart({
         ecuCode: this.selectEcu,
         softwarePn: queryString
