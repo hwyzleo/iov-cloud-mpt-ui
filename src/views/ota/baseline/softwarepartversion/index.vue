@@ -188,7 +188,6 @@
               placeholder="版本"
               clearable
               style="width: 80px;"
-              @select="handleSoftwarePartVerSelect"
             >
               <el-option
                 v-for="version in this.softwarePartVerRange"
