@@ -175,6 +175,7 @@
             :readonly="form.id !== undefined"
             :trigger-on-focus="false"
             @select="handleSoftwarePartSelect"
+            style="width: 100%"
           >
             <template #default="{ item }">
               <div>{{ item.softwarePn }} - {{ item.softwarePartName }}</div>
