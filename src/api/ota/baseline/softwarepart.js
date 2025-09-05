@@ -10,10 +10,11 @@ export function listSoftwarePart(query) {
 }
 
 // 获取所有软件零件
-export function listAllSoftwarePart(ecuCode, key) {
+export function listAllSoftwarePart(query) {
   return request({
-    url: '/ota-baseline/mpt/softwarePart/listAllSoftwarePart?ecuCode=' + ecuCode + '&key=' + key,
-    method: 'get'
+    url: '/ota-baseline/mpt/softwarePart/listAllSoftwarePart',
+    method: 'get',
+    params: query
   })
 }
 
