@@ -437,6 +437,7 @@ export default {
     handleSoftwarePartChange(item) {
       if(form.softwarePn !== this.selectSoftwarePn) {
         this.softwarePartVerRange = [];
+        this.form.softwarePartVer = undefined;
       }
     },
     /** 提交按钮 */
