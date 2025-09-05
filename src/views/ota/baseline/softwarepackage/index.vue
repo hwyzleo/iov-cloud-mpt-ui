@@ -79,7 +79,6 @@
 
     <el-table v-loading="loading" :data="softwarePackageList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center"/>
-      <el-table-column label="软件包代码" prop="packageCode" width="100"/>
       <el-table-column label="软件包名称" prop="packageName"/>
       <el-table-column label="软件包类型" prop="packageType" width="120"/>
       <el-table-column label="软件包来源" prop="packageSource" width="100" align="center">
@@ -137,45 +136,21 @@
     <!-- 添加或修改软件包信息对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="800px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="160px">
-        <el-row>
-          <el-col :span="12">
-            <el-form-item label="软件零件版本" prop="softwarePartVersionId">
-              <el-select
-                v-model="form.softwarePartVersionId"
-                placeholder="软件零件版本"
-                clearable
-              >
-                <el-option
-                  v-for="softwarePartVersion in this.softwarePartVersionList"
-                  :key="softwarePartVersion.id"
-                  :label="softwarePartVersion.ecuCode + '-' + softwarePartVersion.softwarePn + '-' + softwarePartVersion.softwarePartVer"
-                  :value="softwarePartVersion.id"
-                />
-              </el-select>
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="软件包代码" prop="packageCode">
-              <el-input v-model="form.packageCode" :readonly="form.id !== undefined" placeholder="请输入软件包代码"/>
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <el-form-item label="软件包名称" prop="packageName">
-          <el-input v-model="form.packageName" placeholder="请输入软件包名称"/>
+        <el-form-item label="软件零件版本" prop="softwarePartVersionId">
+          <el-select
+            v-model="form.softwarePartVersionId"
+            placeholder="软件零件版本"
+            clearable
+          >
+            <el-option
+              v-for="softwarePartVersion in this.softwarePartVersionList"
+              :key="softwarePartVersion.id"
+              :label="softwarePartVersion.ecuCode + '-' + softwarePartVersion.softwarePn + '-' + softwarePartVersion.softwarePartVer"
+              :value="softwarePartVersion.id"
+            />
+          </el-select>
         </el-form-item>
         <el-row>
-          <el-col :span="12">
-            <el-form-item label="软件包类型" prop="packageType">
-              <el-select
-                v-model="form.packageType"
-                placeholder="软件包类型"
-                clearable
-              >
-                <el-option key="1" label="全量" value="1" />
-                <el-option key="2" label="差分" value="2" />
-              </el-select>
-            </el-form-item>
-          </el-col>
           <el-col :span="12">
             <el-form-item label="软件包来源" prop="softwareSource">
               <el-select
@@ -188,7 +163,43 @@
               </el-select>
             </el-form-item>
           </el-col>
+          <el-col :span="12">
+            <el-form-item label="软件包类型" prop="packageType">
+              <el-select
+                v-model="form.packageType"
+                placeholder="软件包类型"
+                clearable
+              >
+                <el-option key="1" label="全量" value="1" />
+                <el-option key="2" label="差分" value="2" />
+              </el-select>
+            </el-form-item>
+          </el-col>
         </el-row>
+        <el-form-item label="软件包名称" prop="packageName">
+          <el-input v-model="form.packageName" placeholder="请输入软件包名称"/>
+        </el-form-item>
+        <el-form-item label="软件包代码" prop="packageCode">
+          <el-input v-model="form.packageCode" placeholder="请输入软件包代码"/>
+        </el-form-item>
+        <el-form-item label="软件包URL" prop="packageCode">
+          <el-input v-model="form.packageUrl" placeholder="请输入软件包URL"/>
+        </el-form-item>
+        <el-row>
+          <el-col :span="12">
+            <el-form-item label="软件包大小（Byte）" prop="packageSize">
+              <el-input v-model="form.packageSize" placeholder="请输入软件包大小"/>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="软件包MD5" prop="packageMd5">
+              <el-input v-model="form.packageMd5" placeholder="请输入软件包MD5"/>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-form-item label="软件包说明" prop="packageDesc">
+          <el-input v-model="form.packageDesc" type="textarea" placeholder="请输入软件包说明"></el-input>
+        </el-form-item>
         <el-row>
           <el-col :span="12">
             <el-form-item label="基础软件零件号" prop="baseSoftwarePn">
@@ -311,20 +322,11 @@ export default {
         softwarePartVersionId: [
           {required: true, message: "软件零件版本不能为空", trigger: "blur"}
         ],
-        packageCode: [
-          {required: true, message: "软件包代码不能为空", trigger: "blur"}
-        ],
         packageName: [
           {required: true, message: "软件包名称不能为空", trigger: "blur"}
         ],
         packageType: [
           {required: true, message: "软件包类型不能为空", trigger: "blur"}
-        ],
-        packageSize: [
-          {required: true, message: "软件包大小不能为空", trigger: "blur"}
-        ],
-        packageMd5: [
-          {required: true, message: "软件包MD5不能为空", trigger: "blur"}
         ],
         packageSource: [
           {required: true, message: "软件包来源不能为空", trigger: "blur"}
