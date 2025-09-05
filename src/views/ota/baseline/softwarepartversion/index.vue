@@ -157,6 +157,7 @@
             v-model="form.ecuCode"
             placeholder="ECU"
             clearable
+            @change="handleEcuChange"
           >
             <el-option
               v-for="ecu in this.ecuList"
@@ -167,7 +168,20 @@
           </el-select>
         </el-form-item>
         <el-form-item label="软件零件号" prop="softwarePn">
-          <el-input v-model="form.softwarePn" :readonly="form.id !== undefined" placeholder="请输入软件零件号"/>
+          <el-autocomplete
+            v-model="form.softwarePn"
+            :fetch-suggestions="querySoftwarePart"
+            placeholder="请输入软件零件号"
+            :readonly="form.id !== undefined"
+            :trigger-on-focus="false"
+            @select="handleSoftwarePartSelect"
+          >
+            <template slot-suggestions="props">
+              <li v-for="item in props.suggestions" :key="item.softwarePn" class="el-autocomplete-suggestion__item">
+                <span>{{ item.softwarePn }} - {{ item.softwarePartName }}</span>
+              </li>
+            </template>
+          </el-autocomplete>
         </el-form-item>
         <el-form-item label="软件零件版本" prop="softwarePartVer">
           <el-input v-model="form.softwarePartVer" placeholder="请输入软件零件版本"/>
@@ -224,6 +238,9 @@ import {
   updateSoftwarePartVersion,
   delSoftwarePartVersion
 } from "@/api/ota/baseline/softwarepartversion";
+import {
+  listAllSoftwarePart
+} from "@/api/ota/baseline/softwarepart";
 
 export default {
   name: "SoftwarePartVersion",
@@ -244,7 +261,9 @@ export default {
       total: 0,
       // 软件零件表格数据
       softwarePartVersionList: [],
+      softwarePartList: [],
       ecuList: [],
+      selectEcu: "",
       // 弹出层标题
       title: "",
       // 是否显示弹出层
@@ -302,6 +321,30 @@ export default {
         }
       );
     },
+    querySoftwarePart(queryString, cb) {
+      if (!this.selectEcu || !queryString) {
+        cb([]);
+        return;
+      }
+      listAllSoftwarePart({
+        ecuCode: this.selectEcu,
+        softwarePn: queryString
+      }).then(response => {
+        if (response.data && response.data.length > 0) {
+          const suggestions = response.data.map(item => {
+            return {
+              value: item.softwarePn,
+              ...item
+            };
+          });
+          cb(suggestions);
+        } else {
+          cb([]);
+        }
+      }).catch(() => {
+        cb([]);
+      });
+    },
     /** 取消按钮 */
     cancel() {
       this.open = false;
@@ -356,6 +399,15 @@ export default {
         this.open = true;
       });
       this.title = "修改软件零件版本信息";
+    },
+    handleEcuChange(value) {
+      if (value) {
+        this.selectEcu = value;
+      } else {
+        this.selectEcu = '';
+      }
+    },
+    handleSoftwarePartSelect(item) {
     },
     /** 提交按钮 */
     submitForm: function () {

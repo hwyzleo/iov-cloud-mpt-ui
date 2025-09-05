@@ -9,22 +9,6 @@ export function listSoftwarePartVersion(query) {
   })
 }
 
-// 获取所有ECU
-export function listAllEcu() {
-  return request({
-    url: '/ota-baseline/mpt/softwarePart/listAllEcu',
-    method: 'get'
-  })
-}
-
-// 获取所有软件零件
-export function listAllSoftwarePart() {
-  return request({
-    url: '/ota-baseline/mpt/softwareVersion/listAllSoftwarePart',
-    method: 'get'
-  })
-}
-
 // 查询软件零件版本信息详细
 export function getSoftwarePartVersion(softwarePartVersionId) {
   return request({
