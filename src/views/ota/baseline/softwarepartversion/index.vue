@@ -186,6 +186,7 @@
               </template>
             </el-autocomplete>
             <el-select
+              :key="selectKey"
               v-model="form.softwarePartVer"
               placeholder="版本"
               :disabled="form.ecuCode === undefined || form.ecuCode === ''"
@@ -283,6 +284,7 @@ export default {
       ecuList: [],
       selectEcu: "",
       selectSoftwarePn: "",
+      selectKey: 0,
       // 弹出层标题
       title: "",
       // 是否显示弹出层
@@ -438,6 +440,7 @@ export default {
       if(form.softwarePn !== this.selectSoftwarePn) {
         this.softwarePartVerRange = [];
         this.form.softwarePartVer = null;
+        this.selectKey += 1;
       }
     },
     /** 提交按钮 */
