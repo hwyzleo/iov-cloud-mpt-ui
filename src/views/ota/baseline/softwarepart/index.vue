@@ -191,12 +191,14 @@
 <script>
 import {
   listSoftwarePart,
-  listAllEcu,
   getSoftwarePart,
   addSoftwarePart,
   updateSoftwarePart,
   delSoftwarePart
 } from "@/api/ota/baseline/softwarepart";
+import {
+  listAllEcu,
+} from "@/api/ota/baseline/ecu";
 
 export default {
   name: "SoftwarePart",
@@ -275,9 +277,9 @@ export default {
     reset() {
       this.form = {
         ecuCode: undefined,
-        softwareName: undefined,
-        softwareNo: undefined,
-        softwareNoVerRange: undefined,
+        softwarePartName: undefined,
+        softwarePn: undefined,
+        softwarePartVerRange: undefined,
         ota: undefined
       };
       this.resetForm("form");

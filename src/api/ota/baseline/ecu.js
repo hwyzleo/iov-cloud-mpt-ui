@@ -17,6 +17,14 @@ export function listAllEcuType() {
   })
 }
 
+// 获取所有ECU
+export function listAllEcu() {
+  return request({
+    url: '/ota-baseline/mpt/ecu/listAllEcu',
+    method: 'get'
+  })
+}
+
 // 查询ECU信息详细
 export function getEcu(ecuId) {
   return request({
