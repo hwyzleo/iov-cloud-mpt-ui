@@ -173,9 +173,10 @@
               v-model="form.softwarePn"
               :fetch-suggestions="querySoftwarePart"
               placeholder="请输入软件零件号"
-              :disabled="form.ecuCode === undefined"
+              :disabled="form.ecuCode === undefined || form.ecuCode === ''"
               :readonly="form.id !== undefined"
               :trigger-on-focus="false"
+              clearable
               @select="handleSoftwarePartSelect"
               style="flex: 1; margin-right: 10px;"
             >
@@ -186,6 +187,7 @@
             <el-select
               v-model="form.softwarePartVer"
               placeholder="版本"
+              :disabled="form.ecuCode === undefined || form.ecuCode === ''"
               clearable
               style="width: 80px;"
             >
@@ -428,9 +430,6 @@ export default {
     },
     handleSoftwarePartSelect(item) {
       this.softwarePartVerRange = item.softwarePartVerRange.split(',');
-    },
-    handleSoftwarePartVerSelect(item) {
-      this.form.softwarePartVer = item.value;
     },
     /** 提交按钮 */
     submitForm: function () {
