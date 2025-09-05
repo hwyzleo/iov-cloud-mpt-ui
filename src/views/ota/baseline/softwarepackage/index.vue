@@ -195,7 +195,7 @@
         </el-form-item>
         <el-row>
           <el-col :span="12">
-            <el-form-item label="软件包来源" prop="softwareSource">
+            <el-form-item label="软件包来源" prop="packageSource">
               <el-select
                 v-model="form.packageSource"
                 placeholder="软件包来源"
@@ -372,7 +372,13 @@ export default {
       form: {},
       // 表单校验
       rules: {
-        softwarePartVersionId: [
+        ecuCode: [
+          {required: true, message: "ECU代码不能为空", trigger: "blur"}
+        ],
+        softwarePn: [
+          {required: true, message: "软件零件号不能为空", trigger: "blur"}
+        ],
+        softwarePartVer: [
           {required: true, message: "软件零件版本不能为空", trigger: "blur"}
         ],
         packageName: [
