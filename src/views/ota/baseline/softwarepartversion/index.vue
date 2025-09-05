@@ -439,7 +439,7 @@ export default {
     handleSoftwarePartChange(item) {
       if(form.softwarePn !== this.selectSoftwarePn) {
         this.softwarePartVerRange = [];
-        this.form.softwarePartVer = null;
+        this.$set(this.form, 'softwarePartVer', null);
         this.selectKey += 1;
       }
     },
