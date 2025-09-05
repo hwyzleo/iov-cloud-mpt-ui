@@ -92,7 +92,7 @@
       </el-table-column>
       <el-table-column label="基础软件零件号" prop="baseSoftwarePn" width="150"/>
       <el-table-column label="基础软件版本" prop="baseSoftwareVer" width="150"/>
-      <el-table-column label="适配级别" prop="packageAdaptionLevel" width="100" align="center">
+      <el-table-column label="适配级别" prop="packageAdaptionLevel" width="150" align="center">
         <template slot-scope="scope">
           <span v-if="scope.row.packageAdaptionLevel === 1">基础版本及以下</span>
           <span v-else-if="scope.row.packageAdaptionLevel === 2">基础版本及以上</span>
@@ -195,7 +195,7 @@
         <el-row>
           <el-col :span="12">
             <el-form-item label="软件包大小（Byte）" prop="packageSize">
-              <el-input v-model="form.packageSize" placeholder="请输入软件包大小"/>
+              <el-input-number v-model="form.packageSize" controls-position="right" :min="0"/>
             </el-form-item>
           </el-col>
           <el-col :span="12">
