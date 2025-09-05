@@ -188,6 +188,7 @@
               placeholder="版本"
               clearable
               style="width: 80px;"
+              @select="handleSoftwarePartVerSelect"
             >
               <el-option
                 v-for="version in this.softwarePartVerRange"
@@ -429,6 +430,9 @@ export default {
     },
     handleSoftwarePartSelect(item) {
       this.softwarePartVerRange = item.softwarePartVerRange.split(',');
+    },
+    handleSoftwarePartVerSelect(item) {
+      this.form.softwarePartVer = item.value;
     },
     /** 提交按钮 */
     submitForm: function () {
