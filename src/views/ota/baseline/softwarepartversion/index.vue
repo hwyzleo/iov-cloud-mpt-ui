@@ -282,7 +282,7 @@ export default {
       softwarePartVerRange: [],
       ecuList: [],
       selectEcu: "",
-      softwarePnSelected: false,
+      selectSoftwarePn: "",
       // 弹出层标题
       title: "",
       // 是否显示弹出层
@@ -432,11 +432,10 @@ export default {
     },
     handleSoftwarePartSelect(item) {
       this.softwarePartVerRange = item.softwarePartVerRange.split(',');
-      this.softwarePnSelected = true;
+      this.selectSoftwarePn = item.softwarePn;
     },
     handleSoftwarePartChange(item) {
-      if(form.softwarePn === undefined || form.softwarePn === '') {
-        this.softwarePnSelected = false;
+      if(form.softwarePn !== this.selectSoftwarePn) {
         this.softwarePartVerRange = [];
       }
     },
