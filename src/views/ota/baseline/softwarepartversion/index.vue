@@ -174,10 +174,11 @@
               :fetch-suggestions="querySoftwarePart"
               placeholder="请输入软件零件号"
               :disabled="form.ecuCode === undefined || form.ecuCode === ''"
-              :readonly="form.id !== undefined"
+              :readonly="softwarePnSelected"
               :trigger-on-focus="false"
               clearable
               @select="handleSoftwarePartSelect"
+              @change="handleSoftwarePartChange"
               style="flex: 1; margin-right: 10px;"
             >
               <template #default="{ item }">
@@ -281,6 +282,7 @@ export default {
       softwarePartVerRange: [],
       ecuList: [],
       selectEcu: "",
+      softwarePnSelected: false,
       // 弹出层标题
       title: "",
       // 是否显示弹出层
@@ -430,6 +432,13 @@ export default {
     },
     handleSoftwarePartSelect(item) {
       this.softwarePartVerRange = item.softwarePartVerRange.split(',');
+      this.softwarePnSelected = true;
+    },
+    handleSoftwarePartChange(item) {
+      if(form.softwarePn === undefined || form.softwarePn === '') {
+        this.softwarePnSelected = false;
+        this.softwarePartVerRange = [];
+      }
     },
     /** 提交按钮 */
     submitForm: function () {
