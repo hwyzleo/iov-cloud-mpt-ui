@@ -309,7 +309,7 @@
     </el-drawer>
 
     <!-- 软件零件版本列表对话框 -->
-    <el-dialog :title="title" :visible.sync="openSoftwarePartVersion" width="700px" append-to-body>
+    <el-dialog title="查询并添加软件零件版本" :visible.sync="openSoftwarePartVersion" width="900px" append-to-body>
       <el-form :model="queryParamsSoftwarePartVersion" ref="queryFormSoftwarePartVersion" size="small" :inline="true"
                v-show="showSearchSoftwarePartVersion">
         <el-form-item label="软件零件号" prop="softwarePn">
@@ -352,7 +352,7 @@
             size="mini"
             :disabled="multipleSoftwarePartVersion"
             @click="handleAddBaselineSoftwarePartVersion"
-            v-hasPermi="['ota:baseline:softwarePartVersion:remove']"
+            v-hasPermi="['ota:baseline:baseline:edit']"
           >关联
           </el-button>
         </el-col>
@@ -393,8 +393,8 @@
               size="mini"
               type="text"
               icon="el-icon-edit"
-              @click="handleUpdate(scope.row)"
-              v-hasPermi="['ota:baseline:softwarePartVersion:edit']"
+              @click="handleAddBaselineSoftwarePartVersion(scope.row)"
+              v-hasPermi="['ota:baseline:baseline:edit']"
             >关联
             </el-button>
         </el-table-column>
@@ -407,7 +407,7 @@
         :limit.sync="queryParams.pageSize"
         @pagination="getList"
       />
-      <div slot="footer" class="dialog-footer">
+      <div slot="footer" class="dialog-footer" style="text-align: center">
         <el-button @click="closeSoftwarePartVersion">关 闭</el-button>
       </div>
     </el-dialog>
