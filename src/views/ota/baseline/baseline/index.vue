@@ -110,6 +110,7 @@
           <span>{{ parseTime(scope.row.publishDate, '{y}-{m}-{d}') }}</span>
         </template>
       </el-table-column>
+      <el-table-column label="软件零件数" prop="softwarePartVersionCount" width="100" align="center"/>
       <el-table-column label="创建时间" align="center" prop="createTime" width="180">
         <template slot-scope="scope">
           <span>{{ parseTime(scope.row.createTime) }}</span>
@@ -626,8 +627,12 @@ export default {
     },
     handleRemoveBaselineSoftwarePartVersion(row) {
       const baselineSoftwarePartVersionIds = row.id || this.idsBaselineSoftwarePartVersion;
-      delBaselineSoftwarePartVersion(this.currentBaselineId, baselineSoftwarePartVersionIds).then(() => {
+      this.$modal.confirm('是否确认删除基线关联软件零件版本ID为"' + baselineSoftwarePartVersionIds + '"的数据项？').then(() => {
+        return delBaselineSoftwarePartVersion(this.currentBaselineId, baselineSoftwarePartVersionIds);
+      }).then(() => {
+        this.$modal.msgSuccess("删除成功");
         this.getListBaselineSoftwarePartVersion();
+      }).catch(() => {
       });
     },
     handleBaselineSoftwarePartVersion(row) {
