@@ -305,9 +305,6 @@
           :limit.sync="queryParamsBaselineSoftwarePartVersion.pageSize"
           @pagination="getListBaselineSoftwarePartVersion"
         />
-        <div slot="footer" class="dialog-footer">
-          <el-button @click="closeBaselineSoftwarePartVersion">关 闭</el-button>
-        </div>
       </div>
     </el-drawer>
 
@@ -615,6 +612,7 @@ export default {
     },
     handleAddSoftwarePartVersion() {
       this.openSoftwarePartVersion = true;
+      this.getListSoftwarePartVersion();
     },
     /** 修改按钮操作 */
     handleUpdate(row) {
@@ -688,3 +686,38 @@ export default {
   }
 };
 </script>
+<style>
+.message-cell {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+
+.message-cell:hover {
+  cursor: pointer;
+}
+
+.my-tooltip {
+  max-width: 400px !important;
+  white-space: normal !important;
+  word-break: break-word !important;
+}
+
+.drawer-content {
+  padding: 20px;
+  font-size: 14px;
+  color: #606266;
+}
+
+.drawer-title {
+  font-size: 16px;
+  font-weight: bolder;
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+
+.drawer-row {
+  margin-bottom: 15px;
+}
+</style>
