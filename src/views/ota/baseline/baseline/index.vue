@@ -668,7 +668,7 @@ export default {
     },
     handleAddBaselineSoftwarePartVersion(row) {
       const softwarePartVersionIds = row.id || this.idsSoftwarePartVersion;
-      this.$modal.confirm('是否确认将软件零件版本ID为"' + softwarePartVersionIds + '"的数据项关联到基线ID' + this.currentBaselineId + '？').then(function () {
+      this.$modal.confirm('是否确认将软件零件版本ID为"' + softwarePartVersionIds + '"的数据项关联到基线ID' + this.currentBaselineId + '？').then(() => {
         return addSoftwarePartVersion(this.currentBaselineId, softwarePartVersionIds);
       }).then(() => {
         this.$modal.msgSuccess("关联成功");
