@@ -535,9 +535,6 @@ export default {
           this.softwarePartVersionList = response.rows;
           this.totalSoftwarePartVersion = response.total;
           this.loadingSoftwarePartVersion = false;
-          this.$nextTick(() => {
-            this.setDefaultSelection();
-          });
         }
       );
     },
@@ -622,6 +619,9 @@ export default {
     handleAddSoftwarePartVersion() {
       this.openSoftwarePartVersion = true;
       this.getListSoftwarePartVersion();
+      this.$nextTick(() => {
+        this.setDefaultSelection();
+      });
     },
     /** 修改按钮操作 */
     handleUpdate(row) {
