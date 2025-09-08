@@ -361,7 +361,7 @@
         <right-toolbar :showSearch.sync="showSearch" @queryTable="getListSoftwarePartVersion"></right-toolbar>
       </el-row>
 
-      <el-table v-loading="loadingSoftwarePartVersion" :data="softwarePartVersionList"
+      <el-table ref="softwarePartVersionTable" v-loading="loadingSoftwarePartVersion" :data="softwarePartVersionList"
                 @selection-change="handleSelectionChangeSoftwarePartVersion">
         <el-table-column type="selection" width="55" align="center"/>
         <el-table-column label="ECU" prop="ecuCode" width="100"/>
@@ -535,8 +535,18 @@ export default {
           this.softwarePartVersionList = response.rows;
           this.totalSoftwarePartVersion = response.total;
           this.loadingSoftwarePartVersion = false;
+          this.$nextTick(() => {
+            this.setDefaultSelection();
+          });
         }
       );
+    },
+    setDefaultSelection() {
+      const linkedIds = this.baselineSoftwarePartVersionList.map(item => item.id);
+      const selectedRows = this.softwarePartVersionList.filter(item =>
+        linkedIds.includes(item.id)
+      );
+      this.$refs.softwarePartVersionTable && this.$refs.softwarePartVersionTable.setSelection(selectedRows, true);
     },
     /** 取消按钮 */
     cancel() {
@@ -545,9 +555,6 @@ export default {
     },
     closeSoftwarePartVersion() {
       this.openSoftwarePartVersion = false;
-    },
-    closeBaselineSoftwarePartVersion() {
-      this.openBaselineSoftwarePartVersion = false;
     },
     /** 表单重置 */
     reset() {
