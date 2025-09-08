@@ -211,7 +211,8 @@
     <!-- 基线关联软件零件版本信息层 -->
     <el-drawer title="关联软件零件版本信息" :visible.sync="openBaselineSoftwarePartVersion" direction="rtl" size="80%"
                :modal="true"
-               :append-to-body="true">
+               :append-to-body="true"
+               @close="onBaselineSoftwarePartVersionClose">
       <div class="drawer-content">
         <el-form :model="queryParamsBaselineSoftwarePartVersion" ref="queryParamsBaselineSoftwarePartVersion"
                  size="small" :inline="true" v-show="showSearchBaselineSoftwarePartVersion">
@@ -687,7 +688,10 @@ export default {
       this.download('ota-baseline/baseline/export', {
         ...this.queryParams
       }, `baseline_${new Date().getTime()}.xlsx`)
-    }
+    },
+    onBaselineSoftwarePartVersionClose() {
+      this.getList();
+    },
   }
 };
 </script>
