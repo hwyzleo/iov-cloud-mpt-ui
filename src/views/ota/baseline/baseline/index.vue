@@ -88,9 +88,15 @@
 
     <el-table v-loading="loading" :data="baselineList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center"/>
-      <el-table-column label="基线代码" prop="code" width="100"/>
+      <el-table-column label="基线代码" prop="code" width="200"/>
       <el-table-column label="基线名称" prop="name"/>
-      <el-table-column label="基线类型" prop="type"/>
+      <el-table-column label="基线类型" prop="type" width="150" align="center">
+        <template slot-scope="scope">
+          <span v-if="scope.row.type === 1">测试基线</span>
+          <span v-else-if="scope.row.type === 2">正式基线</span>
+          <span v-else>未知</span>
+        </template>
+      </el-table-column>
       <el-table-column label="基线来源" prop="source" width="150" align="center">
         <template slot-scope="scope">
           <span v-if="scope.row.source === 1">BOM</span>
@@ -98,7 +104,7 @@
           <span v-else>未知</span>
         </template>
       </el-table-column>
-      <el-table-column label="车型编码" prop="vehModel"/>
+      <el-table-column label="车型编码" prop="vehModel" width="120"/>
       <el-table-column label="发布日期" align="center" prop="createTime" width="120">
         <template slot-scope="scope">
           <span>{{ parseTime(scope.row.publishDate, '{y}-{m}-{d}') }}</span>
@@ -154,8 +160,8 @@
             placeholder="基线类型"
             clearable
           >
-            <el-option key="1" label="BOM" value="1" />
-            <el-option key="2" label="OTA" value="2" />
+            <el-option key="1" label="测试基线" value="1" />
+            <el-option key="2" label="正式基线" value="2" />
           </el-select>
         </el-form-item>
         <el-form-item label="基线来源" prop="source">
