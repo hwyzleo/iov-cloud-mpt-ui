@@ -12,7 +12,7 @@ export function listSoftwarePartVersion(query) {
 // 查询软件零件版本下软件包
 export function listSoftwarePartVersionPackage(softwarePartVersionId, query) {
   return request({
-    url: '/ota-baseline/mpt/softwarePartVersion/' + softwarePartVersionId + '/listSoftwarePartVersionPackage',
+    url: '/ota-baseline/mpt/softwarePartVersion/' + softwarePartVersionId + '/listSoftwarePackage',
     method: 'get',
     params: query
   })
