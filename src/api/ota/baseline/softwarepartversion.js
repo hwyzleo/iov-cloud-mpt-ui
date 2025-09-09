@@ -18,6 +18,15 @@ export function listSoftwarePartVersionPackage(softwarePartVersionId, query) {
   })
 }
 
+// 查询软件零件版本下依赖
+export function listSoftwarePartVersionDependency(softwarePartVersionId, query) {
+  return request({
+    url: '/ota-baseline/mpt/softwarePartVersion/' + softwarePartVersionId + '/listDependency',
+    method: 'get',
+    params: query
+  })
+}
+
 // 查询软件零件版本信息详细
 export function getSoftwarePartVersion(softwarePartVersionId) {
   return request({
@@ -43,6 +52,14 @@ export function addSoftwarePackage(softwarePartVersionId, softwarePackageIds) {
   })
 }
 
+// 新增依赖的软件零件版本
+export function addDependency(softwarePartVersionId, softwarePartVersionIds, adaptionLevel) {
+  return request({
+    url: '/ota-baseline/mpt/softwarePartVersion/' + softwarePartVersionId + '/action/addDependency/' + softwarePartVersionIds + '?adaptionLevel=' + adaptionLevel,
+    method: 'post'
+  })
+}
+
 // 修改软件零件版本信息
 export function updateSoftwarePartVersion(data) {
   return request({
@@ -64,6 +81,14 @@ export function delSoftwarePartVersion(softwarePartVersionIds) {
 export function delSoftwarePackage(softwarePartVersionId, softwarePackageIds) {
   return request({
     url: '/ota-baseline/mpt/softwarePartVersion/' + softwarePartVersionId + '/action/removeSoftwarePackage/' + softwarePackageIds,
+    method: 'post'
+  })
+}
+
+// 删除依赖的软件零件版本
+export function delDependency(softwarePartVersionId, softwarePartVersionIds) {
+  return request({
+    url: '/ota-baseline/mpt/softwarePartVersion/' + softwarePartVersionId + '/action/removeDependency/' + softwarePartVersionIds,
     method: 'post'
   })
 }

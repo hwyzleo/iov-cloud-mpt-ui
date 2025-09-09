@@ -115,6 +115,7 @@
         </template>
       </el-table-column>
       <el-table-column label="软件包数" prop="softwarePackageCount" width="100" align="center"/>
+      <el-table-column label="依赖数" prop="dependencyCount" width="100" align="center"/>
       <el-table-column label="创建时间" align="center" prop="createTime" width="180">
         <template slot-scope="scope">
           <span>{{ parseTime(scope.row.createTime) }}</span>
@@ -137,6 +138,14 @@
             @click="handleSoftwarePartVersionPackage(scope.row)"
             v-hasPermi="['ota:baseline:softwarePartVersion:query']"
           >关联
+          </el-button>
+          <el-button
+            size="mini"
+            type="text"
+            icon="el-icon-edit"
+            @click="handleSoftwarePartVersionDependency(scope.row)"
+            v-hasPermi="['ota:baseline:softwarePartVersion:query']"
+          >依赖
           </el-button>
           <el-button
             size="mini"
@@ -337,6 +346,85 @@
       </div>
     </el-drawer>
 
+    <!-- 软件零件版本依赖信息层 -->
+    <el-drawer title="依赖软件零件版本信息" :visible.sync="openSoftwarePartVersionDependency" direction="rtl" size="80%"
+               :modal="true"
+               :append-to-body="true"
+               @close="onSoftwarePartVersionPackageClose">
+      <div class="drawer-content">
+        <el-form :model="queryParamsSoftwarePartVersionDependency" ref="queryParamsSoftwarePartVersionDependency"
+                 size="small" :inline="true" v-show="showSearchSoftwarePartVersionDependency">
+          <el-form-item label="软件包名称" prop="packageName">
+            <el-input
+              v-model="queryParamsSoftwarePartVersionDependency.packageName"
+              placeholder="请输入软件包名称"
+              clearable
+              style="width: 140px"
+              @keyup.enter.native="handleQuerySoftwarePartVersionDependency"
+            />
+          </el-form-item>
+          <el-form-item>
+            <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuerySoftwarePartVersionDependency">
+              搜索
+            </el-button>
+            <el-button icon="el-icon-refresh" size="mini" @click="resetQuerySoftwarePartVersionDependency">重置
+            </el-button>
+          </el-form-item>
+        </el-form>
+
+        <el-row :gutter="10" class="mb8">
+          <el-col :span="1.5">
+            <el-button
+              type="primary"
+              plain
+              icon="el-icon-plus"
+              size="mini"
+              @click="handleAddDependency"
+              v-hasPermi="['ota:baseline:softwarePartVersion:edit']"
+            >查询并添加软件零件版本依赖
+            </el-button>
+          </el-col>
+          <right-toolbar :showSearch.sync="showSearch" @queryTable="getListSoftwarePartVersionDependency"></right-toolbar>
+        </el-row>
+        <el-table v-loading="loadingSoftwarePartVersionDependency" :data="softwarePartVersionDependencyList"
+                  @selection-change="handleSelectionChangeSoftwarePartVersionDependency">
+          <el-table-column type="selection" width="55" align="center"/>
+          <el-table-column label="ECU" prop="ecuCode" width="100"/>
+          <el-table-column label="软件零件号" prop="softwarePn"/>
+          <el-table-column label="软件零件版本" prop="softwarePartVer" width="120"/>
+          <el-table-column label="测试报告" prop="softwareReport" width="80" align="center">
+            <template slot-scope="scope">
+              <span>{{ scope.row.softwareReport && scope.row.softwareReport.trim() ? '已上传' : '未上传' }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column label="软件来源" prop="softwareSource" width="80" align="center">
+            <template slot-scope="scope">
+              <span>{{ scope.row.softwareSource === 1 ? 'BOM' : 'OTA' }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column label="适配的总成硬件零件号" prop="adaptedHardwarePn" width="150"/>
+          <el-table-column label="适配的总成软件零件号" prop="adaptedSoftwarePn" width="150"/>
+          <el-table-column label="发布日期" align="center" prop="createTime" width="120">
+            <template slot-scope="scope">
+              <span>{{ parseTime(scope.row.publishDate, '{y}-{m}-{d}') }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column label="操作" align="center" width="200" class-name="small-padding fixed-width">
+            <template slot-scope="scope">
+              <el-button
+                size="mini"
+                type="text"
+                icon="el-icon-delete"
+                @click="handleRemoveSoftwarePartVersionDependency(scope.row)"
+                v-hasPermi="['ota:baseline:softwarePartVersion:edit']"
+              >删除依赖
+              </el-button>
+            </template>
+          </el-table-column>
+        </el-table>
+      </div>
+    </el-drawer>
+
     <!-- 软件包列表对话框 -->
     <el-dialog title="查询并添加软件包" :visible.sync="openSoftwarePackage" width="900px" append-to-body>
       <el-form :model="queryParamsSoftwarePackage" ref="queryParamsSoftwarePackage" size="small" :inline="true"
@@ -427,6 +515,91 @@
         <el-button @click="closeSoftwarePackage">关 闭</el-button>
       </div>
     </el-dialog>
+
+    <!-- 软件零件版本依赖列表对话框 -->
+    <el-dialog title="查询并添加依赖软件零件版本" :visible.sync="openDependency" width="900px" append-to-body>
+      <el-form :model="queryParamsDependency" ref="queryParamsDependency" size="small" :inline="true"
+               v-show="showSearchDependency">
+        <el-form-item label="软件包名称" prop="packageName">
+          <el-input
+            v-model="queryParamsDependency.packageName"
+            placeholder="请输入软件包名称"
+            clearable
+            style="width: 140px"
+            @keyup.enter.native="handleQuerySoftwarePartVersionDependency"
+          />
+        </el-form-item>
+        <el-form-item>
+          <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQueryDependency">搜索
+          </el-button>
+          <el-button icon="el-icon-refresh" size="mini" @click="resetQueryDependency">重置</el-button>
+        </el-form-item>
+      </el-form>
+
+      <el-row :gutter="10" class="mb8">
+        <el-col :span="1.5">
+          <el-button
+            type="primary"
+            plain
+            icon="el-icon-plus"
+            size="mini"
+            :disabled="multipleDependency"
+            @click="handleAddSoftwarePartVersionDependency"
+            v-hasPermi="['ota:baseline:softwarePartVersion:edit']"
+          >添加依赖
+          </el-button>
+        </el-col>
+        <right-toolbar :showSearch.sync="showSearchDependency"
+                       @queryTable="getListDependency"></right-toolbar>
+      </el-row>
+
+      <el-table ref="dependencyTable" v-loading="loadingDependency" :data="dependencyList"
+                @selection-change="handleSelectionChangeDependency">
+        <el-table-column type="selection" width="55" align="center"/>
+        <el-table-column label="ECU" prop="ecuCode" width="100"/>
+        <el-table-column label="软件零件号" prop="softwarePn"/>
+        <el-table-column label="软件零件版本" prop="softwarePartVer" width="120"/>
+        <el-table-column label="测试报告" prop="softwareReport" width="80" align="center">
+          <template slot-scope="scope">
+            <span>{{ scope.row.softwareReport && scope.row.softwareReport.trim() ? '已上传' : '未上传' }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="软件来源" prop="softwareSource" width="80" align="center">
+          <template slot-scope="scope">
+            <span>{{ scope.row.softwareSource === 1 ? 'BOM' : 'OTA' }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="适配的总成硬件零件号" prop="adaptedHardwarePn" width="150"/>
+        <el-table-column label="适配的总成软件零件号" prop="adaptedSoftwarePn" width="150"/>
+        <el-table-column label="发布日期" align="center" prop="createTime" width="120">
+          <template slot-scope="scope">
+            <span>{{ parseTime(scope.row.publishDate, '{y}-{m}-{d}') }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="操作" align="center" width="200" class-name="small-padding fixed-width">
+          <template slot-scope="scope">
+            <el-button
+              size="mini"
+              type="text"
+              icon="el-icon-edit"
+              @click="handleAddSoftwarePartVersionDependency(scope.row)"
+              v-hasPermi="['ota:baseline:softwarePartVersion:edit']"
+            >添加依赖
+            </el-button>
+        </el-table-column>
+      </el-table>
+
+      <pagination
+        v-show="totalDependency>0"
+        :total="totalDependency"
+        :page.sync="queryParamsDependency.pageNum"
+        :limit.sync="queryParamsDependency.pageSize"
+        @pagination="getListDependency"
+      />
+      <div slot="footer" class="dialog-footer" style="text-align: center">
+        <el-button @click="closeDependency">关 闭</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -434,12 +607,14 @@
 import {
   addSoftwarePackage,
   addSoftwarePartVersion,
+  addDependency,
   delSoftwarePartVersion,
   delSoftwarePackage,
+  delDependency,
   getSoftwarePartVersion,
   listSoftwarePartVersion,
   listSoftwarePartVersionPackage,
-  updateSoftwarePartVersion
+  updateSoftwarePartVersion, listSoftwarePartVersionDependency
 } from "@/api/ota/baseline/softwarepartversion";
 import {listAllEcu,} from "@/api/ota/baseline/ecu";
 import {listAllSoftwarePart} from "@/api/ota/baseline/softwarepart";
@@ -453,30 +628,43 @@ export default {
       // 遮罩层
       loading: true,
       loadingSoftwarePartVersionPackage: true,
+      loadingSoftwarePartVersionDependency: true,
       loadingSoftwarePackage: true,
+      loadingDependency: true,
       // 选中数组
       ids: [],
       idsSoftwarePartVersionPackage: [],
+      idsSoftwarePartVersionDependency: [],
       idsSoftwarePackage: [],
+      idsDependency: [],
       // 非单个禁用
       single: true,
       singleSoftwarePartVersionPackage: true,
+      singleSoftwarePartVersionDependency: true,
       singleSoftwarePackage: true,
+      singleDependency: true,
       // 非多个禁用
       multiple: true,
       multipleSoftwarePartVersionPackage: true,
+      multipleSoftwarePartVersionDependency: true,
       multipleSoftwarePackage: true,
+      multipleDependency: true,
       // 显示搜索条件
       showSearch: true,
       showSearchSoftwarePartVersionPackage: true,
+      showSearchSoftwarePartVersionDependency: true,
       showSearchSoftwarePackage: true,
+      showSearchDependency: true,
       // 总条数
       total: 0,
       totalSoftwarePackage: 0,
+      totalDependency: 0,
       // 软件零件表格数据
       softwarePartVersionList: [],
       softwarePartVersionPackageList: [],
+      softwarePartVersionDependencyList: [],
       softwarePackageList: [],
+      dependencyList: [],
       softwarePartList: [],
       softwarePartVerRange: [],
       ecuList: [],
@@ -489,7 +677,9 @@ export default {
       // 是否显示弹出层
       open: false,
       openSoftwarePartVersionPackage: false,
+      openSoftwarePartVersionDependency: false,
       openSoftwarePackage: false,
+      openDependency: false,
       // 日期范围
       dateRange: [],
       // 查询参数
@@ -501,7 +691,15 @@ export default {
         pageNum: 1,
         pageSize: 10
       },
+      queryParamsSoftwarePartVersionDependency: {
+        pageNum: 1,
+        pageSize: 10
+      },
       queryParamsSoftwarePackage: {
+        pageNum: 1,
+        pageSize: 10
+      },
+      queryParamsDependency: {
         pageNum: 1,
         pageSize: 10
       },
@@ -553,6 +751,14 @@ export default {
         }
       );
     },
+    getListSoftwarePartVersionDependency() {
+      this.loadingSoftwarePartVersionDependency = true;
+      listSoftwarePartVersionDependency(this.currentSoftwarePartVersionId, this.queryParamsSoftwarePartVersionPackage).then(response => {
+          this.softwarePartVersionDependencyList = response.data;
+          this.loadingSoftwarePartVersionDependency = false;
+        }
+      );
+    },
     getListSoftwarePackage() {
       this.loadingSoftwarePackage = true;
       listSoftwarePackage(this.queryParamsSoftwarePackage).then(response => {
@@ -560,12 +766,24 @@ export default {
           this.totalSoftwarePackage = response.total;
           this.loadingSoftwarePackage = false;
           this.$nextTick(() => {
-            this.setDefaultSelection();
+            this.setSoftwarePackageSelection();
           });
         }
       );
     },
-    setDefaultSelection() {
+    getListDependency() {
+      this.loadingDependency = true;
+      listSoftwarePartVersion(this.queryParamsSoftwarePackage).then(response => {
+          this.dependencyList = response.rows;
+          this.totalDependency = response.total;
+          this.loadingDependency = false;
+          this.$nextTick(() => {
+            this.setDependencySelection();
+          });
+        }
+      );
+    },
+    setSoftwarePackageSelection() {
       const linkedIds = this.softwarePartVersionPackageList.map(item => item.id);
       const selectedRows = this.softwarePackageList.filter(item =>
         linkedIds.includes(item.id)
@@ -574,6 +792,18 @@ export default {
       this.$nextTick(() => {
         selectedRows.forEach(row => {
           this.$refs.softwarePackageTable.toggleRowSelection(row, true);
+        });
+      });
+    },
+    setDependencySelection() {
+      const linkedIds = this.softwarePartVersionDependencyList.map(item => item.id);
+      const selectedRows = this.dependencyList.filter(item =>
+        linkedIds.includes(item.id)
+      );
+      this.$refs.dependencyTable.clearSelection();
+      this.$nextTick(() => {
+        selectedRows.forEach(row => {
+          this.$refs.dependencyTable.toggleRowSelection(row, true);
         });
       });
     },
@@ -616,6 +846,9 @@ export default {
     closeSoftwarePackage() {
       this.openSoftwarePackage = false;
     },
+    closeDependency() {
+      this.openDependency = false;
+    },
     /** 表单重置 */
     reset() {
       this.form = {
@@ -640,9 +873,17 @@ export default {
       this.queryParamsSoftwarePartVersionPackage.pageNum = 1;
       this.getListSoftwarePartVersionPackage();
     },
+    handleQuerySoftwarePartVersionDependency() {
+      this.queryParamsSoftwarePartVersionDependency.pageNum = 1;
+      this.getListSoftwarePartVersionDependency();
+    },
     handleQuerySoftwarePackage() {
       this.queryParamsSoftwarePackage.pageNum = 1;
       this.getListSoftwarePackage();
+    },
+    handleQueryDependency() {
+      this.queryParamsDependency.pageNum = 1;
+      this.getListDependency();
     },
     /** 重置按钮操作 */
     resetQuery() {
@@ -654,9 +895,17 @@ export default {
       this.resetForm("queryFormSoftwarePartVersionPackage");
       this.handleQuerySoftwarePartVersionPackage();
     },
+    resetQuerySoftwarePartVersionDependency() {
+      this.resetForm("queryFormSoftwarePartVersionDependency");
+      this.handleQuerySoftwarePartVersionDependency();
+    },
     resetQuerySoftwarePackage() {
       this.resetForm("queryFormSoftwarePackage");
       this.handleQuerySoftwarePackage();
+    },
+    resetQueryDependency() {
+      this.resetForm("queryFormDependency");
+      this.handleQueryDependency();
     },
     /** 多选框选中数据 */
     handleSelectionChange(selection) {
@@ -669,10 +918,20 @@ export default {
       this.singleSoftwarePartVersionPackage = selection.length != 1
       this.multipleSoftwarePartVersionPackage = !selection.length
     },
+    handleSelectionChangeSoftwarePartVersionDependency(selection) {
+      this.idsSoftwarePartVersionDependency = selection.map(item => item.id)
+      this.singleSoftwarePartVersionDependency = selection.length != 1
+      this.multipleSoftwarePartVersionDependency = !selection.length
+    },
     handleSelectionChangeSoftwarePackage(selection) {
       this.idsSoftwarePackage = selection.map(item => item.id)
       this.singleSoftwarePackage = selection.length != 1
       this.multipleSoftwarePackage = !selection.length
+    },
+    handleSelectionChangeDependency(selection) {
+      this.idsDependency = selection.map(item => item.id)
+      this.singleDependency = selection.length != 1
+      this.multipleDependency = !selection.length
     },
     /** 新增按钮操作 */
     handleAdd() {
@@ -751,9 +1010,18 @@ export default {
       this.openSoftwarePartVersionPackage = true;
       this.getListSoftwarePartVersionPackage();
     },
+    handleSoftwarePartVersionDependency(row) {
+      this.currentSoftwarePartVersionId = row.id;
+      this.openSoftwarePartVersionDependency = true;
+      this.getListSoftwarePartVersionDependency();
+    },
     handleAddSoftwarePackage() {
       this.openSoftwarePackage = true;
       this.getListSoftwarePackage();
+    },
+    handleAddDependency() {
+      this.openDependency = true;
+      this.getListDependency();
     },
     handleAddSoftwarePartVersionPackage(row) {
       const softwarePackageIds = row.id || this.idsSoftwarePackage;
@@ -766,6 +1034,17 @@ export default {
       }).catch(() => {
       });
     },
+    handleAddSoftwarePartVersionDependency(row) {
+      const dependencyIds = row.id || this.idsDependency;
+      this.$modal.confirm('是否确认将软件零件版本ID为"' + dependencyIds + '"的数据项依赖到软件零件版本ID' + this.currentSoftwarePartVersionId + '？').then(() => {
+        return addDependency(this.currentSoftwarePartVersionId, dependencyIds, 1);
+      }).then(() => {
+        this.$modal.msgSuccess("添加依赖成功");
+        this.closeDependency();
+        this.getListSoftwarePartVersionDependency();
+      }).catch(() => {
+      });
+    },
     handleRemoveSoftwarePartVersionPackage(row) {
       const softwarePackageIds = row.id || this.idsSoftwarePartVersionPackage;
       this.$modal.confirm('是否确认删除软件零件版本' + this.currentSoftwarePartVersionId + '下关联软件包ID为"' + softwarePackageIds + '"的数据项？').then(() => {
@@ -773,6 +1052,16 @@ export default {
       }).then(() => {
         this.$modal.msgSuccess("删除成功");
         this.getListSoftwarePartVersionPackage();
+      }).catch(() => {
+      });
+    },
+    handleRemoveSoftwarePartVersionDependency(row) {
+      const softwarePartVersionIds = row.id || this.idsSoftwarePartVersionDependency;
+      this.$modal.confirm('是否确认删除软件零件版本' + this.currentSoftwarePartVersionId + '下依赖软件零件版本ID为"' + softwarePartVersionIds + '"的数据项？').then(() => {
+        return delDependency(this.currentSoftwarePartVersionId, softwarePartVersionIds);
+      }).then(() => {
+        this.$modal.msgSuccess("删除成功");
+        this.getListSoftwarePartVersionDependency();
       }).catch(() => {
       });
     },
