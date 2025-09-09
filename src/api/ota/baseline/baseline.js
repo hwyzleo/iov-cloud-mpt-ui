@@ -61,9 +61,9 @@ export function delBaseline(baselineIds) {
 }
 
 // 删除关联的软件零件版本
-export function delSoftwarePartVersion(baselineId, baselineSoftwarePartVersionIds) {
+export function delSoftwarePartVersion(baselineId, softwarePartVersionIds) {
   return request({
-    url: '/ota-baseline/mpt/baseline/' + baselineId + '/action/removeSoftwarePartVersion/' + baselineSoftwarePartVersionIds,
+    url: '/ota-baseline/mpt/baseline/' + baselineId + '/action/removeSoftwarePartVersion/' + softwarePartVersionIds,
     method: 'post'
   })
 }

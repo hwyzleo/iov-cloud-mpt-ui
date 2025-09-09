@@ -639,9 +639,9 @@ export default {
       this.title = "修改基线";
     },
     handleRemoveBaselineSoftwarePartVersion(row) {
-      const baselineSoftwarePartVersionIds = row.id || this.idsBaselineSoftwarePartVersion;
-      this.$modal.confirm('是否确认删除基线' + this.currentBaselineId + '下关联软件零件版本ID为"' + baselineSoftwarePartVersionIds + '"的数据项？').then(() => {
-        return delSoftwarePartVersion(this.currentBaselineId, baselineSoftwarePartVersionIds);
+      const softwarePartVersionIds = row.id || this.idsBaselineSoftwarePartVersion;
+      this.$modal.confirm('是否确认删除基线' + this.currentBaselineId + '下关联软件零件版本ID为"' + softwarePartVersionIds + '"的数据项？').then(() => {
+        return delSoftwarePartVersion(this.currentBaselineId, softwarePartVersionIds);
       }).then(() => {
         this.$modal.msgSuccess("删除成功");
         this.getListBaselineSoftwarePartVersion();

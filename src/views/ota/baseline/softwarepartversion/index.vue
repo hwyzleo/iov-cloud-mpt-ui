@@ -327,7 +327,7 @@
                 size="mini"
                 type="text"
                 icon="el-icon-delete"
-                @click="handleRemoveBaselineSoftwarePartVersion(scope.row)"
+                @click="handleRemoveSoftwarePartVersionPackage(scope.row)"
                 v-hasPermi="['ota:baseline:baseline:edit']"
               >删除关联
               </el-button>
@@ -373,7 +373,7 @@
             icon="el-icon-plus"
             size="mini"
             :disabled="multipleSoftwarePackage"
-            @click="handleAddBaselineSoftwarePartVersion"
+            @click="handleAddSoftwarePartVersionPackage"
             v-hasPermi="['ota:baseline:baseline:edit']"
           >关联
           </el-button>
@@ -417,7 +417,7 @@
               size="mini"
               type="text"
               icon="el-icon-edit"
-              @click="handleAddBaselineSoftwarePartVersion(scope.row)"
+              @click="handleAddSoftwarePartVersionPackage(scope.row)"
               v-hasPermi="['ota:baseline:baseline:edit']"
             >关联
             </el-button>
@@ -440,21 +440,17 @@
 
 <script>
 import {
+  addSoftwarePackage,
+  addSoftwarePartVersion,
+  delSoftwarePartVersion,
+  delSoftwarePackage,
+  getSoftwarePartVersion,
   listSoftwarePartVersion,
   listSoftwarePartVersionPackage,
-  getSoftwarePartVersion,
-  addSoftwarePartVersion,
-  addSoftwarePackage,
-  updateSoftwarePartVersion,
-  delSoftwarePartVersion,
-  delSoftwarePackage
+  updateSoftwarePartVersion
 } from "@/api/ota/baseline/softwarepartversion";
-import {
-  listAllEcu,
-} from "@/api/ota/baseline/ecu";
-import {
-  listAllSoftwarePart
-} from "@/api/ota/baseline/softwarepart";
+import {listAllEcu,} from "@/api/ota/baseline/ecu";
+import {listAllSoftwarePart} from "@/api/ota/baseline/softwarepart";
 import {listSoftwarePackage} from "@/api/ota/baseline/softwarepackage";
 
 export default {
@@ -627,6 +623,9 @@ export default {
       this.open = false;
       this.reset();
     },
+    closeSoftwarePackage() {
+      this.openSoftwarePackage = false;
+    },
     /** 表单重置 */
     reset() {
       this.form = {
@@ -766,6 +765,27 @@ export default {
       this.openSoftwarePackage = true;
       this.getListSoftwarePackage();
     },
+    handleAddSoftwarePartVersionPackage(row) {
+      const softwarePackageIds = row.id || this.idsSoftwarePackage;
+      this.$modal.confirm('是否确认将软件包ID为"' + softwarePackageIds + '"的数据项关联到软件零件版本ID' + this.currentSoftwarePartVersionId + '？').then(() => {
+        return addSoftwarePackage(this.currentSoftwarePartVersionId, softwarePackageIds);
+      }).then(() => {
+        this.$modal.msgSuccess("关联成功");
+        this.closeSoftwarePackage();
+        this.getListSoftwarePartVersionPackage();
+      }).catch(() => {
+      });
+    },
+    handleRemoveSoftwarePartVersionPackage(row) {
+      const softwarePackageIds = row.id || this.idsSoftwarePartVersionPackage;
+      this.$modal.confirm('是否确认删除软件零件版本' + this.currentSoftwarePartVersionId + '下关联软件包ID为"' + softwarePackageIds + '"的数据项？').then(() => {
+        return delSoftwarePackage(this.currentSoftwarePartVersionId, softwarePackageIds);
+      }).then(() => {
+        this.$modal.msgSuccess("删除成功");
+        this.getListSoftwarePartVersionPackage();
+      }).catch(() => {
+      });
+    },
     /** 导出按钮操作 */
     handleExport() {
       this.download('ota-baseline/softwarePartVersion/export', {
@@ -778,3 +798,38 @@ export default {
   }
 };
 </script>
+<style>
+.message-cell {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+
+.message-cell:hover {
+  cursor: pointer;
+}
+
+.my-tooltip {
+  max-width: 400px !important;
+  white-space: normal !important;
+  word-break: break-word !important;
+}
+
+.drawer-content {
+  padding: 20px;
+  font-size: 14px;
+  color: #606266;
+}
+
+.drawer-title {
+  font-size: 16px;
+  font-weight: bolder;
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+
+.drawer-row {
+  margin-bottom: 15px;
+}
+</style>
