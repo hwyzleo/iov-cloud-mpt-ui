@@ -543,12 +543,15 @@ export default {
     },
     setDefaultSelection() {
       const linkedIds = this.baselineSoftwarePartVersionList.map(item => item.id);
-      console.log("linkedIds:" + linkedIds);
       const selectedRows = this.softwarePartVersionList.filter(item =>
         linkedIds.includes(item.id)
       );
-      console.log("selectedRows:" + selectedRows);
-      this.$refs.softwarePartVersionTable && this.$refs.softwarePartVersionTable.setSelection(selectedRows, true);
+      this.$refs.softwarePartVersionTable.clearSelection();
+      this.$nextTick(() => {
+        selectedRows.forEach(row => {
+          this.$refs.softwarePartVersionTable.toggleRowSelection(row, true);
+        });
+      });
     },
     /** 取消按钮 */
     cancel() {
