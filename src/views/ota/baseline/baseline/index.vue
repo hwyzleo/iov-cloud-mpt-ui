@@ -535,14 +535,19 @@ export default {
           this.softwarePartVersionList = response.rows;
           this.totalSoftwarePartVersion = response.total;
           this.loadingSoftwarePartVersion = false;
+          this.$nextTick(() => {
+            this.setDefaultSelection();
+          });
         }
       );
     },
     setDefaultSelection() {
       const linkedIds = this.baselineSoftwarePartVersionList.map(item => item.id);
+      console.log("linkedIds:" + linkedIds);
       const selectedRows = this.softwarePartVersionList.filter(item =>
         linkedIds.includes(item.id)
       );
+      console.log("selectedRows:" + selectedRows);
       this.$refs.softwarePartVersionTable && this.$refs.softwarePartVersionTable.setSelection(selectedRows, true);
     },
     /** 取消按钮 */
@@ -619,9 +624,6 @@ export default {
     handleAddSoftwarePartVersion() {
       this.openSoftwarePartVersion = true;
       this.getListSoftwarePartVersion();
-      this.$nextTick(() => {
-        this.setDefaultSelection();
-      });
     },
     /** 修改按钮操作 */
     handleUpdate(row) {
