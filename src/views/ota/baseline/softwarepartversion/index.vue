@@ -135,7 +135,7 @@
             type="text"
             icon="el-icon-edit"
             @click="handleSoftwarePartVersionPackage(scope.row)"
-            v-hasPermi="['ota:baseline:baseline:query']"
+            v-hasPermi="['ota:baseline:softwarePartVersion:query']"
           >关联
           </el-button>
           <el-button
@@ -286,7 +286,7 @@
               icon="el-icon-plus"
               size="mini"
               @click="handleAddSoftwarePackage"
-              v-hasPermi="['ota:baseline:baseline:edit']"
+              v-hasPermi="['ota:baseline:softwarePartVersion:edit']"
             >查询并添加软件包
             </el-button>
           </el-col>
@@ -328,20 +328,12 @@
                 type="text"
                 icon="el-icon-delete"
                 @click="handleRemoveSoftwarePartVersionPackage(scope.row)"
-                v-hasPermi="['ota:baseline:baseline:edit']"
+                v-hasPermi="['ota:baseline:softwarePartVersion:edit']"
               >删除关联
               </el-button>
             </template>
           </el-table-column>
         </el-table>
-
-        <pagination
-          v-show="totalSoftwarePartVersionPackage>0"
-          :total="totalSoftwarePartVersionPackage"
-          :page.sync="queryParamsSoftwarePartVersionPackage.pageNum"
-          :limit.sync="queryParamsSoftwarePartVersionPackage.pageSize"
-          @pagination="getListSoftwarePartVersionPackage"
-        />
       </div>
     </el-drawer>
 
@@ -374,7 +366,7 @@
             size="mini"
             :disabled="multipleSoftwarePackage"
             @click="handleAddSoftwarePartVersionPackage"
-            v-hasPermi="['ota:baseline:baseline:edit']"
+            v-hasPermi="['ota:baseline:softwarePartVersion:edit']"
           >关联
           </el-button>
         </el-col>
@@ -418,7 +410,7 @@
               type="text"
               icon="el-icon-edit"
               @click="handleAddSoftwarePartVersionPackage(scope.row)"
-              v-hasPermi="['ota:baseline:baseline:edit']"
+              v-hasPermi="['ota:baseline:softwarePartVersion:edit']"
             >关联
             </el-button>
         </el-table-column>
@@ -432,7 +424,7 @@
         @pagination="getListSoftwarePackage"
       />
       <div slot="footer" class="dialog-footer" style="text-align: center">
-        <el-button @click="closeSoftwarePartVersion">关 闭</el-button>
+        <el-button @click="closeSoftwarePackage">关 闭</el-button>
       </div>
     </el-dialog>
   </div>
@@ -480,7 +472,6 @@ export default {
       showSearchSoftwarePackage: true,
       // 总条数
       total: 0,
-      totalSoftwarePartVersionPackage: 0,
       totalSoftwarePackage: 0,
       // 软件零件表格数据
       softwarePartVersionList: [],
@@ -557,8 +548,7 @@ export default {
     getListSoftwarePartVersionPackage() {
       this.loadingSoftwarePartVersionPackage = true;
       listSoftwarePartVersionPackage(this.currentSoftwarePartVersionId, this.queryParamsSoftwarePartVersionPackage).then(response => {
-          this.softwarePartVersionPackageList = response.rows;
-          this.totalSoftwarePartVersionPackage = response.total;
+          this.softwarePartVersionPackageList = response.data;
           this.loadingSoftwarePartVersionPackage = false;
         }
       );
