@@ -102,6 +102,18 @@
           <span>{{ scope.row.ota ? '支持' : '不支持' }}</span>
         </template>
       </el-table-column>
+      <el-table-column label="分区类型" prop="partitionType" width="120" align="center">
+        <template slot-scope="scope">
+          <span v-if="scope.row.partitionType === 1">AB分区</span>
+          <span v-else-if="scope.row.partitionType === 2">单分区</span>
+          <span v-else>未知</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="是否有解闭锁安全件" prop="lockUnlockSecurityComponent" width="120" align="center">
+        <template slot-scope="scope">
+          <span>{{ scope.row.lockUnlockSecurityComponent ? '是' : '否' }}</span>
+        </template>
+      </el-table-column>
       <el-table-column label="创建时间" align="center" prop="createTime" width="180">
         <template slot-scope="scope">
           <span>{{ parseTime(scope.row.createTime) }}</span>
@@ -173,6 +185,28 @@
             <el-radio
               :label="false"
             >不支持
+            </el-radio>
+          </el-radio-group>
+        </el-form-item>
+        <el-form-item label="分区类型" prop="partitionType">
+          <el-select
+            v-model="form.partitionType"
+            placeholder="分区类型"
+            clearable
+          >
+            <el-option key="1" label="AB分区" value="1"/>
+            <el-option key="2" label="单分区" value="2"/>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="是否有解闭锁安全件">
+          <el-radio-group v-model="form.lockUnlockSecurityComponent">
+            <el-radio
+              :label="true"
+            >是
+            </el-radio>
+            <el-radio
+              :label="false"
+            >否
             </el-radio>
           </el-radio-group>
         </el-form-item>
