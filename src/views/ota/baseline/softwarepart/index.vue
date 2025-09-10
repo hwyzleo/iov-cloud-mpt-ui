@@ -109,7 +109,7 @@
           <span v-else>未知</span>
         </template>
       </el-table-column>
-      <el-table-column label="是否有解闭锁安全件" prop="lockUnlockSecurityComponent" width="120" align="center">
+      <el-table-column label="是否有解闭锁安全件" prop="lockUnlockSecurityComponent" width="150" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.lockUnlockSecurityComponent ? '是' : '否' }}</span>
         </template>
@@ -167,7 +167,7 @@
             />
           </el-select>
         </el-form-item>
-        <el-form-item label="软件零件号" prop="softwareNo">
+        <el-form-item label="软件零件号" prop="softwarePn">
           <el-input v-model="form.softwarePn" :readonly="form.id !== undefined" placeholder="请输入软件零件号"/>
         </el-form-item>
         <el-form-item label="软件零件名称" prop="softwarePartName">
@@ -341,7 +341,9 @@ export default {
       this.open = true;
       this.title = "添加软件零件信息";
       this.form = {
-        ota: true
+        ota: true,
+        partitionType: 1,
+        lockUnlockSecurityComponent: false
       };
     },
     /** 修改按钮操作 */
