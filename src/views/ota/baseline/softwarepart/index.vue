@@ -342,7 +342,6 @@ export default {
       this.title = "添加软件零件信息";
       this.form = {
         ota: true,
-        partitionType: 1,
         lockUnlockSecurityComponent: false
       };
     },
