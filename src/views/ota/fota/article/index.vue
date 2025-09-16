@@ -147,9 +147,9 @@
             placeholder="文章类型"
             clearable
           >
-            <el-option key="1" label="活动条款" value="1"/>
-            <el-option key="2" label="升级须知" value="2"/>
-            <el-option key="3" label="隐私协议" value="3"/>
+            <el-option :key="1" label="活动条款" :value="1"/>
+            <el-option :key="2" label="升级须知" :value="2"/>
+            <el-option :key="3" label="隐私协议" :value="3"/>
           </el-select>
         </el-form-item>
         <el-form-item label="文章内容" prop="content">
