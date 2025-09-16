@@ -348,10 +348,11 @@ export default {
 };
 </script>
 <style scoped>
-/* 可选：调整编辑器样式 */
 .ckeditor-container {
   width: 100%;
+  height: 400px;
   max-width: 800px;
   margin: 20px auto;
+  margin-top: 0px;
 }
 </style>
