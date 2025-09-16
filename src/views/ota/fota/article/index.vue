@@ -233,7 +233,6 @@ export default {
       ClassicEditor,
       editorData: '<p></p>',
       editorConfig: {
-        height: '400px',
         toolbar: [
           'heading', 'bold', 'italic', 'link', 'bulletedList', 'numberedList'
         ]
@@ -354,5 +353,14 @@ export default {
   max-width: 800px;
   margin: 20px auto;
   margin-top: 0px;
+}
+/* 穿透 scoped 样式并强制设置编辑区域高度 */
+.ckeditor-container ::v-deep .ck-editor__main > .ck-editor__editable {
+  min-height: 400px !important;
+}
+
+/* 可选：隐藏默认的滚动条样式（美化） */
+.ckeditor-container ::v-deep .ck-editor__editable {
+  overflow-y: auto;
 }
 </style>
