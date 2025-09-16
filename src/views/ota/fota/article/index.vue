@@ -235,7 +235,8 @@ export default {
       editorConfig: {
         toolbar: [
           'heading', 'bold', 'italic', 'link', 'bulletedList', 'numberedList'
-        ]
+        ],
+        height: 400
       }
     };
   },
@@ -350,7 +351,6 @@ export default {
 <style scoped>
 .ckeditor-container {
   width: 100%;
-  height: 400px;
   max-width: 800px;
   margin: 20px auto;
   margin-top: 0px;
