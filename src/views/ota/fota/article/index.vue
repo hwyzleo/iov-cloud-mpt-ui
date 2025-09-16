@@ -231,7 +231,7 @@ export default {
         ]
       },
       ClassicEditor,
-      editorData: '<p></p>',
+      editorData: '',
       editorConfig: {
         toolbar: [
           'heading', 'bold', 'italic', 'link', 'bulletedList', 'numberedList'
@@ -290,6 +290,7 @@ export default {
       this.open = true;
       this.title = "添加文章";
       this.form = {};
+      this.editorData = '<p></p>';
     },
     /** 修改按钮操作 */
     handleUpdate(row) {
@@ -297,6 +298,7 @@ export default {
       const articleId = row.id || this.ids
       getArticle(articleId).then(response => {
         this.form = response.data;
+        this.editorData = this.form.content;
         this.open = true;
       });
       this.title = "修改文章";
