@@ -153,11 +153,15 @@
           </el-select>
         </el-form-item>
         <el-form-item label="文章内容" prop="content">
-          <div class="tinymce-container">
-            <editor
-              v-model="content"
-              :init="editorInit"
-            />
+          <div class="ckeditor-container">
+            <!-- 绑定编辑器内容到 editorData -->
+            <ckeditor
+              :editor="ClassicEditor"
+              v-model="editorData"
+              :config="editorConfig"
+              @ready="onEditorReady"
+              @input="onEditorInput"
+            ></ckeditor>
           </div>
         </el-form-item>
         <el-form-item label="备注">
@@ -180,19 +184,13 @@ import {
   listArticle,
   updateArticle
 } from "@/api/ota/fota/article";
-import tinymce from 'tinymce/tinymce'
-import Editor from '@tinymce/tinymce-vue';
-import 'tinymce/themes/silver/theme'
-import 'tinymce/icons/default/icons'
-import 'tinymce/plugins/advlist'
-import 'tinymce/plugins/list'
-import 'tinymce/plugins/image'
-import 'tinymce/plugins/table'
+import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
+import CKEditor from '@ckeditor/ckeditor5-vue2';
 
 export default {
   name: "FotaArticle",
   dicts: [],
-  components: { Editor },
+  components: { ckeditor: CKEditor.component },
   data() {
     return {
       // 遮罩层
@@ -233,21 +231,31 @@ export default {
           {required: true, message: "文章类型不能为空", trigger: "blur"}
         ]
       },
-      editorInit: {
-        cloudServices: false,
-        base_url: '/tinymce',
-        suffix: '.min',
-        height: 400,
-        plugins: 'advlist list image table',
-        toolbar: 'undo redo | bold italic | alignleft aligncenter | image table'
+      ClassicEditor,
+      editorData: '<p></p>',
+      editorConfig: {
+        // 自定义工具栏
+        toolbar: [
+          'heading', '|',
+          'bold', 'italic', 'underline', 'strikethrough', '|',
+          'bulletedList', 'numberedList', '|',
+          'link', 'image', '|',
+          'undo', 'redo'
+        ],
+        // 图片上传配置（如果需要）
+        image: {
+          toolbar: [
+            'imageStyle:full',
+            'imageStyle:side',
+            '|',
+            'imageTextAlternative'
+          ]
+        }
       }
     };
   },
   created() {
     this.getList();
-  },
-  mounted() {
-    tinymce.init({})
   },
   methods: {
     /** 查询文章列表 */
@@ -345,6 +353,21 @@ export default {
         ...this.queryParams
       }, `article_${new Date().getTime()}.xlsx`)
     },
+    onEditorReady(editor) {
+      console.log('编辑器就绪:', editor);
+    },
+    onEditorInput(event) {
+      console.log('内容变化:', event);
+      // 这里可以处理内容变更，如同步到表单
+    }
   }
 };
 </script>
+<style scoped>
+/* 可选：调整编辑器样式 */
+.ckeditor-container {
+  width: 100%;
+  max-width: 800px;
+  margin: 20px auto;
+}
+</style>
