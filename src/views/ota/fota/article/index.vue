@@ -234,20 +234,8 @@ export default {
       editorData: '<p></p>',
       editorConfig: {
         toolbar: [
-          'heading', '|',
-          'bold', 'italic', 'underline', 'strikethrough', '|',
-          'bulletedList', 'numberedList', '|',
-          'link', 'image', '|',
-          'undo', 'redo'
-        ],
-        image: {
-          toolbar: [
-            'imageStyle:full',
-            'imageStyle:side',
-            '|',
-            'imageTextAlternative'
-          ]
-        }
+          'heading', 'bold', 'italic', 'link', 'bulletedList', 'numberedList'
+        ]
       }
     };
   },

@@ -36,7 +36,7 @@
     "url": "https://gitee.com/y_project/RuoYi-Cloud.git"
   },
   "dependencies": {
-    "@ckeditor/ckeditor5-build-classic": "^44.3.0",
+    "@ckeditor/ckeditor5-build-classic": "^34.2.0",
     "@ckeditor/ckeditor5-vue2": "^3.0.1",
     "@riophae/vue-treeselect": "0.4.0",
     "@tinymce/tinymce-vue": "^3.2.8",
