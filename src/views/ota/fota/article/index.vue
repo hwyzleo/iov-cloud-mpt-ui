@@ -342,7 +342,7 @@ export default {
       console.log('编辑器就绪:', editor);
     },
     onEditorInput(event) {
-      console.log('内容变化:', event);
+      this.form.content = event;
     }
   }
 };
