@@ -75,7 +75,10 @@ module.exports = {
     config.plugins.delete('preload') // TODO: need test
     config.plugins.delete('prefetch') // TODO: need test
 
-    // set svg-sprite-loader
+    config.module
+      .rule('js')
+      .exclude.add(/ckeditor5-[^/\\]+[/\\]src[/\\].+\.js$/)
+      .end();
     config.module
       .rule('svg')
       .exclude.add(resolve('src/assets/icons'))
@@ -90,6 +93,12 @@ module.exports = {
       .options({
         symbolId: 'icon-[name]'
       })
+      .end()
+    config.module
+      .rule('ckeditor')
+      .test(/ckeditor5-[^/\\]+[/\\]build[/\\].+\.js$/)
+      .use('babel-loader')
+      .loader('babel-loader')
       .end()
 
     config.when(process.env.NODE_ENV !== 'development', config => {
