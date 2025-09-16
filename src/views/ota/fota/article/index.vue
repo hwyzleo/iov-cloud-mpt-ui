@@ -136,7 +136,7 @@
     />
 
     <!-- 添加或修改文章对话框 -->
-    <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
+    <el-dialog :title="title" :visible.sync="open" width="700px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="120px">
         <el-form-item label="文章标题" prop="title">
           <el-input v-model="form.title" placeholder="请输入文章标题"/>
@@ -154,7 +154,6 @@
         </el-form-item>
         <el-form-item label="文章内容" prop="content">
           <div class="ckeditor-container">
-            <!-- 绑定编辑器内容到 editorData -->
             <ckeditor
               :editor="ClassicEditor"
               v-model="editorData"
@@ -234,7 +233,6 @@ export default {
       ClassicEditor,
       editorData: '<p></p>',
       editorConfig: {
-        // 自定义工具栏
         toolbar: [
           'heading', '|',
           'bold', 'italic', 'underline', 'strikethrough', '|',
@@ -242,7 +240,6 @@ export default {
           'link', 'image', '|',
           'undo', 'redo'
         ],
-        // 图片上传配置（如果需要）
         image: {
           toolbar: [
             'imageStyle:full',
@@ -358,7 +355,6 @@ export default {
     },
     onEditorInput(event) {
       console.log('内容变化:', event);
-      // 这里可以处理内容变更，如同步到表单
     }
   }
 };
