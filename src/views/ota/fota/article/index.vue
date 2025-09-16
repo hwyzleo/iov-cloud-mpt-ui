@@ -153,15 +153,12 @@
           </el-select>
         </el-form-item>
         <el-form-item label="文章内容" prop="content">
-          <Editor
-            v-model="form.content"
-            :init="{
-          height: 400,
-          menubar: false,
-          plugins: 'advlist autolink lists image',
-          toolbar: 'bold italic | alignleft | image'
-        }"
-          />
+          <div class="tinymce-container">
+            <editor
+              v-model="content"
+              :init="editorInit"
+            />
+          </div>
         </el-form-item>
         <el-form-item label="备注">
           <el-input v-model="form.description" type="textarea" placeholder="请输入内容"></el-input>
@@ -183,7 +180,14 @@ import {
   listArticle,
   updateArticle
 } from "@/api/ota/fota/article";
+import tinymce from 'tinymce/tinymce'
 import Editor from '@tinymce/tinymce-vue';
+import 'tinymce/themes/silver/theme'
+import 'tinymce/icons/default/icons'
+import 'tinymce/plugins/advlist'
+import 'tinymce/plugins/list'
+import 'tinymce/plugins/image'
+import 'tinymce/plugins/table'
 
 export default {
   name: "FotaArticle",
@@ -229,10 +233,21 @@ export default {
           {required: true, message: "文章类型不能为空", trigger: "blur"}
         ]
       },
+      editorInit: {
+        cloudServices: false,
+        base_url: '/tinymce',
+        suffix: '.min',
+        height: 400,
+        plugins: 'advlist list image table',
+        toolbar: 'undo redo | bold italic | alignleft aligncenter | image table'
+      }
     };
   },
   created() {
     this.getList();
+  },
+  mounted() {
+    tinymce.init({})
   },
   methods: {
     /** 查询文章列表 */
