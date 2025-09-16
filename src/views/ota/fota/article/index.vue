@@ -160,6 +160,7 @@
               :config="editorConfig"
               @ready="onEditorReady"
               @input="onEditorInput"
+              style="height: 400px;"
             ></ckeditor>
           </div>
         </el-form-item>
@@ -235,8 +236,7 @@ export default {
       editorConfig: {
         toolbar: [
           'heading', 'bold', 'italic', 'link', 'bulletedList', 'numberedList'
-        ],
-        height: 400
+        ]
       }
     };
   },
