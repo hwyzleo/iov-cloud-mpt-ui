@@ -253,15 +253,6 @@
             </el-form-item>
           </el-col>
         </el-row>
-        <el-form-item label="活动发布时间" prop="publishTime">
-          <el-date-picker
-            v-model="form.publishTime"
-            type="datetime"
-            placeholder="请选择发布时间"
-            value-format="timestamp"
-          >
-          </el-date-picker>
-        </el-form-item>
         <el-form-item label="升级目的">
           <el-input v-model="form.upgradePurpose" type="textarea" placeholder="请输入升级目的"></el-input>
         </el-form-item>
