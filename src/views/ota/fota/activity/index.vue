@@ -166,14 +166,15 @@
             </el-form-item>
           </el-col>
         </el-row>
-        <el-form-item label="升级须知" prop="upgradeNoticeArticleId">
+        <el-form-item label="升级须知" prop="upgradeNoticeArticleTitle">
           <div>
             <el-autocomplete
-              v-model="form.upgradeNoticeArticleId"
+              v-model="form.upgradeNoticeArticleTitle"
               :fetch-suggestions="queryUpgradeNotice"
               placeholder="请查询升级须知"
               :trigger-on-focus="false"
               clearable
+              @select="handleUpgradeNoticeSelect"
             >
               <template #default="{ item }">
                 <div>{{ item.title }}</div>
@@ -181,14 +182,15 @@
             </el-autocomplete>
           </div>
         </el-form-item>
-        <el-form-item label="活动条款" prop="activityTermArticleId">
+        <el-form-item label="活动条款" prop="activityTermArticleTitle">
           <div>
             <el-autocomplete
-              v-model="form.activityTermArticleId"
+              v-model="form.activityTermArticleTitle"
               :fetch-suggestions="queryActivityTerm"
               placeholder="请查询活动条款"
               :trigger-on-focus="false"
               clearable
+              @select="handleActivityTermSelect"
             >
               <template #default="{ item }">
                 <div>{{ item.title }}</div>
@@ -196,14 +198,15 @@
             </el-autocomplete>
           </div>
         </el-form-item>
-        <el-form-item label="隐私协议" prop="privacyAgreementArticleId">
+        <el-form-item label="隐私协议" prop="privacyAgreementArticleTitle">
           <div>
             <el-autocomplete
-              v-model="form.privacyAgreementArticleId"
+              v-model="form.privacyAgreementArticleTitle"
               :fetch-suggestions="queryPrivacyAgreement"
               placeholder="请查询隐私协议"
               :trigger-on-focus="false"
               clearable
+              @select="handlePrivacyAgreementSelect"
             >
               <template #default="{ item }">
                 <div>{{ item.title }}</div>
@@ -498,6 +501,15 @@ export default {
       this.download('ota-fota/activity/export', {
         ...this.queryParams
       }, `activity_${new Date().getTime()}.xlsx`)
+    },
+    handleUpgradeNoticeSelect(item) {
+      this.form.upgradeNoticeArticleId = item.id;
+    },
+    handleActivityTermSelect(item) {
+      this.form.activityTermArticleId = item.id;
+    },
+    handlePrivacyAgreementSelect(item) {
+      this.form.privacyAgreementArticleId = item.id;
     },
   }
 };
