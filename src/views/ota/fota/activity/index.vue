@@ -10,6 +10,21 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
+      <el-form-item label="活动状态" prop="type">
+        <el-select
+          v-model="queryParams.state"
+          placeholder="活动状态"
+          clearable
+          style="width: 140px"
+        >
+          <el-option
+            v-for="activityState in this.activityStateList"
+            :key="activityState.value"
+            :label="activityState.label"
+            :value="activityState.value"
+          />
+        </el-select>
+      </el-form-item>
       <el-form-item label="创建时间">
         <el-date-picker
           v-model="dateRange"
@@ -77,7 +92,7 @@
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
-    <el-table v-loading="loading" :data="baselineList" @selection-change="handleSelectionChange">
+    <el-table v-loading="loading" :data="activityList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center"/>
       <el-table-column label="活动名称" prop="name"/>
       <el-table-column label="活动版本" prop="version" width="120"/>
@@ -295,6 +310,7 @@ import {
   delActivity,
   getActivity,
   listActivity,
+  listAllActivityState,
   updateActivity
 } from "@/api/ota/fota/activity";
 import {listArticle,} from "@/api/ota/fota/article";
@@ -318,6 +334,7 @@ export default {
       total: 0,
       // 升级活动表格数据
       activityList: [],
+      activityStateList: [],
       // 弹出层标题
       title: "",
       // 是否显示弹出层
@@ -343,6 +360,7 @@ export default {
     };
   },
   created() {
+    this.getActivityStateList();
     this.getList();
   },
   methods: {
@@ -353,6 +371,12 @@ export default {
           this.activityList = response.rows;
           this.total = response.total;
           this.loading = false;
+        }
+      );
+    },
+    getActivityStateList() {
+      listAllActivityState().then(response => {
+          this.activityStateList = response.data;
         }
       );
     },

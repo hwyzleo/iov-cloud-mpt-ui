@@ -9,6 +9,14 @@ export function listActivity(query) {
   })
 }
 
+// 获取所有升级活动状态
+export function listAllActivityState() {
+  return request({
+    url: '/ota-fota/mpt/activity/listAllActivityState',
+    method: 'get'
+  })
+}
+
 // 查询升级活动详细
 export function getActivity(activityId) {
   return request({
