@@ -216,6 +216,9 @@
             </el-form-item>
           </el-col>
         </el-row>
+        <el-form-item label="任务车辆">
+          <el-input v-model="form.target" type="textarea" placeholder="请输入任务车辆"></el-input>
+        </el-form-item>
         <el-form-item label="升级活动" prop="activityName">
           <div>
             <el-autocomplete
@@ -320,7 +323,7 @@ import {
   listAllTaskState,
   updateTask
 } from "@/api/ota/fota/task";
-import {listArticle} from "@/api/ota/fota/article";
+import {listActivity} from "@/api/ota/fota/activity";
 
 export default {
   name: "Task",
@@ -406,9 +409,9 @@ export default {
       );
     },
     queryActivity(queryString, cb) {
-      listArticle({
-        title: queryString,
-        type: 2
+      listActivity({
+        name: queryString,
+        state: 5
       }).then(response => {
         if (response.rows && response.rows.length > 0) {
           const suggestions = response.rows.map(item => {
