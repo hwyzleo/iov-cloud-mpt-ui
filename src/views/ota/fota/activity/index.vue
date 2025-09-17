@@ -149,8 +149,8 @@
     />
 
     <!-- 添加或修改升级活动对话框 -->
-    <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
-      <el-form ref="form" :model="form" :rules="rules" label-width="120px">
+    <el-dialog :title="title" :visible.sync="open" width="700px" append-to-body>
+      <el-form ref="form" :model="form" :rules="rules" label-width="140px">
         <el-form-item label="活动名称" prop="name">
           <el-input v-model="form.name" placeholder="请输入活动名称"/>
         </el-form-item>
@@ -202,28 +202,34 @@
             </el-autocomplete>
           </div>
         </el-form-item>
-        <el-form-item label="活动开始时间" prop="startTime">
-          <el-date-picker
-            v-model="form.startTime"
-            type="datetime"
-            placeholder="请选择活动开始时间"
-            value-format="timestamp"
-          >
-          </el-date-picker>
-        </el-form-item>
-        <el-form-item label="活动结束时间" prop="endTime">
-          <el-date-picker
-            v-model="form.endTime"
-            type="datetime"
-            placeholder="请选择活动结束时间"
-            value-format="timestamp"
-          >
-          </el-date-picker>
-        </el-form-item>
+        <el-row>
+          <el-col :span="12">
+            <el-form-item label="活动开始时间" prop="startTime">
+              <el-date-picker
+                v-model="form.startTime"
+                type="datetime"
+                placeholder="请选择活动开始时间"
+                value-format="timestamp"
+              >
+              </el-date-picker>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="活动结束时间" prop="endTime">
+              <el-date-picker
+                v-model="form.endTime"
+                type="datetime"
+                placeholder="请选择活动结束时间"
+                value-format="timestamp"
+              >
+              </el-date-picker>
+            </el-form-item>
+          </el-col>
+        </el-row>
         <el-form-item label="活动发布时间" prop="publishTime">
           <el-date-picker
             v-model="form.publishTime"
-            type="date"
+            type="datetime"
             placeholder="请选择发布时间"
             value-format="timestamp"
           >
@@ -241,21 +247,27 @@
         <el-form-item label="总文件大小（MB）" prop="totalFileSize">
           <el-input-number v-model="form.totalFileSize" controls-position="right" :min="0"/>
         </el-form-item>
-        <el-form-item label="是否基线活动">
-          <el-radio-group v-model="form.enable">
-            <el-radio
-              :label="true"
-            >是
-            </el-radio>
-            <el-radio
-              :label="false"
-            >否
-            </el-radio>
-          </el-radio-group>
-        </el-form-item>
-        <el-form-item label="基线代码" prop="name">
-          <el-input v-model="form.baselineCode" placeholder="请输入基线代码"/>
-        </el-form-item>
+        <el-row>
+          <el-col :span="12">
+            <el-form-item label="是否基线活动" prop="baseline">
+              <el-radio-group v-model="form.baseline">
+                <el-radio
+                  :label="true"
+                >是
+                </el-radio>
+                <el-radio
+                  :label="false"
+                >否
+                </el-radio>
+              </el-radio-group>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="基线代码" prop="baselineCode">
+              <el-input v-model="form.baselineCode" placeholder="请输入基线代码"/>
+            </el-form-item>
+          </el-col>
+        </el-row>
         <el-form-item label="备注">
           <el-input v-model="form.description" type="textarea" placeholder="请输入内容"></el-input>
         </el-form-item>
