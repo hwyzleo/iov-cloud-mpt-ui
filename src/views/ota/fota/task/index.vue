@@ -512,6 +512,7 @@ export default {
       }, `task_${new Date().getTime()}.xlsx`)
     },
     handleActivitySelect(item) {
+      this.form.activityName = item.name + "[" + item.version + "]";
       this.form.activityId = item.id;
     },
   }
