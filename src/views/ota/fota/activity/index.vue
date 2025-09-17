@@ -149,14 +149,23 @@
     />
 
     <!-- 添加或修改升级活动对话框 -->
-    <el-dialog :title="title" :visible.sync="open" width="700px" append-to-body>
+    <el-dialog :title="title" :visible.sync="open" width="800px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="140px">
         <el-form-item label="活动名称" prop="name">
           <el-input v-model="form.name" placeholder="请输入活动名称"/>
         </el-form-item>
-        <el-form-item label="活动版本" prop="version">
-          <el-input v-model="form.version" placeholder="请输入活动版本"/>
-        </el-form-item>
+        <el-row>
+          <el-col :span="12">
+            <el-form-item label="活动版本" prop="version">
+              <el-input v-model="form.version" placeholder="请输入活动版本"/>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="总文件大小（MB）" prop="totalFileSize">
+              <el-input-number v-model="form.totalFileSize" controls-position="right" :min="0"/>
+            </el-form-item>
+          </el-col>
+        </el-row>
         <el-form-item label="升级须知" prop="upgradeNoticeArticleId">
           <div>
             <el-autocomplete
@@ -243,9 +252,6 @@
         </el-form-item>
         <el-form-item label="活动说明">
           <el-input v-model="form.statement" type="textarea" placeholder="请输入活动说明"></el-input>
-        </el-form-item>
-        <el-form-item label="总文件大小（MB）" prop="totalFileSize">
-          <el-input-number v-model="form.totalFileSize" controls-position="right" :min="0"/>
         </el-form-item>
         <el-row>
           <el-col :span="12">
@@ -442,7 +448,9 @@ export default {
       this.reset();
       this.open = true;
       this.title = "添加升级活动";
-      this.form = {};
+      this.form = {
+        baseline: true
+      };
     },
     /** 修改按钮操作 */
     handleUpdate(row) {
