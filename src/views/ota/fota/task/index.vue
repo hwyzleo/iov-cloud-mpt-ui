@@ -217,7 +217,20 @@
           </el-col>
         </el-row>
         <el-form-item label="升级活动" prop="activityName">
-          <el-input v-model="form.activityName" placeholder="请选择升级活动"/>
+          <div>
+            <el-autocomplete
+              v-model="form.activityName"
+              :fetch-suggestions="queryActivity"
+              placeholder="请查询升级活动"
+              :trigger-on-focus="false"
+              clearable
+              @select="handleActivitySelect"
+            >
+              <template #default="{ item }">
+                <div>{{ item.name }}[{{ item.version }}]</div>
+              </template>
+            </el-autocomplete>
+          </div>
         </el-form-item>
         <el-row>
           <el-col :span="12">
@@ -307,6 +320,7 @@ import {
   listAllTaskState,
   updateTask
 } from "@/api/ota/fota/task";
+import {listArticle} from "@/api/ota/fota/article";
 
 export default {
   name: "Task",
@@ -345,6 +359,27 @@ export default {
       rules: {
         name: [
           {required: true, message: "任务名称不能为空", trigger: "blur"}
+        ],
+        type: [
+          {required: true, message: "任务类型不能为空", trigger: "blur"}
+        ],
+        stage: [
+          {required: true, message: "任务阶段不能为空", trigger: "blur"}
+        ],
+        activityName: [
+          {required: true, message: "升级活动不能为空", trigger: "blur"}
+        ],
+        startTime: [
+          {required: true, message: "任务开始时间不能为空", trigger: "blur"}
+        ],
+        endTime: [
+          {required: true, message: "任务结束时间不能为空", trigger: "blur"}
+        ],
+        upgradeMode: [
+          {required: true, message: "升级模式不能为空", trigger: "blur"}
+        ],
+        adaptation: [
+          {required: true, message: "适配主体不能为空", trigger: "blur"}
         ]
       },
     };
@@ -369,6 +404,26 @@ export default {
           this.taskStateList = response.data;
         }
       );
+    },
+    queryActivity(queryString, cb) {
+      listArticle({
+        title: queryString,
+        type: 2
+      }).then(response => {
+        if (response.rows && response.rows.length > 0) {
+          const suggestions = response.rows.map(item => {
+            return {
+              value: item.title,
+              ...item
+            };
+          });
+          cb(suggestions);
+        } else {
+          cb([]);
+        }
+      }).catch(() => {
+        cb([]);
+      });
     },
     /** 取消按钮 */
     cancel() {
@@ -452,6 +507,9 @@ export default {
       this.download('ota-fota/task/export', {
         ...this.queryParams
       }, `task_${new Date().getTime()}.xlsx`)
+    },
+    handleActivitySelect(item) {
+      this.form.activityId = item.id;
     },
   }
 };
