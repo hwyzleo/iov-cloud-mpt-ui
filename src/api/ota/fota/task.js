@@ -43,6 +43,15 @@ export function updateTask(data) {
   })
 }
 
+// 提交升级任务
+export function submitTask(taskId, data) {
+  return request({
+    url: '/ota-fota/mpt/task/' + taskId + '/action/submit',
+    method: 'post',
+    data: data
+  })
+}
+
 // 删除升级任务
 export function delTask(taskIds) {
   return request({

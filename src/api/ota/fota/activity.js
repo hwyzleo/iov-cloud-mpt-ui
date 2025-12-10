@@ -17,6 +17,14 @@ export function listAllActivityState() {
   })
 }
 
+// 列出升级活动下软件零件版本
+export function listActivitySoftwarePartVersion(activityId) {
+  return request({
+    url: '/ota-fota/mpt/activity/' + activityId + '/listSoftwarePartVersion',
+    method: 'get'
+  })
+}
+
 // 查询升级活动详细
 export function getActivity(activityId) {
   return request({
@@ -34,6 +42,14 @@ export function addActivity(data) {
   })
 }
 
+// 新增关联的软件零件版本
+export function addSoftwarePartVersion(activityId, softwarePartVersionIds) {
+  return request({
+    url: '/ota-fota/mpt/activity/' + activityId + '/action/addSoftwarePartVersion/' + softwarePartVersionIds,
+    method: 'post'
+  })
+}
+
 // 修改升级活动
 export function updateActivity(data) {
   return request({
@@ -48,5 +64,13 @@ export function delActivity(activityIds) {
   return request({
     url: '/ota-fota/mpt/activity/' + activityIds,
     method: 'delete'
+  })
+}
+
+// 删除关联的软件零件版本
+export function delSoftwarePartVersion(activityId, softwarePartVersionIds) {
+  return request({
+    url: '/ota-fota/mpt/activity/' + activityId + '/action/removeSoftwarePartVersion/' + softwarePartVersionIds,
+    method: 'post'
   })
 }

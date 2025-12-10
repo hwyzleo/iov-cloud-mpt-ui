@@ -102,11 +102,11 @@
           <span v-else>未知</span>
         </template>
       </el-table-column>
-      <el-table-column label="任务阶段" prop="stage" width="120" align="center">
+      <el-table-column label="任务阶段" prop="phase" width="120" align="center">
         <template slot-scope="scope">
-          <span v-if="scope.row.stage === 1">验证</span>
-          <span v-else-if="scope.row.stage === 2">灰度</span>
-          <span v-else-if="scope.row.stage === 3">发布</span>
+          <span v-if="scope.row.phase === 1">验证</span>
+          <span v-else-if="scope.row.phase === 2">灰度</span>
+          <span v-else-if="scope.row.phase === 3">发布</span>
           <span v-else>未知</span>
         </template>
       </el-table-column>
@@ -205,7 +205,7 @@
           <el-col :span="12">
             <el-form-item label="任务阶段" prop="stage">
               <el-select
-                v-model="form.stage"
+                v-model="form.phase"
                 placeholder="任务阶段"
                 clearable
               >
@@ -272,42 +272,10 @@
             <el-option :key="5" label="工厂" :value="5"/>
           </el-select>
         </el-form-item>
-        <el-row>
-          <el-col :span="12">
-            <el-form-item label="ECU尝试刷写次数" prop="ecuTryLimit">
-              <el-input-number v-model="form.ecuTryLimit" controls-position="right" :min="0"/>
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="刷写失败是否回滚" prop="failRollback">
-              <el-radio-group v-model="form.failRollback">
-                <el-radio
-                  :label="true"
-                >是
-                </el-radio>
-                <el-radio
-                  :label="false"
-                >否
-                </el-radio>
-              </el-radio-group>
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <el-form-item label="适配主体" prop="adaptation">
-          <el-select
-            v-model="form.adaptation"
-            placeholder="适配主体"
-            clearable
-          >
-            <el-option :key="1" label="软件零件号" :value="1"/>
-            <el-option :key="2" label="软件版本" :value="2"/>
-            <el-option :key="3" label="两者均适配" :value="3"/>
-            <el-option :key="4" label="两者均不适配" :value="4"/>
-          </el-select>
-        </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="submitForm">确 定</el-button>
+        <el-button type="success" @click="handleSubmit" v-if="form.state === 1">提 交</el-button>
         <el-button @click="cancel">取 消</el-button>
       </div>
     </el-dialog>
@@ -321,9 +289,13 @@ import {
   getTask,
   listTask,
   listAllTaskState,
-  updateTask
+  updateTask,
+  submitTask
 } from "@/api/ota/fota/task";
-import {listActivity} from "@/api/ota/fota/activity";
+import {
+  listActivity,
+  getActivity
+} from "@/api/ota/fota/activity";
 
 export default {
   name: "Task",
@@ -366,7 +338,7 @@ export default {
         type: [
           {required: true, message: "任务类型不能为空", trigger: "blur"}
         ],
-        stage: [
+        phase: [
           {required: true, message: "任务阶段不能为空", trigger: "blur"}
         ],
         activityName: [
@@ -380,9 +352,6 @@ export default {
         ],
         upgradeMode: [
           {required: true, message: "升级模式不能为空", trigger: "blur"}
-        ],
-        adaptation: [
-          {required: true, message: "适配主体不能为空", trigger: "blur"}
         ]
       },
     };
@@ -470,7 +439,10 @@ export default {
       const taskId = row.id || this.ids
       getTask(taskId).then(response => {
         this.form = response.data;
-        this.open = true;
+        getActivity(this.form.activityId).then(response2 => {
+          this.form.activityName = response2.data.name;
+          this.open = true;
+        });
       });
       this.title = "修改升级任务";
     },
@@ -514,6 +486,20 @@ export default {
     handleActivitySelect(item) {
       this.form.activityName = item.name + "[" + item.version + "]";
       this.form.activityId = item.id;
+    },
+    handleSubmit() {
+      this.$modal.confirm('是否确认提交该升级任务？').then(() => {
+        this.$refs["form"].validate(valid => {
+          if (valid && this.form.id !== undefined) {
+            submitTask(this.form.id, this.form).then(response => {
+              this.$modal.msgSuccess("提交成功");
+              this.open = false;
+              this.getList();
+            });
+          }
+        });
+      }).catch(() => {
+      });
     },
   }
 };
