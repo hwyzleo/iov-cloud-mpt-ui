@@ -69,6 +69,22 @@ export function releaseTask(taskId) {
   })
 }
 
+// 暂停升级任务
+export function pauseTask(taskId) {
+  return request({
+    url: '/ota-fota/mpt/task/' + taskId + '/action/pause',
+    method: 'post'
+  })
+}
+
+// 恢复升级任务
+export function resumeTask(taskId) {
+  return request({
+    url: '/ota-fota/mpt/task/' + taskId + '/action/resume',
+    method: 'post'
+  })
+}
+
 // 删除升级任务
 export function delTask(taskIds) {
   return request({

@@ -120,9 +120,9 @@
           <span>{{ parseTime(scope.row.endTime) }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="任务发布时间" align="center" prop="publishTime" width="180">
+      <el-table-column label="任务发布时间" align="center" prop="releaseTime" width="180">
         <template slot-scope="scope">
-          <span>{{ parseTime(scope.row.publishTime) }}</span>
+          <span>{{ parseTime(scope.row.releaseTime) }}</span>
         </template>
       </el-table-column>
       <el-table-column label="升级模式" prop="upgradeMode" width="120" align="center">
@@ -180,6 +180,24 @@
             v-if="scope.row.state === 3"
             v-hasPermi="['ota:fota:task:release']"
           >发布
+          </el-button>
+          <el-button
+            size="mini"
+            type="text"
+            icon="el-icon-video-pause"
+            @click="handlePause(scope.row)"
+            v-if="scope.row.state === 5"
+            v-hasPermi="['ota:fota:task:pause']"
+          >暂停
+          </el-button>
+          <el-button
+            size="mini"
+            type="text"
+            icon="el-icon-video-play"
+            @click="handleResume(scope.row)"
+            v-if="scope.row.state === 6"
+            v-hasPermi="['ota:fota:task:resume']"
+          >恢复
           </el-button>
           <el-button
             size="mini"
@@ -334,7 +352,9 @@ import {
   updateTask,
   submitTask,
   auditTask,
-  releaseTask
+  releaseTask,
+  pauseTask,
+  resumeTask
 } from "@/api/ota/fota/task";
 import {
   listActivity,
@@ -539,6 +559,32 @@ export default {
         if (taskId !== undefined) {
           releaseTask(taskId).then(response => {
             this.$modal.msgSuccess("发布成功");
+            this.getList();
+          });
+        }
+      }).catch(() => {
+      });
+    },
+    /** 暂停按钮操作 */
+    handlePause(row) {
+      const taskId = row.id || this.ids
+      this.$modal.confirm('是否确认暂停该升级任务？').then(() => {
+        if (taskId !== undefined) {
+          pauseTask(taskId).then(response => {
+            this.$modal.msgSuccess("暂停成功");
+            this.getList();
+          });
+        }
+      }).catch(() => {
+      });
+    },
+    /** 恢复按钮操作 */
+    handleResume(row) {
+      const taskId = row.id || this.ids
+      this.$modal.confirm('是否确认恢复该升级任务？').then(() => {
+        if (taskId !== undefined) {
+          resumeTask(taskId).then(response => {
+            this.$modal.msgSuccess("恢复成功");
             this.getList();
           });
         }
