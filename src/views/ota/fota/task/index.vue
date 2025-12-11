@@ -166,6 +166,15 @@
           <el-button
             size="mini"
             type="text"
+            icon="el-icon-finished"
+            @click="handleAudit(scope.row)"
+            v-if="scope.row.state === 2"
+            v-hasPermi="['ota:fota:task:audit']"
+          >审核
+          </el-button>
+          <el-button
+            size="mini"
+            type="text"
             icon="el-icon-delete"
             @click="handleDelete(scope.row)"
             v-hasPermi="['ota:fota:task:remove']"
@@ -187,7 +196,7 @@
     <el-dialog :title="title" :visible.sync="open" width="800px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="140px">
         <el-form-item label="任务名称" prop="name">
-          <el-input v-model="form.name" placeholder="请输入任务名称"/>
+          <el-input v-model="form.name" placeholder="请输入任务名称" :disabled="form.state === 2"/>
         </el-form-item>
         <el-row>
           <el-col :span="12">
@@ -196,6 +205,7 @@
                 v-model="form.type"
                 placeholder="任务类型"
                 clearable
+                :disabled="form.state === 2"
               >
                 <el-option :key="1" label="普通" :value="1"/>
                 <el-option :key="2" label="快速" :value="2"/>
@@ -208,6 +218,7 @@
                 v-model="form.phase"
                 placeholder="任务阶段"
                 clearable
+                :disabled="form.state === 2"
               >
                 <el-option :key="1" label="验证" :value="1"/>
                 <el-option :key="2" label="灰度" :value="2"/>
@@ -216,8 +227,8 @@
             </el-form-item>
           </el-col>
         </el-row>
-        <el-form-item label="任务车辆">
-          <el-input v-model="form.target" type="textarea" placeholder="请输入任务车辆"></el-input>
+        <el-form-item label="任务车辆" prop="target">
+          <el-input v-model="form.target" type="textarea" placeholder="请输入任务车辆" :disabled="form.state === 2"></el-input>
         </el-form-item>
         <el-form-item label="升级活动" prop="activityName">
           <div>
@@ -228,6 +239,7 @@
               :trigger-on-focus="false"
               clearable
               @select="handleActivitySelect"
+              :disabled="form.state === 2"
             >
               <template #default="{ item }">
                 <div>{{ item.name }}[{{ item.version }}]</div>
@@ -243,6 +255,7 @@
                 type="datetime"
                 placeholder="请选择任务开始时间"
                 value-format="timestamp"
+                :disabled="form.state === 2"
               >
               </el-date-picker>
             </el-form-item>
@@ -254,6 +267,7 @@
                 type="datetime"
                 placeholder="请选择任务结束时间"
                 value-format="timestamp"
+                :disabled="form.state === 2"
               >
               </el-date-picker>
             </el-form-item>
@@ -264,6 +278,7 @@
             v-model="form.upgradeMode"
             placeholder="升级模式"
             clearable
+            :disabled="form.state === 2"
           >
             <el-option :key="1" label="普通" :value="1"/>
             <el-option :key="2" label="强制" :value="2"/>
@@ -272,10 +287,26 @@
             <el-option :key="5" label="工厂" :value="5"/>
           </el-select>
         </el-form-item>
+        <el-form-item label="审核结果" prop="audit" v-if="title === '审核升级任务'">
+          <el-radio-group v-model="form.audit">
+            <el-radio
+              :label="true"
+            >通过
+            </el-radio>
+            <el-radio
+              :label="false"
+            >拒绝
+            </el-radio>
+          </el-radio-group>
+        </el-form-item>
+        <el-form-item label="拒绝理由" prop="reason" v-if="title === '审核升级任务' && form.audit === false">
+          <el-input v-model="form.reason" type="textarea" placeholder="请输入拒绝理由"></el-input>
+        </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="submitForm">确 定</el-button>
+        <el-button type="primary" @click="submitForm" v-if="title !== '审核升级任务'">确 定</el-button>
         <el-button type="success" @click="handleSubmit" v-if="form.state === 1">提 交</el-button>
+        <el-button type="success" @click="submitAuditForm" v-if="title === '审核升级任务' && form.state === 2">审 核</el-button>
         <el-button @click="cancel">取 消</el-button>
       </div>
     </el-dialog>
@@ -290,7 +321,8 @@ import {
   listTask,
   listAllTaskState,
   updateTask,
-  submitTask
+  submitTask,
+  auditTask
 } from "@/api/ota/fota/task";
 import {
   listActivity,
@@ -352,7 +384,35 @@ export default {
         ],
         upgradeMode: [
           {required: true, message: "升级模式不能为空", trigger: "blur"}
-        ]
+        ],
+        audit: [{
+          validator: (rule, value, callback) => {
+            if (this.form.state === 2) {
+              if (value === undefined || value === null) {
+                callback(new Error('审核结果不能为空'));
+              } else {
+                callback();
+              }
+            } else {
+              callback();
+            }
+          },
+          trigger: "blur"
+        }],
+        reason: [{
+          validator: (rule, value, callback) => {
+            if (this.form.state === 2 && this.form.audit === false) {
+              if (!value || value.trim() === '') {
+                callback(new Error('拒绝理由不能为空'));
+              } else {
+                callback();
+              }
+            } else {
+              callback();
+            }
+          },
+          trigger: ["blur", "change"]
+        }]
       },
     };
   },
@@ -405,7 +465,7 @@ export default {
     /** 表单重置 */
     reset() {
       this.form = {
-        name: undefined,
+        name: undefined
       };
       this.resetForm("form");
     },
@@ -445,6 +505,20 @@ export default {
         });
       });
       this.title = "修改升级任务";
+    },
+    /** 审核按钮操作 */
+    handleAudit(row) {
+      this.reset();
+      const taskId = row.id || this.ids
+      getTask(taskId).then(response => {
+        this.form = response.data;
+        this.$set(this.form, 'audit', true);
+        getActivity(this.form.activityId).then(response2 => {
+          this.form.activityName = response2.data.name;
+          this.open = true;
+        });
+      });
+      this.title = "审核升级任务";
     },
     /** 提交按钮 */
     submitForm: function () {
@@ -492,6 +566,20 @@ export default {
         this.$refs["form"].validate(valid => {
           if (valid && this.form.id !== undefined) {
             submitTask(this.form.id, this.form).then(response => {
+              this.$modal.msgSuccess("提交成功");
+              this.open = false;
+              this.getList();
+            });
+          }
+        });
+      }).catch(() => {
+      });
+    },
+    submitAuditForm() {
+      this.$modal.confirm('是否确认提交该升级任务审核结果？').then(() => {
+        this.$refs["form"].validate(valid => {
+          if (valid && this.form.id !== undefined) {
+            auditTask(this.form.id, this.form).then(response => {
               this.$modal.msgSuccess("提交成功");
               this.open = false;
               this.getList();
