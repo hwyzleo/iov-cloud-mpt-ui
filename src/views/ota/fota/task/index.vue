@@ -175,6 +175,15 @@
           <el-button
             size="mini"
             type="text"
+            icon="el-icon-s-flag"
+            @click="handleRelease(scope.row)"
+            v-if="scope.row.state === 3"
+            v-hasPermi="['ota:fota:task:release']"
+          >发布
+          </el-button>
+          <el-button
+            size="mini"
+            type="text"
             icon="el-icon-delete"
             @click="handleDelete(scope.row)"
             v-hasPermi="['ota:fota:task:remove']"
@@ -228,7 +237,8 @@
           </el-col>
         </el-row>
         <el-form-item label="任务车辆" prop="target">
-          <el-input v-model="form.target" type="textarea" placeholder="请输入任务车辆" :disabled="form.state === 2"></el-input>
+          <el-input v-model="form.target" type="textarea" placeholder="请输入任务车辆"
+                    :disabled="form.state === 2"></el-input>
         </el-form-item>
         <el-form-item label="升级活动" prop="activityName">
           <div>
@@ -306,7 +316,8 @@
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="submitForm" v-if="title !== '审核升级任务'">确 定</el-button>
         <el-button type="success" @click="handleSubmit" v-if="form.state === 1">提 交</el-button>
-        <el-button type="success" @click="submitAuditForm" v-if="title === '审核升级任务' && form.state === 2">审 核</el-button>
+        <el-button type="success" @click="submitAuditForm" v-if="title === '审核升级任务' && form.state === 2">审 核
+        </el-button>
         <el-button @click="cancel">取 消</el-button>
       </div>
     </el-dialog>
@@ -322,7 +333,8 @@ import {
   listAllTaskState,
   updateTask,
   submitTask,
-  auditTask
+  auditTask,
+  releaseTask
 } from "@/api/ota/fota/task";
 import {
   listActivity,
@@ -519,6 +531,19 @@ export default {
         });
       });
       this.title = "审核升级任务";
+    },
+    /** 发布按钮操作 */
+    handleRelease(row) {
+      const taskId = row.id || this.ids
+      this.$modal.confirm('是否确认发布该升级任务？').then(() => {
+        if (taskId !== undefined) {
+          releaseTask(taskId).then(response => {
+            this.$modal.msgSuccess("发布成功");
+            this.getList();
+          });
+        }
+      }).catch(() => {
+      });
     },
     /** 提交按钮 */
     submitForm: function () {
