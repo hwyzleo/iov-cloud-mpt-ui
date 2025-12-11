@@ -85,6 +85,14 @@ export function resumeTask(taskId) {
   })
 }
 
+// 取消升级任务
+export function cancelTask(taskId) {
+  return request({
+    url: '/ota-fota/mpt/task/' + taskId + '/action/cancel',
+    method: 'post'
+  })
+}
+
 // 删除升级任务
 export function delTask(taskIds) {
   return request({

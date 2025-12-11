@@ -202,8 +202,18 @@
           <el-button
             size="mini"
             type="text"
+            icon="el-icon-zoom-out"
+            @click="handleCancel(scope.row)"
+            v-if="scope.row.state === 5 || scope.row.state === 6"
+            v-hasPermi="['ota:fota:task:cancel']"
+          >取消
+          </el-button>
+          <el-button
+            size="mini"
+            type="text"
             icon="el-icon-delete"
             @click="handleDelete(scope.row)"
+            v-if="scope.row.state < 5"
             v-hasPermi="['ota:fota:task:remove']"
           >删除
           </el-button>
@@ -354,7 +364,8 @@ import {
   auditTask,
   releaseTask,
   pauseTask,
-  resumeTask
+  resumeTask,
+  cancelTask
 } from "@/api/ota/fota/task";
 import {
   listActivity,
@@ -585,6 +596,19 @@ export default {
         if (taskId !== undefined) {
           resumeTask(taskId).then(response => {
             this.$modal.msgSuccess("恢复成功");
+            this.getList();
+          });
+        }
+      }).catch(() => {
+      });
+    },
+    /** 取消按钮操作 */
+    handleCancel(row) {
+      const taskId = row.id || this.ids
+      this.$modal.confirm('是否确认取消该升级任务？').then(() => {
+        if (taskId !== undefined) {
+          cancelTask(taskId).then(response => {
+            this.$modal.msgSuccess("取消成功");
             this.getList();
           });
         }
