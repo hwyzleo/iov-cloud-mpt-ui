@@ -106,9 +106,9 @@
           <span>{{ parseTime(scope.row.endTime) }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="活动发布时间" align="center" prop="publishTime" width="180">
+      <el-table-column label="活动发布时间" align="center" prop="releaseTime" width="180">
         <template slot-scope="scope">
-          <span>{{ parseTime(scope.row.publishTime) }}</span>
+          <span>{{ parseTime(scope.row.releaseTime) }}</span>
         </template>
       </el-table-column>
       <el-table-column label="活动状态" prop="state" width="120" align="center">
@@ -141,6 +141,7 @@
             type="text"
             icon="el-icon-edit"
             @click="handleUpdate(scope.row)"
+            v-if="scope.row.state < 2"
             v-hasPermi="['ota:fota:activity:edit']"
           >修改
           </el-button>
@@ -149,14 +150,43 @@
             type="text"
             icon="el-icon-edit"
             @click="handleActivitySoftwarePartVersion(scope.row)"
+            v-if="scope.row.state < 2"
             v-hasPermi="['ota:fota:activity:edit']"
           >关联版本
           </el-button>
           <el-button
             size="mini"
             type="text"
+            icon="el-icon-finished"
+            @click="handleAudit(scope.row)"
+            v-if="scope.row.state === 2"
+            v-hasPermi="['ota:fota:activity:audit']"
+          >审核
+          </el-button>
+          <el-button
+            size="mini"
+            type="text"
+            icon="el-icon-s-flag"
+            @click="handleRelease(scope.row)"
+            v-if="scope.row.state === 3"
+            v-hasPermi="['ota:fota:activity:release']"
+          >发布
+          </el-button>
+          <el-button
+            size="mini"
+            type="text"
+            icon="el-icon-zoom-out"
+            @click="handleCancel(scope.row)"
+            v-if="scope.row.state === 5"
+            v-hasPermi="['ota:fota:activity:cancel']"
+          >取消
+          </el-button>
+          <el-button
+            size="mini"
+            type="text"
             icon="el-icon-delete"
             @click="handleDelete(scope.row)"
+            v-if="scope.row.state < 1"
             v-hasPermi="['ota:fota:activity:remove']"
           >删除
           </el-button>
@@ -176,17 +206,17 @@
     <el-dialog :title="title" :visible.sync="open" width="800px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="130px">
         <el-form-item label="活动名称" prop="name">
-          <el-input v-model="form.name" placeholder="请输入活动名称"/>
+          <el-input v-model="form.name" placeholder="请输入活动名称" :disabled="form.state === 2"/>
         </el-form-item>
         <el-row>
           <el-col :span="12">
             <el-form-item label="活动版本" prop="version">
-              <el-input v-model="form.version" placeholder="请输入活动版本"/>
+              <el-input v-model="form.version" placeholder="请输入活动版本" :disabled="form.state === 2"/>
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="总文件大小(MB)" prop="totalFileSize">
-              <el-input-number v-model="form.totalFileSize" controls-position="right" :min="0"/>
+              <el-input-number v-model="form.totalFileSize" controls-position="right" :min="0" :disabled="form.state === 2"/>
             </el-form-item>
           </el-col>
         </el-row>
@@ -199,6 +229,7 @@
               :trigger-on-focus="false"
               clearable
               @select="handleUpgradeNoticeSelect"
+              :disabled="form.state === 2"
             >
               <template #default="{ item }">
                 <div>{{ item.title }}</div>
@@ -215,6 +246,7 @@
               :trigger-on-focus="false"
               clearable
               @select="handleActivityTermSelect"
+              :disabled="form.state === 2"
             >
               <template #default="{ item }">
                 <div>{{ item.title }}</div>
@@ -231,6 +263,7 @@
               :trigger-on-focus="false"
               clearable
               @select="handlePrivacyAgreementSelect"
+              :disabled="form.state === 2"
             >
               <template #default="{ item }">
                 <div>{{ item.title }}</div>
@@ -246,6 +279,7 @@
                 type="datetime"
                 placeholder="请选择活动开始时间"
                 value-format="timestamp"
+                :disabled="form.state === 2"
               >
               </el-date-picker>
             </el-form-item>
@@ -257,24 +291,25 @@
                 type="datetime"
                 placeholder="请选择活动结束时间"
                 value-format="timestamp"
+                :disabled="form.state === 2"
               >
               </el-date-picker>
             </el-form-item>
           </el-col>
         </el-row>
         <el-form-item label="升级目的">
-          <el-input v-model="form.upgradePurpose" type="textarea" placeholder="请输入升级目的"></el-input>
+          <el-input v-model="form.upgradePurpose" type="textarea" placeholder="请输入升级目的" :disabled="form.state === 2"></el-input>
         </el-form-item>
         <el-form-item label="升级功能项">
-          <el-input v-model="form.upgradeFunction" type="textarea" placeholder="请输入升级功能项"></el-input>
+          <el-input v-model="form.upgradeFunction" type="textarea" placeholder="请输入升级功能项" :disabled="form.state === 2"></el-input>
         </el-form-item>
         <el-form-item label="活动说明">
-          <el-input v-model="form.statement" type="textarea" placeholder="请输入活动说明"></el-input>
+          <el-input v-model="form.statement" type="textarea" placeholder="请输入活动说明" :disabled="form.state === 2"></el-input>
         </el-form-item>
         <el-row>
           <el-col :span="12">
             <el-form-item label="是否基线活动" prop="baseline">
-              <el-radio-group v-model="form.baseline">
+              <el-radio-group v-model="form.baseline" :disabled="form.state === 2">
                 <el-radio
                   :label="true"
                 >是
@@ -288,16 +323,34 @@
           </el-col>
           <el-col :span="12">
             <el-form-item label="基线代码" prop="baselineCode">
-              <el-input v-model="form.baselineCode" placeholder="请输入基线代码"/>
+              <el-input v-model="form.baselineCode" placeholder="请输入基线代码" :disabled="form.state === 2"/>
             </el-form-item>
           </el-col>
         </el-row>
         <el-form-item label="备注">
-          <el-input v-model="form.description" type="textarea" placeholder="请输入内容"></el-input>
+          <el-input v-model="form.description" type="textarea" placeholder="请输入内容" :disabled="form.state === 2"></el-input>
+        </el-form-item>
+        <el-form-item label="审核结果" prop="audit" v-if="title === '审核升级活动'">
+          <el-radio-group v-model="form.audit">
+            <el-radio
+              :label="true"
+            >通过
+            </el-radio>
+            <el-radio
+              :label="false"
+            >拒绝
+            </el-radio>
+          </el-radio-group>
+        </el-form-item>
+        <el-form-item label="拒绝理由" prop="reason" v-if="title === '审核升级活动' && form.audit === false">
+          <el-input v-model="form.reason" type="textarea" placeholder="请输入拒绝理由"></el-input>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="submitForm">确 定</el-button>
+        <el-button type="primary" @click="submitForm" v-if="form.state === 1">确 定</el-button>
+        <el-button type="success" @click="handleSubmit" v-if="form.state === 1">提 交</el-button>
+        <el-button type="success" @click="submitAuditForm" v-if="title === '审核升级活动' && form.state === 2">审 核
+        </el-button>
         <el-button @click="cancel">取 消</el-button>
       </div>
     </el-dialog>
@@ -469,7 +522,11 @@ import {
   listActivity,
   listAllActivityState,
   listActivitySoftwarePartVersion,
-  updateActivity
+  updateActivity,
+  submitActivity,
+  auditActivity,
+  releaseActivity,
+  cancelActivity
 } from "@/api/ota/fota/activity";
 import {listArticle,} from "@/api/ota/fota/article";
 import {listSoftwarePartVersion} from "@/api/ota/baseline/softwarepartversion";
@@ -788,6 +845,71 @@ export default {
     },
     onActivitySoftwarePartVersionClose() {
       this.getList();
+    },
+    handleSubmit() {
+      this.$modal.confirm('是否确认提交该升级活动？').then(() => {
+        this.$refs["form"].validate(valid => {
+          if (valid && this.form.id !== undefined) {
+            submitActivity(this.form.id, this.form).then(response => {
+              this.$modal.msgSuccess("提交成功");
+              this.open = false;
+              this.getList();
+            });
+          }
+        });
+      }).catch(() => {
+      });
+    },
+    /** 审核按钮操作 */
+    handleAudit(row) {
+      this.reset();
+      const activityId = row.id || this.ids
+      getActivity(activityId).then(response => {
+        this.form = response.data;
+        this.$set(this.form, 'audit', true);
+        this.open = true;
+      });
+      this.title = "审核升级活动";
+    },
+    submitAuditForm() {
+      this.$modal.confirm('是否确认提交该升级活动审核结果？').then(() => {
+        this.$refs["form"].validate(valid => {
+          if (valid && this.form.id !== undefined) {
+            auditActivity(this.form.id, this.form).then(response => {
+              this.$modal.msgSuccess("提交成功");
+              this.open = false;
+              this.getList();
+            });
+          }
+        });
+      }).catch(() => {
+      });
+    },
+    /** 发布按钮操作 */
+    handleRelease(row) {
+      const activityId = row.id || this.ids
+      this.$modal.confirm('是否确认发布该升级活动？').then(() => {
+        if (activityId !== undefined) {
+          releaseActivity(activityId).then(response => {
+            this.$modal.msgSuccess("发布成功");
+            this.getList();
+          });
+        }
+      }).catch(() => {
+      });
+    },
+    /** 取消按钮操作 */
+    handleCancel(row) {
+      const activityId = row.id || this.ids
+      this.$modal.confirm('是否确认取消该升级活动？').then(() => {
+        if (activityId !== undefined) {
+          cancelActivity(activityId).then(response => {
+            this.$modal.msgSuccess("取消成功");
+            this.getList();
+          });
+        }
+      }).catch(() => {
+      });
     },
   }
 };

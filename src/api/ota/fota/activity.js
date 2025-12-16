@@ -59,6 +59,40 @@ export function updateActivity(data) {
   })
 }
 
+// 提交升级活动
+export function submitActivity(activityId, data) {
+  return request({
+    url: '/ota-fota/mpt/activity/' + activityId + '/action/submit',
+    method: 'post',
+    data: data
+  })
+}
+
+// 审核升级任务
+export function auditActivity(activityId, data) {
+  return request({
+    url: '/ota-fota/mpt/activity/' + activityId + '/action/audit',
+    method: 'post',
+    data: data
+  })
+}
+
+// 发布升级活动
+export function releaseActivity(activityId) {
+  return request({
+    url: '/ota-fota/mpt/activity/' + activityId + '/action/release',
+    method: 'post'
+  })
+}
+
+// 取消升级活动
+export function cancelActivity(activityId) {
+  return request({
+    url: '/ota-fota/mpt/activity/' + activityId + '/action/cancel',
+    method: 'post'
+  })
+}
+
 // 删除升级活动
 export function delActivity(activityIds) {
   return request({
