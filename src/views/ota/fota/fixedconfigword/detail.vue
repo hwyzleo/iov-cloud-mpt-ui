@@ -99,10 +99,10 @@
     <el-dialog :title="title" :visible.sync="open" width="800px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="140px">
         <el-form-item label="ECU设备" prop="ecu">
-          <el-input v-model="form.ecu" placeholder="请输入任务名称" disabled/>
+          <el-input v-model="form.ecu" placeholder="请输入任务名称" readonly/>
         </el-form-item>
         <el-form-item label="软件零件号" prop="softwarePn">
-          <el-input v-model="form.softwarePn" placeholder="请输入软件零件号" disabled/>
+          <el-input v-model="form.softwarePn" placeholder="请输入软件零件号" readonly/>
         </el-form-item>
         <el-form-item label="配置字版本" prop="configWordVersion">
           <el-input v-model="form.configWordVersion" placeholder="请输入配置字版本"/>
@@ -138,12 +138,12 @@
 
 <script>
 import {
-  addFixedConfigWordDetail,
-  delFixedConfigWordDetail,
-  getFixedConfigWordDetail,
-  listFixedConfigWordDetail,
-  updateFixedConfigWordDetail,
-} from "@/api/ota/fota/fixedconfigworddetail";
+  addConfigWord,
+  delConfigWord,
+  getConfigWord,
+  listConfigWord,
+  updateConfigWord,
+} from "@/api/ota/fota/fixedconfigword";
 import {getFixedConfigWord,} from "@/api/ota/fota/fixedconfigword";
 
 export default {
@@ -209,7 +209,7 @@ export default {
       getFixedConfigWord(this.fixedConfigWordId).then(response => {
         this.ecu = response.data.ecu;
         this.softwarePn = response.data.softwarePn;
-        listFixedConfigWordDetail(this.fixedConfigWordId).then(response => {
+        listConfigWord(this.fixedConfigWordId).then(response => {
           this.list = response.data;
           this.loading = false;
         });
@@ -248,7 +248,7 @@ export default {
     handleAdd() {
       this.reset();
       this.open = true;
-      this.title = "添加固定配置字明细";
+      this.title = "添加配置字";
       this.form = {
         fixedConfigWordId: this.fixedConfigWordId,
         ecu: this.ecu,
@@ -258,28 +258,28 @@ export default {
     /** 修改按钮操作 */
     handleUpdate(row) {
       this.reset();
-      const fixedConfigWordDetailId = row.id || this.ids
-      getFixedConfigWordDetail(this.fixedConfigWordId, fixedConfigWordDetailId).then(response => {
+      const configWordId = row.id || this.ids
+      getConfigWord(this.fixedConfigWordId, configWordId).then(response => {
         this.form = response.data;
         this.form.fixedConfigWordId = this.fixedConfigWordId;
         this.form.ecu = this.ecu;
         this.form.softwarePn = this.softwarePn;
         this.open = true;
       });
-      this.title = "修改固定配置字明细";
+      this.title = "修改配置字";
     },
     /** 提交按钮 */
     submitForm: function () {
       this.$refs["form"].validate(valid => {
         if (valid) {
           if (this.form.id !== undefined) {
-            updateFixedConfigWordDetail(this.fixedConfigWordId, this.form).then(response => {
+            updateConfigWord(this.fixedConfigWordId, this.form).then(response => {
               this.$modal.msgSuccess("修改成功");
               this.open = false;
               this.getList();
             });
           } else {
-            addFixedConfigWordDetail(this.fixedConfigWordId, this.form).then(response => {
+            addConfigWord(this.fixedConfigWordId, this.form).then(response => {
               this.$modal.msgSuccess("新增成功");
               this.open = false;
               this.getList();
@@ -291,9 +291,9 @@ export default {
     /** 删除按钮操作 */
     handleDelete(row) {
       const fixedConfigWordId = this.fixedConfigWordId;
-      const fixedConfigWordDetailIds = row.id || this.ids;
-      this.$modal.confirm('是否确认删除固定配置字明细ID为"' + fixedConfigWordDetailIds + '"的数据项？').then(function () {
-        return delFixedConfigWordDetail(fixedConfigWordId, fixedConfigWordDetailIds);
+      const configWordIds = row.id || this.ids;
+      this.$modal.confirm('是否确认删除固定配置字明细ID为"' + configWordIds + '"的数据项？').then(function () {
+        return delConfigWord(fixedConfigWordId, configWordIds);
       }).then(() => {
         this.getList();
         this.$modal.msgSuccess("删除成功");
