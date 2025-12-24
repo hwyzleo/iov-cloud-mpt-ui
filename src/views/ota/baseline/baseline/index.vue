@@ -399,6 +399,7 @@
               v-hasPermi="['ota:baseline:baseline:edit']"
             >关联
             </el-button>
+          </template>
         </el-table-column>
       </el-table>
 
