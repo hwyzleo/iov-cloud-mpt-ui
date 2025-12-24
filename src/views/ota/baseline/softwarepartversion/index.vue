@@ -501,6 +501,7 @@
               v-hasPermi="['ota:baseline:softwarePartVersion:edit']"
             >关联
             </el-button>
+          </template>
         </el-table-column>
       </el-table>
 
@@ -586,6 +587,7 @@
               v-hasPermi="['ota:baseline:softwarePartVersion:edit']"
             >添加依赖
             </el-button>
+          </template>
         </el-table-column>
       </el-table>
 
