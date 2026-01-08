@@ -496,6 +496,15 @@ export default {
         ],
         name: [
           {required: true, message: "基线名称不能为空", trigger: "blur"}
+        ],
+        type: [
+          {required: true, message: "基线类型不能为空", trigger: "blur"}
+        ],
+        source: [
+          {required: true, message: "基线来源不能为空", trigger: "blur"}
+        ],
+        vehModel: [
+          {required: true, message: "车型编码不能为空", trigger: "blur"}
         ]
       },
     };
