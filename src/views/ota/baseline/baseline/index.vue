@@ -105,9 +105,9 @@
         </template>
       </el-table-column>
       <el-table-column label="车型编码" prop="vehModel" width="120" align="center"/>
-      <el-table-column label="发布日期" align="center" prop="createTime" width="120">
+      <el-table-column label="发布日期" align="center" prop="releaseTime" width="120">
         <template slot-scope="scope">
-          <span>{{ parseTime(scope.row.publishDate, '{y}-{m}-{d}') }}</span>
+          <span>{{ parseTime(scope.row.releaseDate, '{y}-{m}-{d}') }}</span>
         </template>
       </el-table-column>
       <el-table-column label="软件零件数" prop="softwarePartVersionCount" width="100" align="center"/>
@@ -186,9 +186,9 @@
         <el-form-item label="车型编码" prop="vehModel">
           <el-input v-model="form.vehModel" placeholder="请输入车型编码"/>
         </el-form-item>
-        <el-form-item label="发布日期" prop="publishDate">
+        <el-form-item label="发布日期" prop="releaseDate">
           <el-date-picker
-            v-model="form.publishDate"
+            v-model="form.releaseDate"
             type="date"
             placeholder="请选择发布日期"
             value-format="timestamp"
@@ -281,9 +281,9 @@
           </el-table-column>
           <el-table-column label="适配的总成硬件零件号" prop="adaptedHardwarePn" width="150"/>
           <el-table-column label="适配的总成软件零件号" prop="adaptedSoftwarePn" width="150"/>
-          <el-table-column label="发布日期" align="center" prop="createTime" width="120">
+          <el-table-column label="发布日期" align="center" prop="releaseTime" width="120">
             <template slot-scope="scope">
-              <span>{{ parseTime(scope.row.publishDate, '{y}-{m}-{d}') }}</span>
+              <span>{{ parseTime(scope.row.releaseDate, '{y}-{m}-{d}') }}</span>
             </template>
           </el-table-column>
           <el-table-column label="操作" align="center" width="200" class-name="small-padding fixed-width">
@@ -379,9 +379,9 @@
         </el-table-column>
         <el-table-column label="适配的总成硬件零件号" prop="adaptedHardwarePn" width="150"/>
         <el-table-column label="适配的总成软件零件号" prop="adaptedSoftwarePn" width="150"/>
-        <el-table-column label="发布日期" align="center" prop="createTime" width="120">
+        <el-table-column label="发布日期" align="center" prop="releaseTime" width="120">
           <template slot-scope="scope">
-            <span>{{ parseTime(scope.row.publishDate, '{y}-{m}-{d}') }}</span>
+            <span>{{ parseTime(scope.row.releaseDate, '{y}-{m}-{d}') }}</span>
           </template>
         </el-table-column>
         <el-table-column label="创建时间" align="center" prop="createTime" width="180">
