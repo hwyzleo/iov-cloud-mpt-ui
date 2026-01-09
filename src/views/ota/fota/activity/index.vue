@@ -128,7 +128,7 @@
           <span>{{ scope.row.baseline ? '是' : '否'  }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="版本数" prop="softwarePartVersionCount" width="100" align="center"/>
+      <el-table-column label="版本数" prop="SoftwareBuildVersionCount" width="100" align="center"/>
       <el-table-column label="创建时间" align="center" prop="createTime" width="180">
         <template slot-scope="scope">
           <span>{{ parseTime(scope.row.createTime) }}</span>
@@ -149,7 +149,7 @@
             size="mini"
             type="text"
             icon="el-icon-edit"
-            @click="handleActivitySoftwarePartVersion(scope.row)"
+            @click="handleActivitySoftwareBuildVersion(scope.row)"
             v-if="scope.row.state < 2"
             v-hasPermi="['ota:fota:activity:edit']"
           >关联版本
@@ -356,10 +356,10 @@
     </el-dialog>
 
     <!-- 升级活动关联软件零件版本信息层 -->
-    <el-drawer title="关联软件零件版本信息" :visible.sync="openActivitySoftwarePartVersion" direction="rtl" size="80%"
+    <el-drawer title="关联软件零件版本信息" :visible.sync="openActivitySoftwareBuildVersion" direction="rtl" size="80%"
                :modal="true"
                :append-to-body="true"
-               @close="onActivitySoftwarePartVersionClose">
+               @close="onActivitySoftwareBuildVersionClose">
       <div class="drawer-content">
         <el-row :gutter="10" class="mb8">
           <el-col :span="1.5">
@@ -368,15 +368,15 @@
               plain
               icon="el-icon-plus"
               size="mini"
-              @click="handleAddSoftwarePartVersion"
+              @click="handleAddSoftwareBuildVersion"
               v-hasPermi="['ota:fota:activity:edit']"
             >查询并添加软件零件版本
             </el-button>
           </el-col>
-          <right-toolbar :showSearch.sync="showSearch" @queryTable="getListActivitySoftwarePartVersion"></right-toolbar>
+          <right-toolbar :showSearch.sync="showSearch" @queryTable="getListActivitySoftwareBuildVersion"></right-toolbar>
         </el-row>
-        <el-table v-loading="loadingActivitySoftwarePartVersion" :data="activitySoftwarePartVersionList"
-                  @selection-change="handleSelectionChangeActivitySoftwarePartVersion">
+        <el-table v-loading="loadingActivitySoftwareBuildVersion" :data="activitySoftwareBuildVersionList"
+                  @selection-change="handleSelectionChangeActivitySoftwareBuildVersion">
           <el-table-column type="selection" width="55" align="center"/>
           <el-table-column label="ECU" prop="ecuCode" width="100"/>
           <el-table-column label="软件零件号" prop="softwarePn"/>
@@ -395,7 +395,7 @@
                 size="mini"
                 type="text"
                 icon="el-icon-delete"
-                @click="handleRemoveActivitySoftwarePartVersion(scope.row)"
+                @click="handleRemoveActivitySoftwareBuildVersion(scope.row)"
                 v-hasPermi="['ota:fota:activity:edit']"
               >删除关联
               </el-button>
@@ -406,21 +406,21 @@
     </el-drawer>
 
     <!-- 软件零件版本列表对话框 -->
-    <el-dialog title="查询并添加软件零件版本" :visible.sync="openSoftwarePartVersion" width="900px" append-to-body>
-      <el-form :model="queryParamsSoftwarePartVersion" ref="queryFormSoftwarePartVersion" size="small" :inline="true"
-               v-show="showSearchSoftwarePartVersion">
+    <el-dialog title="查询并添加软件零件版本" :visible.sync="openSoftwareBuildVersion" width="900px" append-to-body>
+      <el-form :model="queryParamsSoftwareBuildVersion" ref="queryFormSoftwareBuildVersion" size="small" :inline="true"
+               v-show="showSearchSoftwareBuildVersion">
         <el-form-item label="软件零件号" prop="softwarePn">
           <el-input
-            v-model="queryParamsSoftwarePartVersion.softwarePn"
+            v-model="queryParamsSoftwareBuildVersion.softwarePn"
             placeholder="请输入软件零件号"
             clearable
             style="width: 140px"
-            @keyup.enter.native="handleQuerySoftwarePartVersion"
+            @keyup.enter.native="handleQuerySoftwareBuildVersion"
           />
         </el-form-item>
         <el-form-item label="ECU" prop="ecuCode">
           <el-select
-            v-model="queryParamsSoftwarePartVersion.ecuCode"
+            v-model="queryParamsSoftwareBuildVersion.ecuCode"
             placeholder="ECU"
             clearable
             style="width: 140px"
@@ -434,9 +434,9 @@
           </el-select>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuerySoftwarePartVersion">搜索
+          <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuerySoftwareBuildVersion">搜索
           </el-button>
-          <el-button icon="el-icon-refresh" size="mini" @click="resetQuerySoftwarePartVersion">重置</el-button>
+          <el-button icon="el-icon-refresh" size="mini" @click="resetQuerySoftwareBuildVersion">重置</el-button>
         </el-form-item>
       </el-form>
 
@@ -447,17 +447,17 @@
             plain
             icon="el-icon-plus"
             size="mini"
-            :disabled="multipleSoftwarePartVersion"
-            @click="handleAddBaselineSoftwarePartVersion"
+            :disabled="multipleSoftwareBuildVersion"
+            @click="handleAddBaselineSoftwareBuildVersion"
             v-hasPermi="['ota:baseline:baseline:edit']"
           >关联
           </el-button>
         </el-col>
-        <right-toolbar :showSearch.sync="showSearch" @queryTable="getListSoftwarePartVersion"></right-toolbar>
+        <right-toolbar :showSearch.sync="showSearch" @queryTable="getListSoftwareBuildVersion"></right-toolbar>
       </el-row>
 
-      <el-table ref="softwarePartVersionTable" v-loading="loadingSoftwarePartVersion" :data="softwarePartVersionList"
-                @selection-change="handleSelectionChangeSoftwarePartVersion">
+      <el-table ref="SoftwareBuildVersionTable" v-loading="loadingSoftwareBuildVersion" :data="SoftwareBuildVersionList"
+                @selection-change="handleSelectionChangeSoftwareBuildVersion">
         <el-table-column type="selection" width="55" align="center"/>
         <el-table-column label="ECU" prop="ecuCode" width="100"/>
         <el-table-column label="软件零件号" prop="softwarePn"/>
@@ -490,7 +490,7 @@
               size="mini"
               type="text"
               icon="el-icon-edit"
-              @click="handleAddActivitySoftwarePartVersion(scope.row)"
+              @click="handleAddActivitySoftwareBuildVersion(scope.row)"
               v-hasPermi="['ota:fota:activity:edit']"
             >关联
             </el-button>
@@ -506,7 +506,7 @@
         @pagination="getList"
       />
       <div slot="footer" class="dialog-footer" style="text-align: center">
-        <el-button @click="closeSoftwarePartVersion">关 闭</el-button>
+        <el-button @click="closeSoftwareBuildVersion">关 闭</el-button>
       </div>
     </el-dialog>
   </div>
@@ -515,13 +515,13 @@
 <script>
 import {
   addActivity,
-  addSoftwarePartVersion,
+  addSoftwareBuildVersion,
   delActivity,
-  delSoftwarePartVersion,
+  delSoftwareBuildVersion,
   getActivity,
   listActivity,
   listAllActivityState,
-  listActivitySoftwarePartVersion,
+  listActivitySoftwareBuildVersion,
   updateActivity,
   submitActivity,
   auditActivity,
@@ -529,7 +529,7 @@ import {
   cancelActivity
 } from "@/api/ota/fota/activity";
 import {listArticle,} from "@/api/ota/fota/article";
-import {listSoftwarePartVersion} from "@/api/ota/baseline/softwarepartversion";
+import {listSoftwareBuildVersion} from "@/api/ota/baseline/softwarebuildversion";
 
 export default {
   name: "Activity",
@@ -538,35 +538,35 @@ export default {
     return {
       // 遮罩层
       loading: true,
-      loadingActivitySoftwarePartVersion: true,
-      loadingSoftwarePartVersion: true,
+      loadingActivitySoftwareBuildVersion: true,
+      loadingSoftwareBuildVersion: true,
       // 选中数组
       ids: [],
-      idsActivitySoftwarePartVersion: [],
+      idsActivitySoftwareBuildVersion: [],
       // 非单个禁用
       single: true,
-      singleActivitySoftwarePartVersion: true,
+      singleActivitySoftwareBuildVersion: true,
       // 非多个禁用
       multiple: true,
-      multipleActivitySoftwarePartVersion: true,
+      multipleActivitySoftwareBuildVersion: true,
       // 显示搜索条件
       showSearch: true,
-      showSearchSoftwarePartVersion: true,
+      showSearchSoftwareBuildVersion: true,
       // 总条数
       total: 0,
-      totalSoftwarePartVersion: 0,
+      totalSoftwareBuildVersion: 0,
       // 升级活动表格数据
       activityList: [],
       activityStateList: [],
-      activitySoftwarePartVersionList: [],
-      softwarePartVersionList: [],
+      activitySoftwareBuildVersionList: [],
+      SoftwareBuildVersionList: [],
       currentActivityId: undefined,
       // 弹出层标题
       title: "",
       // 是否显示弹出层
       open: false,
-      openActivitySoftwarePartVersion: false,
-      openSoftwarePartVersion: false,
+      openActivitySoftwareBuildVersion: false,
+      openSoftwareBuildVersion: false,
       // 日期范围
       dateRange: [],
       // 查询参数
@@ -574,7 +574,7 @@ export default {
         pageNum: 1,
         pageSize: 10
       },
-      queryParamsSoftwarePartVersion: {
+      queryParamsSoftwareBuildVersion: {
         pageNum: 1,
         pageSize: 10
       },
@@ -615,19 +615,19 @@ export default {
         }
       );
     },
-    getListActivitySoftwarePartVersion() {
-      this.loadingActivitySoftwarePartVersion = true;
-      listActivitySoftwarePartVersion(this.currentActivityId).then(response => {
-          this.activitySoftwarePartVersionList = response.data;
+    getListActivitySoftwareBuildVersion() {
+      this.loadingActivitySoftwareBuildVersion = true;
+      listActivitySoftwareBuildVersion(this.currentActivityId).then(response => {
+          this.activitySoftwareBuildVersionList = response.data;
         }
       );
     },
-    getListSoftwarePartVersion() {
-      this.loadingSoftwarePartVersion = true;
-      listSoftwarePartVersion(this.queryParamsSoftwarePartVersion).then(response => {
-          this.softwarePartVersionList = response.rows;
-          this.totalSoftwarePartVersion = response.total;
-          this.loadingSoftwarePartVersion = false;
+    getListSoftwareBuildVersion() {
+      this.loadingSoftwareBuildVersion = true;
+      listSoftwareBuildVersion(this.queryParamsSoftwareBuildVersion).then(response => {
+          this.SoftwareBuildVersionList = response.rows;
+          this.totalSoftwareBuildVersion = response.total;
+          this.loadingSoftwareBuildVersion = false;
           this.$nextTick(() => {
             this.setDefaultSelection();
           });
@@ -699,8 +699,8 @@ export default {
       this.open = false;
       this.reset();
     },
-    closeSoftwarePartVersion() {
-      this.openSoftwarePartVersion = false;
+    closeSoftwareBuildVersion() {
+      this.openSoftwareBuildVersion = false;
     },
     /** 表单重置 */
     reset() {
@@ -727,10 +727,10 @@ export default {
       this.single = selection.length != 1
       this.multiple = !selection.length
     },
-    handleSelectionChangeActivitySoftwarePartVersion(selection) {
-      this.idsActivitySoftwarePartVersion = selection.map(item => item.id)
-      this.singleActivitySoftwarePartVersion = selection.length != 1
-      this.multipleActivitySoftwarePartVersion = !selection.length
+    handleSelectionChangeActivitySoftwareBuildVersion(selection) {
+      this.idsActivitySoftwareBuildVersion = selection.map(item => item.id)
+      this.singleActivitySoftwareBuildVersion = selection.length != 1
+      this.multipleActivitySoftwareBuildVersion = !selection.length
     },
     /** 新增按钮操作 */
     handleAdd() {
@@ -797,53 +797,53 @@ export default {
     handlePrivacyAgreementSelect(item) {
       this.form.privacyAgreementArticleId = item.id;
     },
-    handleActivitySoftwarePartVersion(row) {
+    handleActivitySoftwareBuildVersion(row) {
       this.currentActivityId = row.id;
-      this.openActivitySoftwarePartVersion = true;
-      this.getListActivitySoftwarePartVersion();
+      this.openActivitySoftwareBuildVersion = true;
+      this.getListActivitySoftwareBuildVersion();
     },
-    handleRemoveActivitySoftwarePartVersion(row) {
-      const softwarePartVersionIds = row.id || this.idsBaselineSoftwarePartVersion;
-      this.$modal.confirm('是否确认删除升级活动' + this.currentActivityId + '下关联软件零件版本ID为"' + softwarePartVersionIds + '"的数据项？').then(() => {
-        return delSoftwarePartVersion(this.currentActivityId, softwarePartVersionIds);
+    handleRemoveActivitySoftwareBuildVersion(row) {
+      const SoftwareBuildVersionIds = row.id || this.idsBaselineSoftwareBuildVersion;
+      this.$modal.confirm('是否确认删除升级活动' + this.currentActivityId + '下关联软件零件版本ID为"' + SoftwareBuildVersionIds + '"的数据项？').then(() => {
+        return delSoftwareBuildVersion(this.currentActivityId, SoftwareBuildVersionIds);
       }).then(() => {
         this.$modal.msgSuccess("删除成功");
-        this.getListActivitySoftwarePartVersion();
+        this.getListActivitySoftwareBuildVersion();
       }).catch(() => {
       });
     },
-    handleAddSoftwarePartVersion() {
-      this.openSoftwarePartVersion = true;
-      this.getListSoftwarePartVersion();
+    handleAddSoftwareBuildVersion() {
+      this.openSoftwareBuildVersion = true;
+      this.getListSoftwareBuildVersion();
     },
-    handleQuerySoftwarePartVersion() {
-      this.queryParamsSoftwarePartVersion.pageNum = 1;
-      this.getListSoftwarePartVersion();
+    handleQuerySoftwareBuildVersion() {
+      this.queryParamsSoftwareBuildVersion.pageNum = 1;
+      this.getListSoftwareBuildVersion();
     },
-    handleAddActivitySoftwarePartVersion(row) {
-      const softwarePartVersionIds = row.id || this.idsSoftwarePartVersion;
-      this.$modal.confirm('是否确认将软件零件版本ID为"' + softwarePartVersionIds + '"的数据项关联到升级活动ID' + this.currentBaselineId + '？').then(() => {
-        return addSoftwarePartVersion(this.currentActivityId, softwarePartVersionIds);
+    handleAddActivitySoftwareBuildVersion(row) {
+      const SoftwareBuildVersionIds = row.id || this.idsSoftwareBuildVersion;
+      this.$modal.confirm('是否确认将软件零件版本ID为"' + SoftwareBuildVersionIds + '"的数据项关联到升级活动ID' + this.currentBaselineId + '？').then(() => {
+        return addSoftwareBuildVersion(this.currentActivityId, SoftwareBuildVersionIds);
       }).then(() => {
         this.$modal.msgSuccess("关联成功");
-        this.closeSoftwarePartVersion();
-        this.getListActivitySoftwarePartVersion();
+        this.closeSoftwareBuildVersion();
+        this.getListActivitySoftwareBuildVersion();
       }).catch(() => {
       });
     },
     setDefaultSelection() {
-      const linkedIds = this.activitySoftwarePartVersionList.map(item => item.id);
-      const selectedRows = this.softwarePartVersionList.filter(item =>
+      const linkedIds = this.activitySoftwareBuildVersionList.map(item => item.id);
+      const selectedRows = this.SoftwareBuildVersionList.filter(item =>
         linkedIds.includes(item.id)
       );
-      this.$refs.softwarePartVersionTable.clearSelection();
+      this.$refs.SoftwareBuildVersionTable.clearSelection();
       this.$nextTick(() => {
         selectedRows.forEach(row => {
-          this.$refs.softwarePartVersionTable.toggleRowSelection(row, true);
+          this.$refs.SoftwareBuildVersionTable.toggleRowSelection(row, true);
         });
       });
     },
-    onActivitySoftwarePartVersionClose() {
+    onActivitySoftwareBuildVersionClose() {
       this.getList();
     },
     handleSubmit() {

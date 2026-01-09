@@ -9,10 +9,10 @@ export function listBaseline(query) {
   })
 }
 
-// 分页查询基线下软件零件版本
-export function listBaselineSoftwarePartVersion(baselineId, query) {
+// 分页查询基线下软件内部版本
+export function listBaselineSoftwareBuildVersion(baselineId, query) {
   return request({
-    url: '/ota-baseline/mpt/baseline/' + baselineId + '/listSoftwarePartVersion',
+    url: '/ota-baseline/mpt/baseline/' + baselineId + '/listSoftwareBuildVersion',
     method: 'get',
     params: query
   })
@@ -35,10 +35,10 @@ export function addBaseline(data) {
   })
 }
 
-// 新增关联的软件零件版本
-export function addSoftwarePartVersion(baselineId, softwarePartVersionIds) {
+// 新增关联的软件内部版本
+export function addSoftwareBuildVersion(baselineId, softwareBuildVersionIds) {
   return request({
-    url: '/ota-baseline/mpt/baseline/' + baselineId + '/action/addSoftwarePartVersion/' + softwarePartVersionIds,
+    url: '/ota-baseline/mpt/baseline/' + baselineId + '/action/addSoftwareBuildVersion/' + softwareBuildVersionIds,
     method: 'post'
   })
 }
@@ -60,10 +60,10 @@ export function delBaseline(baselineIds) {
   })
 }
 
-// 删除关联的软件零件版本
-export function delSoftwarePartVersion(baselineId, softwarePartVersionIds) {
+// 删除关联的软件内部版本
+export function delSoftwareBuildVersion(baselineId, softwareBuildVersionIds) {
   return request({
-    url: '/ota-baseline/mpt/baseline/' + baselineId + '/action/removeSoftwarePartVersion/' + softwarePartVersionIds,
+    url: '/ota-baseline/mpt/baseline/' + baselineId + '/action/removeSoftwareBuildVersion/' + softwareBuildVersionIds,
     method: 'post'
   })
 }

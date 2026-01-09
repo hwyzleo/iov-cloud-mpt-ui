@@ -111,7 +111,7 @@
             type="text"
             icon="el-icon-edit"
             @click="handleUpdate(scope.row)"
-            v-hasPermi="['ota:fota:fixedConfigWord:edit']"
+            v-hasPermi="['ota:baseline:fixedConfigWord:edit']"
           >修改
           </el-button>
           <el-button
@@ -119,7 +119,7 @@
             type="text"
             icon="el-icon-edit"
             @click="handleDetail(scope.row)"
-            v-hasPermi="['ota:fota:fixedConfigWord:query']"
+            v-hasPermi="['ota:baseline:fixedConfigWord:query']"
           >查看明细列表
           </el-button>
           <el-button
@@ -127,7 +127,7 @@
             type="text"
             icon="el-icon-delete"
             @click="handleDelete(scope.row)"
-            v-hasPermi="['ota:fota:fixedConfigWord:remove']"
+            v-hasPermi="['ota:baseline:fixedConfigWord:remove']"
           >删除
           </el-button>
         </template>
@@ -190,7 +190,7 @@ import {
   getFixedConfigWord,
   listFixedConfigWord,
   updateFixedConfigWord,
-} from "@/api/ota/fota/fixedconfigword";
+} from "@/api/ota/baseline/fixedconfigword";
 import {
   listAllEcu
 } from "@/api/ota/baseline/ecu";
@@ -329,7 +329,7 @@ export default {
     /** 明细列表按钮操作 */
     handleDetail(row) {
       this.$router.push({
-        path: "/ota/fota/fixedConfigWordDetail",
+        path: "/ota/baseline/fixedConfigWordDetail",
         query: { id: row.id }
       });
     },

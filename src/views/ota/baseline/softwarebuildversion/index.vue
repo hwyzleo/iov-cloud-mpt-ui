@@ -1,14 +1,29 @@
 <template>
   <div class="app-container">
     <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch">
-      <el-form-item label="软件包名称" prop="packageName">
+      <el-form-item label="软件零件号" prop="softwarePn">
         <el-input
-          v-model="queryParams.packageName"
-          placeholder="请输入软件包名称"
+          v-model="queryParams.softwarePn"
+          placeholder="请输入软件零件号"
           clearable
           style="width: 140px"
           @keyup.enter.native="handleQuery"
         />
+      </el-form-item>
+      <el-form-item label="ECU" prop="ecuCode">
+        <el-select
+          v-model="queryParams.ecuCode"
+          placeholder="ECU"
+          clearable
+          style="width: 140px"
+        >
+          <el-option
+            v-for="ecu in ecuList"
+            :key="ecu.code"
+            :label="ecu.code + '(' + ecu.label + ')'"
+            :value="ecu.code"
+          />
+        </el-select>
       </el-form-item>
       <el-form-item label="创建时间">
         <el-date-picker
@@ -35,7 +50,7 @@
           icon="el-icon-plus"
           size="mini"
           @click="handleAdd"
-          v-hasPermi="['ota:baseline:softwarePackage:add']"
+          v-hasPermi="['ota:baseline:softwareBuildVersion:add']"
         >新增
         </el-button>
       </el-col>
@@ -47,7 +62,7 @@
           size="mini"
           :disabled="single"
           @click="handleUpdate"
-          v-hasPermi="['ota:baseline:softwarePackage:edit']"
+          v-hasPermi="['ota:baseline:softwareBuildVersion:edit']"
         >修改
         </el-button>
       </el-col>
@@ -59,7 +74,7 @@
           size="mini"
           :disabled="multiple"
           @click="handleDelete"
-          v-hasPermi="['ota:baseline:softwarePackage:remove']"
+          v-hasPermi="['ota:baseline:softwareBuildVersion:remove']"
         >删除
         </el-button>
       </el-col>
@@ -70,44 +85,40 @@
           icon="el-icon-download"
           size="mini"
           @click="handleExport"
-          v-hasPermi="['ota:baseline:softwarePackage:export']"
+          v-hasPermi="['ota:baseline:softwareBuildVersion:export']"
         >导出
         </el-button>
       </el-col>
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
-    <el-table v-loading="loading" :data="softwarePackageList" @selection-change="handleSelectionChange">
+    <el-table v-loading="loading" :data="list" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center"/>
-      <el-table-column label="软件包名称" prop="packageName"/>
-      <el-table-column label="软件包类型" prop="packageType" width="100" align="center">
+      <el-table-column label="ECU" prop="ecuCode" width="100"/>
+      <el-table-column label="软件零件号" prop="softwarePn"/>
+      <el-table-column label="软件零件版本" prop="softwarePartVer" width="120"/>
+      <el-table-column label="测试报告" prop="softwareReport" width="80" align="center">
         <template slot-scope="scope">
-          <span>{{ scope.row.packageType===1 ? '全量' : '差分' }}</span>
+          <span>{{ scope.row.softwareReport && scope.row.softwareReport.trim() ? '已上传' : '未上传' }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="软件包来源" prop="packageSource" width="100" align="center">
+      <el-table-column label="软件来源" prop="softwareSource" width="80" align="center">
         <template slot-scope="scope">
-          <span>{{ scope.row.packageSource===1 ? 'BOM' : 'OTA' }}</span>
+          <span>{{ scope.row.softwareSource === 1 ? 'BOM' : 'OTA' }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="基础软件零件号" prop="baseSoftwarePn" width="150"/>
-      <el-table-column label="基础软件版本" prop="baseSoftwareVer" width="150"/>
-      <el-table-column label="适配级别" prop="packageAdaptionLevel" width="150" align="center">
-        <template slot-scope="scope">
-          <span v-if="scope.row.packageAdaptionLevel === 1">基础版本及以下</span>
-          <span v-else-if="scope.row.packageAdaptionLevel === 2">基础版本及以上</span>
-          <span v-else-if="scope.row.packageAdaptionLevel === 3">与基础版本一致</span>
-          <span v-else>未知</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="是否是OTA包" prop="ota" width="120" align="center">
-        <template slot-scope="scope">
-          <span>{{ scope.row.ota ? '是' : '否' }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="发布时间" align="center" prop="releaseDate" width="180">
+      <el-table-column label="适配的总成硬件零件号" prop="adaptedHardwarePn" width="150"/>
+      <el-table-column label="适配的总成软件零件号" prop="adaptedSoftwarePn" width="150"/>
+      <el-table-column label="发布日期" align="center" prop="releaseDate" width="120">
         <template slot-scope="scope">
           <span>{{ parseTime(scope.row.releaseDate, '{y}-{m}-{d}') }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="软件包数" prop="softwarePackageCount" width="100" align="center"/>
+      <el-table-column label="依赖数" prop="dependencyCount" width="100" align="center"/>
+      <el-table-column label="创建时间" align="center" prop="createTime" width="180">
+        <template slot-scope="scope">
+          <span>{{ parseTime(scope.row.createTime) }}</span>
         </template>
       </el-table-column>
       <el-table-column label="操作" align="center" width="200" class-name="small-padding fixed-width">
@@ -117,15 +128,31 @@
             type="text"
             icon="el-icon-edit"
             @click="handleUpdate(scope.row)"
-            v-hasPermi="['ota:baseline:softwarePackage:edit']"
+            v-hasPermi="['ota:baseline:softwareBuildVersion:edit']"
           >修改
+          </el-button>
+          <el-button
+            size="mini"
+            type="text"
+            icon="el-icon-edit"
+            @click="handleSoftwareBuildVersionPackage(scope.row)"
+            v-hasPermi="['ota:baseline:softwareBuildVersion:query']"
+          >关联
+          </el-button>
+          <el-button
+            size="mini"
+            type="text"
+            icon="el-icon-edit"
+            @click="handleSoftwareBuildVersionDependency(scope.row)"
+            v-hasPermi="['ota:baseline:softwareBuildVersion:query']"
+          >依赖
           </el-button>
           <el-button
             size="mini"
             type="text"
             icon="el-icon-delete"
             @click="handleDelete(scope.row)"
-            v-hasPermi="['ota:baseline:softwarePackage:remove']"
+            v-hasPermi="['ota:baseline:softwareBuildVersion:remove']"
           >删除
           </el-button>
         </template>
@@ -140,9 +167,9 @@
       @pagination="getList"
     />
 
-    <!-- 添加或修改软件包信息对话框 -->
-    <el-dialog :title="title" :visible.sync="open" width="800px" append-to-body>
-      <el-form ref="form" :model="form" :rules="rules" label-width="160px">
+    <!-- 添加或修改信息对话框 -->
+    <el-dialog :title="title" :visible.sync="open" width="600px" append-to-body>
+      <el-form ref="form" :model="form" :rules="rules" label-width="180px">
         <el-form-item label="ECU" prop="ecuCode">
           <el-select
             v-model="form.ecuCode"
@@ -152,7 +179,7 @@
             style="width: 100%"
           >
             <el-option
-              v-for="ecu in this.ecuList"
+              v-for="ecu in ecuList"
               :key="ecu.code"
               :label="ecu.code + '(' + ecu.label + ')'"
               :value="ecu.code"
@@ -186,7 +213,7 @@
               style="width: 80px;"
             >
               <el-option
-                v-for="version in this.softwarePartVerRange"
+                v-for="version in softwarePartVerRange"
                 :key="version"
                 :label="version"
                 :value="version"
@@ -194,117 +221,39 @@
             </el-select>
           </div>
         </el-form-item>
-        <el-row>
-          <el-col :span="12">
-            <el-form-item label="软件包来源" prop="packageSource">
-              <el-select
-                v-model="form.packageSource"
-                placeholder="软件包来源"
-                disabled
-              >
-                <el-option key="1" label="BOM" value="1" />
-                <el-option key="2" label="OTA" value="2" />
-              </el-select>
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="软件包类型" prop="packageType">
-              <el-select
-                v-model="form.packageType"
-                placeholder="软件包类型"
-                clearable
-              >
-                <el-option key="1" label="全量" value="1" />
-                <el-option key="2" label="差分" value="2" />
-              </el-select>
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <el-form-item label="软件包名称" prop="packageName">
-          <el-input v-model="form.packageName" placeholder="请输入软件包名称"/>
+        <el-form-item label="软件内部版本" prop="softwareBuildVer">
+          <el-input v-model="form.softwareBuildVer" placeholder="请输入软件内部版本"/>
         </el-form-item>
-        <el-form-item label="软件包代码" prop="packageCode">
-          <el-input v-model="form.packageCode" placeholder="请输入软件包代码"/>
+        <el-form-item label="软件测试报告" prop="softwareReport">
+          <el-input v-model="form.softwareReport" placeholder="请输入软件测试报告"/>
         </el-form-item>
-        <el-form-item label="软件包URL" prop="packageCode">
-          <el-input v-model="form.packageUrl" placeholder="请输入软件包URL"/>
+        <el-form-item label="软件说明" prop="softwareDesc">
+          <el-input v-model="form.softwareDesc" type="textarea" placeholder="请输入软件说明"/>
         </el-form-item>
-        <el-row>
-          <el-col :span="12">
-            <el-form-item label="软件包大小（Byte）" prop="packageSize">
-              <el-input-number v-model="form.packageSize" controls-position="right" :min="0"/>
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="软件包MD5" prop="packageMd5">
-              <el-input v-model="form.packageMd5" placeholder="请输入软件包MD5"/>
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <el-form-item label="软件包说明" prop="packageDesc">
-          <el-input v-model="form.packageDesc" type="textarea" placeholder="请输入软件包说明"></el-input>
+        <el-form-item label="软件来源" prop="softwareSource">
+          <el-select
+            v-model="form.softwareSource"
+            placeholder="软件来源"
+            disabled
+          >
+            <el-option key="1" label="BOM" :value="1"/>
+            <el-option key="2" label="OTA" :value="2"/>
+          </el-select>
         </el-form-item>
-        <el-row>
-          <el-col :span="12">
-            <el-form-item label="基础软件零件号" prop="baseSoftwarePn">
-              <el-input v-model="form.baseSoftwarePn" placeholder="请输入基础软件零件号"/>
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="基础软件版本" prop="baseSoftwareVer">
-              <el-input v-model="form.baseSoftwareVer" placeholder="请输入基础软件版本"/>
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <el-row>
-          <el-col :span="12">
-            <el-form-item label="软件包适配级别" prop="packageAdaptionLevel">
-              <el-select
-                v-model="form.packageAdaptionLevel"
-                placeholder="软件包适配级别"
-                clearable
-              >
-                <el-option key="1" label="基础版本及以下" value="1" />
-                <el-option key="2" label="基础版本及以上" value="2" />
-                <el-option key="3" label="与基础版本一致" value="3" />
-              </el-select>
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="适配总成软件零件号" prop="adaptedSoftwarePn">
-              <el-input v-model="form.adaptedSoftwarePn" placeholder="请输入适配的总成软件零件号"/>
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <el-row>
-          <el-col :span="12">
-            <el-form-item label="发布日期" prop="releaseDate">
-              <el-date-picker
-                v-model="form.releaseDate"
-                type="date"
-                placeholder="请选择发布日期"
-                value-format="timestamp"
-              >
-              </el-date-picker>
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="预计升级时间" prop="estimatedInstallTime">
-              <el-input-number v-model="form.estimatedInstallTime" controls-position="right" :min="0"/>
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <el-form-item label="是否是OTA包">
-          <el-radio-group v-model="form.ota">
-            <el-radio
-              :label="true"
-            >是
-            </el-radio>
-            <el-radio
-              :label="false"
-            >否
-            </el-radio>
-          </el-radio-group>
+        <el-form-item label="适配的总成硬件零件号" prop="adaptedHardwarePn">
+          <el-input v-model="form.adaptedHardwarePn" placeholder="请输入适配的总成硬件零件号"/>
+        </el-form-item>
+        <el-form-item label="适配的总成软件零件号" prop="adaptedSoftwarePn">
+          <el-input v-model="form.adaptedSoftwarePn" placeholder="请输入适配的总成软件零件号"/>
+        </el-form-item>
+        <el-form-item label="发布日期" prop="releaseDate">
+          <el-date-picker
+            v-model="form.releaseDate"
+            type="date"
+            placeholder="请选择发布日期"
+            value-format="timestamp"
+          >
+          </el-date-picker>
         </el-form-item>
         <el-form-item label="备注">
           <el-input v-model="form.description" type="textarea" placeholder="请输入内容"></el-input>
@@ -320,21 +269,17 @@
 
 <script>
 import {
-  listSoftwarePackage,
-  getSoftwarePackage,
-  addSoftwarePackage,
-  updateSoftwarePackage,
-  delSoftwarePackage
-} from "@/api/ota/baseline/softwarepackage";
-import {
-  listAllEcu,
-} from "@/api/ota/baseline/ecu";
-import {
-  listAllSoftwarePart
-} from "@/api/ota/baseline/softwarepart";
+  addSoftwareBuildVersion,
+  delSoftwareBuildVersion,
+  getSoftwareBuildVersion,
+  listSoftwareBuildVersion,
+  updateSoftwareBuildVersion
+} from "@/api/ota/baseline/softwarebuildversion";
+import {listAllEcu,} from "@/api/ota/baseline/ecu";
+import {listAllSoftwarePart} from "@/api/ota/baseline/softwarepart";
 
 export default {
-  name: "SoftwarePackage",
+  name: "SoftwareBuildVersion",
   dicts: [],
   data() {
     return {
@@ -350,9 +295,8 @@ export default {
       showSearch: true,
       // 总条数
       total: 0,
-      // 软件包表格数据
-      softwarePackageList: [],
-      softwarePartList: [],
+      // 软件零件表格数据
+      list: [],
       softwarePartVerRange: [],
       ecuList: [],
       selectEcu: "",
@@ -374,7 +318,7 @@ export default {
       // 表单校验
       rules: {
         ecuCode: [
-          {required: true, message: "ECU代码不能为空", trigger: "blur"}
+          {required: true, message: "ECU不能为空", trigger: "blur"}
         ],
         softwarePn: [
           {required: true, message: "软件零件号不能为空", trigger: "blur"}
@@ -382,43 +326,35 @@ export default {
         softwarePartVer: [
           {required: true, message: "软件零件版本不能为空", trigger: "blur"}
         ],
-        packageName: [
-          {required: true, message: "软件包名称不能为空", trigger: "blur"}
+        softwareBuildVer: [
+          {required: true, message: "软件内部版本不能为空", trigger: "blur"}
         ],
-        packageType: [
-          {required: true, message: "软件包类型不能为空", trigger: "blur"}
+        softwareSource: [
+          {required: true, message: "软件来源不能为空", trigger: "blur"}
         ],
-        packageSource: [
-          {required: true, message: "软件包来源不能为空", trigger: "blur"}
+        adaptedHardwarePn: [
+          {required: true, message: "适配的总成硬件零件号不能为空", trigger: "blur"}
         ],
-        baseSoftwarePn: [
-          {required: true, message: "基础软件零件号不能为空", trigger: "blur"}
-        ],
-        baseSoftwareVer: [
-          {required: true, message: "基础软件版本不能为空", trigger: "blur"}
-        ],
-        packageAdaptionLevel: [
-          {required: true, message: "软件包适配级别不能为空", trigger: "blur"}
-        ],
-        adaptedSoftwarePn: [
-          {required: true, message: "适配的总成软件零件号不能为空", trigger: "blur"}
-        ],
-        publishDate: [
+        releaseDate: [
           {required: true, message: "发布日期不能为空", trigger: "blur"}
         ]
       },
+      softwarePnSelected: false,
     };
   },
   created() {
     this.getEcuList();
     this.getList();
   },
+  activated() {
+    this.getEcuList();
+    this.getList();
+  },
   methods: {
-    /** 查询软件包列表 */
     getList() {
       this.loading = true;
-      listSoftwarePackage(this.addDateRange(this.queryParams, this.dateRange)).then(response => {
-          this.softwarePackageList = response.rows;
+      listSoftwareBuildVersion(this.addDateRange(this.queryParams, this.dateRange)).then(response => {
+          this.list = response.rows;
           this.total = response.total;
           this.loading = false;
         }
@@ -463,21 +399,17 @@ export default {
     /** 表单重置 */
     reset() {
       this.form = {
-        softwarePartVersionId: undefined,
-        packageCode: undefined,
-        packageName: undefined,
-        packageType: undefined,
-        packageSize: undefined,
-        packageMd5: undefined,
-        packageDesc: undefined,
-        packageSource: undefined,
-        baseSoftwarePn: undefined,
-        baseSoftwareVer: undefined,
-        packageAdaptionLevel: undefined,
+        ecuCode: undefined,
+        softwarePn: undefined,
+        softwarePartVer: undefined,
+        softwareBuildVer: undefined,
+        softwareReport: undefined,
+        softwareDesc: undefined,
+        softwareSource: undefined,
+        adaptedHardwarePn: undefined,
         adaptedSoftwarePn: undefined,
-        publishDate: undefined,
-        estimatedInstallTime: undefined,
-        ota: undefined
+        releaseDate: undefined,
+        description: undefined
       };
       this.resetForm("form");
     },
@@ -502,21 +434,20 @@ export default {
     handleAdd() {
       this.reset();
       this.open = true;
-      this.title = "添加软件包信息";
+      this.title = "添加软件内部版本信息";
       this.form = {
-        ota: true,
-        packageSource: "2"
+        softwareSource: 2
       };
     },
     /** 修改按钮操作 */
     handleUpdate(row) {
       this.reset();
-      const softwarePackageId = row.id || this.ids
-      getSoftwarePackage(softwarePackageId).then(response => {
+      const softwareBuildVersionId = row.id || this.ids
+      getSoftwareBuildVersion(softwareBuildVersionId).then(response => {
         this.form = response.data;
         this.open = true;
       });
-      this.title = "修改软件包信息";
+      this.title = "修改软件内部版本信息";
     },
     handleEcuChange(value) {
       if (value) {
@@ -533,7 +464,7 @@ export default {
       this.selectSoftwarePn = item.softwarePn;
     },
     handleSoftwarePartChange(item) {
-      if(this.form.softwarePn !== this.selectSoftwarePn) {
+      if (this.form.softwarePn !== this.selectSoftwarePn) {
         this.softwarePartVerRange = [];
         this.$set(this.form, 'softwarePartVer', '');
         this.$nextTick(() => {
@@ -547,13 +478,13 @@ export default {
       this.$refs["form"].validate(valid => {
         if (valid) {
           if (this.form.id !== undefined) {
-            updateSoftwarePackage(this.form).then(response => {
+            updateSoftwareBuildVersion(this.form).then(response => {
               this.$modal.msgSuccess("修改成功");
               this.open = false;
               this.getList();
             });
           } else {
-            addSoftwarePackage(this.form).then(response => {
+            addSoftwareBuildVersion(this.form).then(response => {
               this.$modal.msgSuccess("新增成功");
               this.open = false;
               this.getList();
@@ -564,21 +495,68 @@ export default {
     },
     /** 删除按钮操作 */
     handleDelete(row) {
-      const softwarePackageIds = row.id || this.ids;
-      this.$modal.confirm('是否确认删除软件包ID为"' + softwarePackageIds + '"的数据项？').then(function () {
-        return delSoftwarePackage(softwarePackageIds);
+      const softwareBuildVersionIds = row.id || this.ids;
+      this.$modal.confirm('是否确认删除软件内部版本ID为"' + softwareBuildVersionIds + '"的数据项？').then(function () {
+        return delSoftwareBuildVersion(softwareBuildVersionIds);
       }).then(() => {
         this.getList();
         this.$modal.msgSuccess("删除成功");
       }).catch(() => {
       });
     },
+    handleSoftwareBuildVersionPackage(row) {
+      this.$router.push({
+        path: "/ota/baseline/softwareBuildVersionPackage",
+        query: { id: row.id }
+      });
+    },
+    handleSoftwareBuildVersionDependency(row) {
+      this.$router.push({
+        path: "/ota/baseline/softwareBuildVersionDependency",
+        query: { id: row.id }
+      });
+    },
     /** 导出按钮操作 */
     handleExport() {
-      this.download('ota-baseline/softwarePackage/export', {
+      this.download('ota-baseline/softwareBuildVersion/export', {
         ...this.queryParams
-      }, `software_package_${new Date().getTime()}.xlsx`)
-    }
+      }, `software_build_version_${new Date().getTime()}.xlsx`)
+    },
   }
 };
 </script>
+<style>
+.message-cell {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+
+.message-cell:hover {
+  cursor: pointer;
+}
+
+.my-tooltip {
+  max-width: 400px !important;
+  white-space: normal !important;
+  word-break: break-word !important;
+}
+
+.drawer-content {
+  padding: 20px;
+  font-size: 14px;
+  color: #606266;
+}
+
+.drawer-title {
+  font-size: 16px;
+  font-weight: bolder;
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+
+.drawer-row {
+  margin-bottom: 15px;
+}
+</style>
