@@ -128,7 +128,7 @@
           <span>{{ scope.row.baseline ? '是' : '否'  }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="版本数" prop="SoftwareBuildVersionCount" width="100" align="center"/>
+      <el-table-column label="软件内部版本数" prop="softwareBuildVersionCount" width="120" align="center"/>
       <el-table-column label="创建时间" align="center" prop="createTime" width="180">
         <template slot-scope="scope">
           <span>{{ parseTime(scope.row.createTime) }}</span>
@@ -321,9 +321,22 @@
               </el-radio-group>
             </el-form-item>
           </el-col>
-          <el-col :span="12">
+          <el-col :span="12" v-if="form.baseline">
             <el-form-item label="基线代码" prop="baselineCode">
-              <el-input v-model="form.baselineCode" placeholder="请输入基线代码" :disabled="form.state === 2"/>
+              <el-autocomplete
+                v-model="form.baselineCode"
+                :fetch-suggestions="queryBaseline"
+                placeholder="请查询基线代码"
+                :trigger-on-focus="false"
+                clearable
+                @select="handleBaselineSelect"
+                :disabled="form.state === 2"
+                style="width: 100%"
+              >
+                <template #default="{ item }">
+                  <div> {{item.name}} - {{item.value}} </div>
+                </template>
+              </el-autocomplete>
             </el-form-item>
           </el-col>
         </el-row>
@@ -347,7 +360,7 @@
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="submitForm" v-if="form.state === 1">确 定</el-button>
+        <el-button type="primary" @click="submitForm" v-if="!form.state || form.state === 1">确 定</el-button>
         <el-button type="success" @click="handleSubmit" v-if="form.state === 1">提 交</el-button>
         <el-button type="success" @click="submitAuditForm" v-if="title === '审核升级活动' && form.state === 2">审 核
         </el-button>
@@ -530,6 +543,7 @@ import {
 } from "@/api/ota/fota/activity";
 import {listArticle,} from "@/api/ota/fota/article";
 import {listSoftwareBuildVersion} from "@/api/ota/baseline/softwarebuildversion";
+import {listBaseline} from "@/api/ota/baseline/baseline";
 
 export default {
   name: "Activity",
@@ -798,9 +812,10 @@ export default {
       this.form.privacyAgreementArticleId = item.id;
     },
     handleActivitySoftwareBuildVersion(row) {
-      this.currentActivityId = row.id;
-      this.openActivitySoftwareBuildVersion = true;
-      this.getListActivitySoftwareBuildVersion();
+      this.$router.push({
+        path: "/ota/fota/activitySoftwareBuildVersion",
+        query: { id: row.id }
+      });
     },
     handleRemoveActivitySoftwareBuildVersion(row) {
       const SoftwareBuildVersionIds = row.id || this.idsBaselineSoftwareBuildVersion;
@@ -910,6 +925,32 @@ export default {
         }
       }).catch(() => {
       });
+    },
+    queryBaseline(queryString, cb) {
+      // 这里需要调用你的基线查询接口
+      // 假设接口是 listBaseline，需要先在页面顶部 import
+      listBaseline({
+        key: queryString  // 根据实际接口参数调整
+      }).then(response => {
+        if (response.rows && response.rows.length > 0) {
+          const suggestions = response.rows.map(item => {
+          return {
+            value: item.code,  // 基线代码字段名根据实际调整
+            ...item
+          };
+          });
+        cb(suggestions);
+        } else {
+          cb([]);
+        }
+      }).catch(() => {
+        cb([]);
+      });
+    },
+    handleBaselineSelect(item) {
+      // 如果需要保存基线ID或其他信息
+      this.form.baselineId = item.id;
+      this.form.baselineCode = item.code;
     },
   }
 };

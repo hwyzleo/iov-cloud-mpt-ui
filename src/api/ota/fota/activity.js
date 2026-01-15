@@ -18,9 +18,9 @@ export function listAllActivityState() {
 }
 
 // 列出升级活动下软件内部版本
-export function listActivitySoftwareBuildVersion(activityId) {
+export function listActivitySoftwareBuildVersion(activityId, group) {
   return request({
-    url: '/ota-fota/mpt/activity/' + activityId + '/listSoftwareBuildVersion',
+    url: '/ota-fota/mpt/activity/' + activityId + '/listSoftwareBuildVersion?group=' + group,
     method: 'get'
   })
 }
@@ -101,10 +101,28 @@ export function delActivity(activityIds) {
   })
 }
 
-// 删除关联的软件零件版本
+// 删除关联的软件内部版本
 export function delSoftwareBuildVersion(activityId, softwareBuildVersionIds) {
   return request({
     url: '/ota-fota/mpt/activity/' + activityId + '/action/removeSoftwareBuildVersion/' + softwareBuildVersionIds,
     method: 'post'
+  })
+}
+
+// 更新关联的软件内部版本组
+export function regroupSoftwareBuildVersion(activityId, data) {
+  return request({
+    url: '/ota-fota/mpt/activity/' + activityId + '/action/regroupSoftwareBuildVersion',
+    method: 'post',
+    data: data
+  })
+}
+
+// 重排序关联的软件内部版本
+export function resortSoftwareBuildVersion(activityId, data) {
+  return request({
+    url: '/ota-fota/mpt/activity/' + activityId + '/action/resortSoftwareBuildVersion',
+    method: 'post',
+    data: data
   })
 }
