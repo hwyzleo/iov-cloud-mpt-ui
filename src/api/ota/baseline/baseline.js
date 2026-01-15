@@ -67,3 +67,12 @@ export function delSoftwareBuildVersion(baselineId, softwareBuildVersionIds) {
     method: 'post'
   })
 }
+
+// 重排序基线关联的软件内部版本
+export function resortSoftwareBuildVersion(baselineId, data) {
+  return request({
+    url: '/ota-baseline/mpt/baseline/' + baselineId + '/action/resortSoftwareBuildVersion',
+    method: 'post',
+    data: data
+  })
+}

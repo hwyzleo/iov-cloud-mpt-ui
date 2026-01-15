@@ -86,7 +86,7 @@
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
-    <el-table v-loading="loading" :data="baselineList" @selection-change="handleSelectionChange">
+    <el-table v-loading="loading" :data="list" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center"/>
       <el-table-column label="基线代码" prop="code" width="250"/>
       <el-table-column label="基线名称" prop="name"/>
@@ -110,7 +110,7 @@
           <span>{{ parseTime(scope.row.releaseDate, '{y}-{m}-{d}') }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="软件零件数" prop="SoftwareBuildVersionCount" width="100" align="center"/>
+      <el-table-column label="软件内部版本数" prop="softwareBuildVersionCount" width="120" align="center"/>
       <el-table-column label="创建时间" align="center" prop="createTime" width="180">
         <template slot-scope="scope">
           <span>{{ parseTime(scope.row.createTime) }}</span>
@@ -179,8 +179,8 @@
             placeholder="基线来源"
             clearable
           >
-            <el-option key="1" label="BOM" value="1"/>
-            <el-option key="2" label="OTA" value="2"/>
+            <el-option key="1" label="BOM" :value="1"/>
+            <el-option key="2" label="OTA" :value="2"/>
           </el-select>
         </el-form-item>
         <el-form-item label="车型编码" prop="vehModel">
@@ -207,229 +207,17 @@
         <el-button @click="cancel">取 消</el-button>
       </div>
     </el-dialog>
-
-    <!-- 基线关联软件零件版本信息层 -->
-    <el-drawer title="关联软件零件版本信息" :visible.sync="openBaselineSoftwareBuildVersion" direction="rtl" size="80%"
-               :modal="true"
-               :append-to-body="true"
-               @close="onBaselineSoftwareBuildVersionClose">
-      <div class="drawer-content">
-        <el-form :model="queryParamsBaselineSoftwareBuildVersion" ref="queryParamsBaselineSoftwareBuildVersion"
-                 size="small" :inline="true" v-show="showSearchBaselineSoftwareBuildVersion">
-          <el-form-item label="软件零件号" prop="softwarePn">
-            <el-input
-              v-model="queryParamsBaselineSoftwareBuildVersion.softwarePn"
-              placeholder="请输入软件零件号"
-              clearable
-              style="width: 140px"
-              @keyup.enter.native="handleQueryBaselineSoftwareBuildVersion"
-            />
-          </el-form-item>
-          <el-form-item label="ECU" prop="ecuCode">
-            <el-select
-              v-model="queryParamsBaselineSoftwareBuildVersion.ecuCode"
-              placeholder="ECU"
-              clearable
-              style="width: 140px"
-            >
-              <el-option
-                v-for="ecu in this.ecuList"
-                :key="ecu.code"
-                :label="ecu.code + '(' + ecu.label + ')'"
-                :value="ecu.code"
-              />
-            </el-select>
-          </el-form-item>
-          <el-form-item>
-            <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQueryBaselineSoftwareBuildVersion">
-              搜索
-            </el-button>
-            <el-button icon="el-icon-refresh" size="mini" @click="resetQueryBaselineSoftwareBuildVersion">重置
-            </el-button>
-          </el-form-item>
-        </el-form>
-
-        <el-row :gutter="10" class="mb8">
-          <el-col :span="1.5">
-            <el-button
-              type="primary"
-              plain
-              icon="el-icon-plus"
-              size="mini"
-              @click="handleAddSoftwareBuildVersion"
-              v-hasPermi="['ota:baseline:baseline:edit']"
-            >查询并添加软件内部版本
-            </el-button>
-          </el-col>
-          <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
-        </el-row>
-        <el-table v-loading="loadingBaselineSoftwareBuildVersion" :data="baselineSoftwareBuildVersionList"
-                  @selection-change="handleSelectionChangeBaselineSoftwareBuildVersion">
-          <el-table-column type="selection" width="55" align="center"/>
-          <el-table-column label="ECU" prop="ecuCode" width="100"/>
-          <el-table-column label="软件零件号" prop="softwarePn"/>
-          <el-table-column label="软件零件版本" prop="softwarePartVer" width="120"/>
-          <el-table-column label="测试报告" prop="softwareReport" width="80" align="center">
-            <template slot-scope="scope">
-              <span>{{ scope.row.softwareReport && scope.row.softwareReport.trim() ? '已上传' : '未上传' }}</span>
-            </template>
-          </el-table-column>
-          <el-table-column label="软件来源" prop="softwareSource" width="80" align="center">
-            <template slot-scope="scope">
-              <span>{{ scope.row.softwareSource === 1 ? 'BOM' : 'OTA' }}</span>
-            </template>
-          </el-table-column>
-          <el-table-column label="适配的总成硬件零件号" prop="adaptedHardwarePn" width="150"/>
-          <el-table-column label="适配的总成软件零件号" prop="adaptedSoftwarePn" width="150"/>
-          <el-table-column label="发布日期" align="center" prop="releaseTime" width="120">
-            <template slot-scope="scope">
-              <span>{{ parseTime(scope.row.releaseDate, '{y}-{m}-{d}') }}</span>
-            </template>
-          </el-table-column>
-          <el-table-column label="操作" align="center" width="200" class-name="small-padding fixed-width">
-            <template slot-scope="scope">
-              <el-button
-                size="mini"
-                type="text"
-                icon="el-icon-delete"
-                @click="handleRemoveBaselineSoftwareBuildVersion(scope.row)"
-                v-hasPermi="['ota:baseline:baseline:edit']"
-              >删除关联
-              </el-button>
-            </template>
-          </el-table-column>
-        </el-table>
-
-        <pagination
-          v-show="totalBaselineSoftwareBuildVersion>0"
-          :total="totalBaselineSoftwareBuildVersion"
-          :page.sync="queryParamsBaselineSoftwareBuildVersion.pageNum"
-          :limit.sync="queryParamsBaselineSoftwareBuildVersion.pageSize"
-          @pagination="getListBaselineSoftwareBuildVersion"
-        />
-      </div>
-    </el-drawer>
-
-    <!-- 软件零件版本列表对话框 -->
-    <el-dialog title="查询并添加软件零件版本" :visible.sync="openSoftwareBuildVersion" width="900px" append-to-body>
-      <el-form :model="queryParamsSoftwareBuildVersion" ref="queryFormSoftwareBuildVersion" size="small" :inline="true"
-               v-show="showSearchSoftwareBuildVersion">
-        <el-form-item label="软件零件号" prop="softwarePn">
-          <el-input
-            v-model="queryParamsSoftwareBuildVersion.softwarePn"
-            placeholder="请输入软件零件号"
-            clearable
-            style="width: 140px"
-            @keyup.enter.native="handleQuerySoftwareBuildVersion"
-          />
-        </el-form-item>
-        <el-form-item label="ECU" prop="ecuCode">
-          <el-select
-            v-model="queryParamsSoftwareBuildVersion.ecuCode"
-            placeholder="ECU"
-            clearable
-            style="width: 140px"
-          >
-            <el-option
-              v-for="ecu in this.ecuList"
-              :key="ecu.code"
-              :label="ecu.code + '(' + ecu.label + ')'"
-              :value="ecu.code"
-            />
-          </el-select>
-        </el-form-item>
-        <el-form-item>
-          <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuerySoftwareBuildVersion">搜索
-          </el-button>
-          <el-button icon="el-icon-refresh" size="mini" @click="resetQuerySoftwareBuildVersion">重置</el-button>
-        </el-form-item>
-      </el-form>
-
-      <el-row :gutter="10" class="mb8">
-        <el-col :span="1.5">
-          <el-button
-            type="primary"
-            plain
-            icon="el-icon-plus"
-            size="mini"
-            :disabled="multipleSoftwareBuildVersion"
-            @click="handleAddBaselineSoftwareBuildVersion"
-            v-hasPermi="['ota:baseline:baseline:edit']"
-          >关联
-          </el-button>
-        </el-col>
-        <right-toolbar :showSearch.sync="showSearch" @queryTable="getListSoftwareBuildVersion"></right-toolbar>
-      </el-row>
-
-      <el-table ref="SoftwareBuildVersionTable" v-loading="loadingSoftwareBuildVersion" :data="SoftwareBuildVersionList"
-                @selection-change="handleSelectionChangeSoftwareBuildVersion">
-        <el-table-column type="selection" width="55" align="center"/>
-        <el-table-column label="ECU" prop="ecuCode" width="100"/>
-        <el-table-column label="软件零件号" prop="softwarePn"/>
-        <el-table-column label="软件零件版本" prop="softwarePartVer" width="120"/>
-        <el-table-column label="测试报告" prop="softwareReport" width="80" align="center">
-          <template slot-scope="scope">
-            <span>{{ scope.row.softwareReport && scope.row.softwareReport.trim() ? '已上传' : '未上传' }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column label="软件来源" prop="softwareSource" width="80" align="center">
-          <template slot-scope="scope">
-            <span>{{ scope.row.softwareSource === 1 ? 'BOM' : 'OTA' }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column label="适配的总成硬件零件号" prop="adaptedHardwarePn" width="150"/>
-        <el-table-column label="适配的总成软件零件号" prop="adaptedSoftwarePn" width="150"/>
-        <el-table-column label="发布日期" align="center" prop="releaseTime" width="120">
-          <template slot-scope="scope">
-            <span>{{ parseTime(scope.row.releaseDate, '{y}-{m}-{d}') }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column label="创建时间" align="center" prop="createTime" width="180">
-          <template slot-scope="scope">
-            <span>{{ parseTime(scope.row.createTime) }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column label="操作" align="center" width="200" class-name="small-padding fixed-width">
-          <template slot-scope="scope">
-            <el-button
-              size="mini"
-              type="text"
-              icon="el-icon-edit"
-              @click="handleAddBaselineSoftwareBuildVersion(scope.row)"
-              v-hasPermi="['ota:baseline:baseline:edit']"
-            >关联
-            </el-button>
-          </template>
-        </el-table-column>
-      </el-table>
-
-      <pagination
-        v-show="total>0"
-        :total="total"
-        :page.sync="queryParams.pageNum"
-        :limit.sync="queryParams.pageSize"
-        @pagination="getList"
-      />
-      <div slot="footer" class="dialog-footer" style="text-align: center">
-        <el-button @click="closeSoftwareBuildVersion">关 闭</el-button>
-      </div>
-    </el-dialog>
   </div>
 </template>
 
 <script>
 import {
   addBaseline,
-  addSoftwareBuildVersion,
   delBaseline,
-  delSoftwareBuildVersion,
   getBaseline,
   listBaseline,
-  listBaselineSoftwareBuildVersion,
   updateBaseline
 } from "@/api/ota/baseline/baseline";
-import {listAllEcu,} from "@/api/ota/baseline/ecu";
-import {listSoftwareBuildVersion} from "@/api/ota/baseline/softwarebuildversion"
 
 export default {
   name: "Baseline",
@@ -438,52 +226,26 @@ export default {
     return {
       // 遮罩层
       loading: true,
-      loadingBaselineSoftwareBuildVersion: true,
-      loadingSoftwareBuildVersion: true,
       // 选中数组
       ids: [],
-      idsBaselineSoftwareBuildVersion: [],
-      idsSoftwareBuildVersion: [],
       // 非单个禁用
       single: true,
-      singleBaselineSoftwareBuildVersion: true,
-      singleSoftwareBuildVersion: true,
       // 非多个禁用
       multiple: true,
-      multipleBaselineSoftwareBuildVersion: true,
-      multipleSoftwareBuildVersion: true,
       // 显示搜索条件
       showSearch: true,
-      showSearchBaselineSoftwareBuildVersion: true,
-      showSearchSoftwareBuildVersion: true,
       // 总条数
       total: 0,
-      totalBaselineSoftwareBuildVersion: 0,
-      totalSoftwareBuildVersion: 0,
-      // 基线表格数据
-      baselineList: [],
-      baselineSoftwareBuildVersionList: [],
-      SoftwareBuildVersionList: [],
+      list: [],
       ecuList: [],
-      currentBaselineId: undefined,
       // 弹出层标题
       title: "",
       // 是否显示弹出层
       open: false,
-      openBaselineSoftwareBuildVersion: false,
-      openSoftwareBuildVersion: false,
       // 日期范围
       dateRange: [],
       // 查询参数
       queryParams: {
-        pageNum: 1,
-        pageSize: 10
-      },
-      queryParamsBaselineSoftwareBuildVersion: {
-        pageNum: 1,
-        pageSize: 10
-      },
-      queryParamsSoftwareBuildVersion: {
         pageNum: 1,
         pageSize: 10
       },
@@ -510,7 +272,9 @@ export default {
     };
   },
   created() {
-    this.getEcuList();
+    this.getList();
+  },
+  activated() {
     this.getList();
   },
   methods: {
@@ -518,58 +282,16 @@ export default {
     getList() {
       this.loading = true;
       listBaseline(this.addDateRange(this.queryParams, this.dateRange)).then(response => {
-          this.baselineList = response.rows;
+          this.list = response.rows;
           this.total = response.total;
           this.loading = false;
         }
       );
     },
-    getListBaselineSoftwareBuildVersion() {
-      this.loadingBaselineSoftwareBuildVersion = true;
-      listBaselineSoftwareBuildVersion(this.currentBaselineId, this.queryParamsBaselineSoftwareBuildVersion).then(response => {
-          this.baselineSoftwareBuildVersionList = response.rows;
-          this.totalBaselineSoftwareBuildVersion = response.total;
-          this.loadingBaselineSoftwareBuildVersion = false;
-        }
-      );
-    },
-    getEcuList() {
-      listAllEcu().then(response => {
-          this.ecuList = response.data;
-        }
-      );
-    },
-    getListSoftwareBuildVersion() {
-      this.loadingSoftwareBuildVersion = true;
-      listSoftwareBuildVersion(this.queryParamsSoftwareBuildVersion).then(response => {
-          this.SoftwareBuildVersionList = response.rows;
-          this.totalSoftwareBuildVersion = response.total;
-          this.loadingSoftwareBuildVersion = false;
-          this.$nextTick(() => {
-            this.setDefaultSelection();
-          });
-        }
-      );
-    },
-    setDefaultSelection() {
-      const linkedIds = this.baselineSoftwareBuildVersionList.map(item => item.id);
-      const selectedRows = this.SoftwareBuildVersionList.filter(item =>
-        linkedIds.includes(item.id)
-      );
-      this.$refs.SoftwareBuildVersionTable.clearSelection();
-      this.$nextTick(() => {
-        selectedRows.forEach(row => {
-          this.$refs.SoftwareBuildVersionTable.toggleRowSelection(row, true);
-        });
-      });
-    },
     /** 取消按钮 */
     cancel() {
       this.open = false;
       this.reset();
-    },
-    closeSoftwareBuildVersion() {
-      this.openSoftwareBuildVersion = false;
     },
     /** 表单重置 */
     reset() {
@@ -579,7 +301,7 @@ export default {
         type: undefined,
         source: undefined,
         vehModel: undefined,
-        publishDate: undefined,
+        releaseDate: undefined,
         baselineDesc: undefined
       };
       this.resetForm("form");
@@ -589,27 +311,11 @@ export default {
       this.queryParams.pageNum = 1;
       this.getList();
     },
-    handleQueryBaselineSoftwareBuildVersion() {
-      this.queryParamsBaselineSoftwareBuildVersion.pageNum = 1;
-      this.getListBaselineSoftwareBuildVersion();
-    },
-    handleQuerySoftwareBuildVersion() {
-      this.queryParamsSoftwareBuildVersion.pageNum = 1;
-      this.getListSoftwareBuildVersion();
-    },
     /** 重置按钮操作 */
     resetQuery() {
       this.dateRange = [];
       this.resetForm("queryForm");
       this.handleQuery();
-    },
-    resetQueryBaselineSoftwareBuildVersion() {
-      this.resetForm("queryFormBaselineSoftwareBuildVersion");
-      this.handleQueryBaselineSoftwareBuildVersion();
-    },
-    resetQuerySoftwareBuildVersion() {
-      this.resetForm("queryFormSoftwareBuildVersion");
-      this.handleQuerySoftwareBuildVersion();
     },
     /** 多选框选中数据 */
     handleSelectionChange(selection) {
@@ -617,26 +323,11 @@ export default {
       this.single = selection.length != 1
       this.multiple = !selection.length
     },
-    handleSelectionChangeBaselineSoftwareBuildVersion(selection) {
-      this.idsBaselineSoftwareBuildVersion = selection.map(item => item.id)
-      this.singleBaselineSoftwareBuildVersion = selection.length != 1
-      this.multipleBaselineSoftwareBuildVersion = !selection.length
-    },
-    handleSelectionChangeSoftwareBuildVersion(selection) {
-      this.idsSoftwareBuildVersion = selection.map(item => item.id)
-      this.singleSoftwareBuildVersion = selection.length != 1
-      this.multipleSoftwareBuildVersion = !selection.length
-    },
     /** 新增按钮操作 */
     handleAdd() {
       this.reset();
       this.open = true;
       this.title = "添加基线";
-      this.form = {};
-    },
-    handleAddSoftwareBuildVersion() {
-      this.openSoftwareBuildVersion = true;
-      this.getListSoftwareBuildVersion();
     },
     /** 修改按钮操作 */
     handleUpdate(row) {
@@ -648,20 +339,11 @@ export default {
       });
       this.title = "修改基线";
     },
-    handleRemoveBaselineSoftwareBuildVersion(row) {
-      const SoftwareBuildVersionIds = row.id || this.idsBaselineSoftwareBuildVersion;
-      this.$modal.confirm('是否确认删除基线' + this.currentBaselineId + '下关联软件零件版本ID为"' + SoftwareBuildVersionIds + '"的数据项？').then(() => {
-        return delSoftwareBuildVersion(this.currentBaselineId, SoftwareBuildVersionIds);
-      }).then(() => {
-        this.$modal.msgSuccess("删除成功");
-        this.getListBaselineSoftwareBuildVersion();
-      }).catch(() => {
-      });
-    },
     handleBaselineSoftwareBuildVersion(row) {
-      this.currentBaselineId = row.id;
-      this.openBaselineSoftwareBuildVersion = true;
-      this.getListBaselineSoftwareBuildVersion();
+      this.$router.push({
+        path: "/ota/baseline/baselineSoftwareBuildVersion",
+        query: { id: row.id }
+      });
     },
     /** 提交按钮 */
     submitForm: function () {
@@ -694,25 +376,11 @@ export default {
       }).catch(() => {
       });
     },
-    handleAddBaselineSoftwareBuildVersion(row) {
-      const SoftwareBuildVersionIds = row.id || this.idsSoftwareBuildVersion;
-      this.$modal.confirm('是否确认将软件零件版本ID为"' + SoftwareBuildVersionIds + '"的数据项关联到基线ID' + this.currentBaselineId + '？').then(() => {
-        return addSoftwareBuildVersion(this.currentBaselineId, SoftwareBuildVersionIds);
-      }).then(() => {
-        this.$modal.msgSuccess("关联成功");
-        this.closeSoftwareBuildVersion();
-        this.getListBaselineSoftwareBuildVersion();
-      }).catch(() => {
-      });
-    },
     /** 导出按钮操作 */
     handleExport() {
       this.download('ota-baseline/baseline/export', {
         ...this.queryParams
       }, `baseline_${new Date().getTime()}.xlsx`)
-    },
-    onBaselineSoftwareBuildVersionClose() {
-      this.getList();
     },
   }
 };
