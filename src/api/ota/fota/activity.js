@@ -25,6 +25,22 @@ export function listActivitySoftwareBuildVersion(activityId, group) {
   })
 }
 
+// 列出升级活动下兼容零件号
+export function listActivityCompatiblePn(activityId) {
+  return request({
+    url: '/ota-fota/mpt/activity/' + activityId + '/listCompatiblePn',
+    method: 'get'
+  })
+}
+
+// 列出升级活动下固定配置字
+export function listActivityFixedConfigWord(activityId) {
+  return request({
+    url: '/ota-fota/mpt/activity/' + activityId + '/listFixedConfigWord',
+    method: 'get'
+  })
+}
+
 // 查询升级活动详细
 export function getActivity(activityId) {
   return request({
@@ -43,9 +59,25 @@ export function addActivity(data) {
 }
 
 // 新增关联的软件内部版本
-export function addSoftwareBuildVersion(activityId, softwareBuildVersionIds) {
+export function addActivitySoftwareBuildVersion(activityId, softwareBuildVersionIds) {
   return request({
     url: '/ota-fota/mpt/activity/' + activityId + '/action/addSoftwareBuildVersion/' + softwareBuildVersionIds,
+    method: 'post'
+  })
+}
+
+// 新增关联的兼容零件号
+export function addActivityCompatiblePn(activityId, compatiblePnIds) {
+  return request({
+    url: '/ota-fota/mpt/activity/' + activityId + '/action/addCompatiblePn/' + compatiblePnIds,
+    method: 'post'
+  })
+}
+
+// 新增关联的固定配置字
+export function addActivityFixedConfigWord(activityId, fixedConfigWordIds) {
+  return request({
+    url: '/ota-fota/mpt/activity/' + activityId + '/action/addFixedConfigWord/' + fixedConfigWordIds,
     method: 'post'
   })
 }
@@ -102,9 +134,25 @@ export function delActivity(activityIds) {
 }
 
 // 删除关联的软件内部版本
-export function delSoftwareBuildVersion(activityId, softwareBuildVersionIds) {
+export function delActivitySoftwareBuildVersion(activityId, softwareBuildVersionIds) {
   return request({
     url: '/ota-fota/mpt/activity/' + activityId + '/action/removeSoftwareBuildVersion/' + softwareBuildVersionIds,
+    method: 'post'
+  })
+}
+
+// 删除关联的兼容零件号
+export function delActivityCompatiblePn(activityId, compatiblePnIds) {
+  return request({
+    url: '/ota-fota/mpt/activity/' + activityId + '/action/removeCompatiblePn/' + compatiblePnIds,
+    method: 'post'
+  })
+}
+
+// 删除关联的固定配置字
+export function delActivityFixedConfigWord(activityId, fixedConfigWordIds) {
+  return request({
+    url: '/ota-fota/mpt/activity/' + activityId + '/action/removeFixedConfigWord/' + fixedConfigWordIds,
     method: 'post'
   })
 }
