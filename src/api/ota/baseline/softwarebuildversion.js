@@ -69,6 +69,14 @@ export function updateSoftwareBuildVersion(data) {
   })
 }
 
+// 修改依赖的软件内部版本
+export function updateDependency(softwareBuildVersionId, softwareBuildVersionIds, adaptionLevel) {
+  return request({
+    url: '/ota-baseline/mpt/softwareBuildVersion/' + softwareBuildVersionId + '/action/editDependency/' + softwareBuildVersionIds + '?adaptionLevel=' + adaptionLevel,
+    method: 'post'
+  })
+}
+
 // 删除软件内部版本信息
 export function delSoftwareBuildVersion(softwareBuildVersionIds) {
   return request({

@@ -38,20 +38,28 @@
               @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center"/>
       <el-table-column label="ECU" prop="ecuCode" width="100"/>
-      <el-table-column label="软件零件号" prop="softwarePn"/>
-      <el-table-column label="软件零件版本" prop="softwarePartVer" width="120"/>
-      <el-table-column label="测试报告" prop="softwareReport" width="80" align="center">
+      <el-table-column label="软件零件号" prop="softwarePn" width="150">
         <template slot-scope="scope">
-          <span>{{ scope.row.softwareReport && scope.row.softwareReport.trim() ? '已上传' : '未上传' }}</span>
+          <span>{{ scope.row.softwarePn + scope.row.softwarePartVer }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="软件来源" prop="softwareSource" width="80" align="center">
+      <el-table-column label="软件内部版本" prop="softwareBuildVer" width="120"/>
+      <el-table-column label="适配级别" prop="adaptionLevel" width="150" align="center">
         <template slot-scope="scope">
-          <span>{{ scope.row.softwareSource === 1 ? 'BOM' : 'OTA' }}</span>
+          <el-select
+            v-model="scope.row.adaptionLevel"
+            placeholder="请选择"
+            size="mini"
+            @change="handleAdaptionLevelChange(scope.row)"
+          >
+            <el-option label="版本及以下" :value="1"></el-option>
+            <el-option label="版本及以上" :value="2"></el-option>
+            <el-option label="与版本一致" :value="3"></el-option>
+          </el-select>
         </template>
       </el-table-column>
-      <el-table-column label="适配的总成硬件零件号" prop="adaptedHardwarePn" width="150"/>
-      <el-table-column label="适配的总成软件零件号" prop="adaptedSoftwarePn" width="150"/>
+      <el-table-column label="适配的总成硬件零件号" prop="adaptedHardwarePn" width="200"/>
+      <el-table-column label="适配的总成软件零件号" prop="adaptedSoftwarePn"/>
       <el-table-column label="发布日期" align="center" prop="releaseDate" width="120">
         <template slot-scope="scope">
           <span>{{ parseTime(scope.row.releaseDate, '{y}-{m}-{d}') }}</span>
@@ -113,7 +121,7 @@
 
         <el-table ref="dependencyTable" v-loading="loadingDependency" :data="dependencyList"
                   @selection-change="handleSelectionChangeDependency">
-          <el-table-column type="selection" width="55" align="center" :selectable="checkSelectable" />
+          <el-table-column type="selection" width="55" align="center" :selectable="checkSelectable"/>
           <el-table-column label="ECU" prop="ecuCode" width="100"/>
           <el-table-column label="软件零件号" prop="softwarePn"/>
           <el-table-column label="软件零件版本" prop="softwarePartVer" width="120"/>
@@ -167,6 +175,7 @@
 <script>
 import {
   addDependency,
+  updateDependency,
   delDependency,
   listSoftwareBuildVersion,
   listSoftwareBuildVersionDependency
@@ -216,8 +225,7 @@ export default {
       // 表单参数
       form: {},
       // 表单校验
-      rules: {
-      },
+      rules: {},
       softwareBuildVersionId: undefined
     };
   },
@@ -265,8 +273,7 @@ export default {
     },
     /** 表单重置 */
     reset() {
-      this.form = {
-      };
+      this.form = {};
       this.resetForm("form");
     },
     /** 搜索按钮操作 */
@@ -342,6 +349,12 @@ export default {
     },
     checkSelectable(row) {
       return row.id != this.softwareBuildVersionId;
+    },
+    handleAdaptionLevelChange(row) {
+      const dependencyIds = row.id || this.idsDependency;
+      updateDependency(this.softwareBuildVersionId, dependencyIds, row.adaptionLevel).then(response => {
+        console.log(response);
+      })
     }
   }
 };
