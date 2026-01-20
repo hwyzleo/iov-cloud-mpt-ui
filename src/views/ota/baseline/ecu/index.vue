@@ -107,6 +107,11 @@
       <el-table-column label="ECU名称" prop="name"/>
       <el-table-column label="ECU英文名称" prop="nameEn"/>
       <el-table-column label="ECU类型" prop="type"/>
+      <el-table-column label="是否核心" prop="critical" width="100" align="center">
+        <template slot-scope="scope">
+          <span>{{ scope.row.critical ? '是' : '否' }}</span>
+        </template>
+      </el-table-column>
       <el-table-column label="排序" prop="sort" align="center" width="60"/>
       <el-table-column label="创建时间" align="center" prop="createTime" width="180">
         <template slot-scope="scope">
@@ -160,6 +165,7 @@
             v-model="form.type"
             placeholder="ECU类型"
             clearable
+            style="width: 100%"
           >
             <el-option
               v-for="ecuType in this.ecuTypeList"
@@ -168,6 +174,18 @@
               :value="ecuType.code"
             />
           </el-select>
+        </el-form-item>
+        <el-form-item label="是否核心ECU" prop="critical">
+          <el-radio-group v-model="form.critical">
+            <el-radio
+              :label="true"
+            >是
+            </el-radio>
+            <el-radio
+              :label="false"
+            >否
+            </el-radio>
+          </el-radio-group>
         </el-form-item>
         <el-form-item label="排序" prop="sort">
           <el-input-number v-model="form.sort" controls-position="right" :min="0"/>
@@ -234,6 +252,9 @@ export default {
         ],
         name: [
           {required: true, message: "ECU名称不能为空", trigger: "blur"}
+        ],
+        critical: [
+          {required: true, message: "是否核心ECU不能为空", trigger: "blur"}
         ]
       },
     };
