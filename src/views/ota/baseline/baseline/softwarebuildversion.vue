@@ -75,6 +75,19 @@
       </el-table-column>
       <el-table-column label="软件内部版本" prop="softwareBuildVer" width="120"/>
       <el-table-column label="ECU" prop="ecuCode" width="80"/>
+      <el-table-column label="是否关键" prop="critical" width="100" align="center">
+        <template slot-scope="scope">
+          <el-select
+            v-model="scope.row.critical"
+            placeholder="请选择"
+            size="mini"
+            @change="handleCriticalChange(scope.row)"
+          >
+            <el-option label="是" :value="true"></el-option>
+            <el-option label="否" :value="false"></el-option>
+          </el-select>
+        </template>
+      </el-table-column>
       <el-table-column label="软件零件名称" prop="softwarePartName"/>
       <el-table-column label="测试报告" prop="softwareReport" width="80" align="center">
         <template slot-scope="scope">
@@ -88,7 +101,7 @@
       </el-table-column>
       <el-table-column label="适配的总成硬件零件号" prop="adaptedHardwarePn" width="150"/>
       <el-table-column label="适配的总成软件零件号" prop="adaptedSoftwarePn" width="150"/>
-      <el-table-column label="发布日期" align="center" prop="releaseTime" width="120">
+      <el-table-column label="发布日期" align="center" prop="releaseDate" width="120">
         <template slot-scope="scope">
           <span>{{ parseTime(scope.row.releaseDate, '{y}-{m}-{d}') }}</span>
         </template>
@@ -231,10 +244,11 @@
 
 <script>
 import {
-  addSoftwareBuildVersion,
-  delSoftwareBuildVersion,
+  addBaselineSoftwareBuildVersion,
+  updateBaselineSoftwareBuildVersion,
+  delBaselineSoftwareBuildVersion,
   listBaselineSoftwareBuildVersion,
-  resortSoftwareBuildVersion
+  resortBaselineSoftwareBuildVersion
 } from "@/api/ota/baseline/baseline";
 import {listSoftwareBuildVersion} from "@/api/ota/baseline/softwarebuildversion"
 import {listAllEcu} from "@/api/ota/baseline/ecu";
@@ -408,7 +422,7 @@ export default {
     handleRemoveBaselineSoftwareBuildVersion(row) {
       const softwareBuildVersionIds = row.softwareBuildVersionId || this.ids;
       this.$modal.confirm('是否确认删除基线' + this.baselineId + '下关联软件内部版本ID为"' + softwareBuildVersionIds + '"的数据项？').then(() => {
-        return delSoftwareBuildVersion(this.baselineId, softwareBuildVersionIds);
+        return delBaselineSoftwareBuildVersion(this.baselineId, softwareBuildVersionIds);
       }).then(() => {
         this.$modal.msgSuccess("删除成功");
         this.getList();
@@ -424,7 +438,7 @@ export default {
     handleAddBaselineSoftwareBuildVersion(row) {
       const softwareBuildVersionIds = row.id || this.idsSoftwareBuildVersion;
       this.$modal.confirm('是否确认将软件零件版本ID为"' + softwareBuildVersionIds + '"的数据项关联到基线ID' + this.baselineId + '？').then(() => {
-        return addSoftwareBuildVersion(this.baselineId, softwareBuildVersionIds);
+        return addBaselineSoftwareBuildVersion(this.baselineId, softwareBuildVersionIds);
       }).then(() => {
         this.$modal.msgSuccess("关联成功");
         this.close();
@@ -506,8 +520,14 @@ export default {
         softwareBuildVersionId: item.softwareBuildVersionId,
         sort: item.sort
       }))
-      resortSoftwareBuildVersion(this.baselineId, sortData).then(response => {
+      resortBaselineSoftwareBuildVersion(this.baselineId, sortData).then(response => {
         console.log(response)
+      })
+    },
+    handleCriticalChange(row) {
+      const softwareBuildVersionIds = row.softwareBuildVersionId || this.ids;
+      updateBaselineSoftwareBuildVersion(this.baselineId, softwareBuildVersionIds, row.critical).then(response => {
+        console.log(response);
       })
     }
   }

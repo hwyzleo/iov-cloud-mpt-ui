@@ -36,7 +36,7 @@ export function addBaseline(data) {
 }
 
 // 新增关联的软件内部版本
-export function addSoftwareBuildVersion(baselineId, softwareBuildVersionIds) {
+export function addBaselineSoftwareBuildVersion(baselineId, softwareBuildVersionIds) {
   return request({
     url: '/ota-baseline/mpt/baseline/' + baselineId + '/action/addSoftwareBuildVersion/' + softwareBuildVersionIds,
     method: 'post'
@@ -52,6 +52,14 @@ export function updateBaseline(data) {
   })
 }
 
+// 修改关联的软件内部版本
+export function updateBaselineSoftwareBuildVersion(baselineId, softwareBuildVersionIds, critical) {
+  return request({
+    url: '/ota-baseline/mpt/baseline/' + baselineId + '/action/editSoftwareBuildVersion/' + softwareBuildVersionIds + '?critical=' + critical,
+    method: 'post'
+  })
+}
+
 // 删除基线信息
 export function delBaseline(baselineIds) {
   return request({
@@ -61,7 +69,7 @@ export function delBaseline(baselineIds) {
 }
 
 // 删除关联的软件内部版本
-export function delSoftwareBuildVersion(baselineId, softwareBuildVersionIds) {
+export function delBaselineSoftwareBuildVersion(baselineId, softwareBuildVersionIds) {
   return request({
     url: '/ota-baseline/mpt/baseline/' + baselineId + '/action/removeSoftwareBuildVersion/' + softwareBuildVersionIds,
     method: 'post'
@@ -69,7 +77,7 @@ export function delSoftwareBuildVersion(baselineId, softwareBuildVersionIds) {
 }
 
 // 重排序基线关联的软件内部版本
-export function resortSoftwareBuildVersion(baselineId, data) {
+export function resortBaselineSoftwareBuildVersion(baselineId, data) {
   return request({
     url: '/ota-baseline/mpt/baseline/' + baselineId + '/action/resortSoftwareBuildVersion',
     method: 'post',
