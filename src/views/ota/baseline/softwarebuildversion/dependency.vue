@@ -44,13 +44,13 @@
         </template>
       </el-table-column>
       <el-table-column label="软件内部版本" prop="softwareBuildVer" width="120"/>
-      <el-table-column label="适配级别" prop="adaptionLevel" width="150" align="center">
+      <el-table-column label="适配级别" prop="adaptiveLevel" width="150" align="center">
         <template slot-scope="scope">
           <el-select
-            v-model="scope.row.adaptionLevel"
+            v-model="scope.row.adaptiveLevel"
             placeholder="请选择"
             size="mini"
-            @change="handleAdaptionLevelChange(scope.row)"
+            @change="handleAdaptiveLevelChange(scope.row)"
           >
             <el-option label="版本及以下" :value="1"></el-option>
             <el-option label="版本及以上" :value="2"></el-option>
@@ -58,8 +58,8 @@
           </el-select>
         </template>
       </el-table-column>
-      <el-table-column label="适配的总成硬件零件号" prop="adaptedHardwarePn" width="200"/>
-      <el-table-column label="适配的总成软件零件号" prop="adaptedSoftwarePn"/>
+      <el-table-column label="适配的总成硬件零件号" prop="adaptiveHardwarePn" width="200"/>
+      <el-table-column label="适配的总成软件零件号" prop="adaptiveSoftwarePn"/>
       <el-table-column label="发布日期" align="center" prop="releaseDate" width="120">
         <template slot-scope="scope">
           <span>{{ parseTime(scope.row.releaseDate, '{y}-{m}-{d}') }}</span>
@@ -135,8 +135,8 @@
               <span>{{ scope.row.softwareSource === 1 ? 'BOM' : 'OTA' }}</span>
             </template>
           </el-table-column>
-          <el-table-column label="适配的总成硬件零件号" prop="adaptedHardwarePn" width="150"/>
-          <el-table-column label="适配的总成软件零件号" prop="adaptedSoftwarePn" width="150"/>
+          <el-table-column label="适配的总成硬件零件号" prop="adaptiveHardwarePn" width="150"/>
+          <el-table-column label="适配的总成软件零件号" prop="adaptiveSoftwarePn" width="150"/>
           <el-table-column label="发布日期" align="center" prop="releaseDate" width="120">
             <template slot-scope="scope">
               <span>{{ parseTime(scope.row.releaseDate, '{y}-{m}-{d}') }}</span>
@@ -350,9 +350,9 @@ export default {
     checkSelectable(row) {
       return row.id != this.softwareBuildVersionId;
     },
-    handleAdaptionLevelChange(row) {
+    handleAdaptiveLevelChange(row) {
       const dependencyIds = row.id || this.idsDependency;
-      updateSoftwareBuildVersionDependency(this.softwareBuildVersionId, dependencyIds, row.adaptionLevel).then(response => {
+      updateSoftwareBuildVersionDependency(this.softwareBuildVersionId, dependencyIds, row.adaptiveLevel).then(response => {
         console.log(response);
       })
     }

@@ -112,8 +112,8 @@
           <span>{{ scope.row.softwareSource === 1 ? 'BOM' : 'OTA' }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="适配的总成硬件零件号" prop="adaptedHardwarePn" width="150"/>
-      <el-table-column label="适配的总成软件零件号" prop="adaptedSoftwarePn" width="150"/>
+      <el-table-column label="适配的总成硬件零件号" prop="adaptiveHardwarePn" width="150"/>
+      <el-table-column label="适配的总成软件零件号" prop="adaptiveSoftwarePn" width="150"/>
       <el-table-column label="发布日期" align="center" prop="releaseDate" width="120">
         <template slot-scope="scope">
           <span>{{ parseTime(scope.row.releaseDate, '{y}-{m}-{d}') }}</span>
@@ -215,8 +215,8 @@
               <span>{{ scope.row.softwareSource === 1 ? 'BOM' : 'OTA' }}</span>
             </template>
           </el-table-column>
-          <el-table-column label="适配的总成硬件零件号" prop="adaptedHardwarePn" width="150"/>
-          <el-table-column label="适配的总成软件零件号" prop="adaptedSoftwarePn" width="150"/>
+          <el-table-column label="适配的总成硬件零件号" prop="adaptiveHardwarePn" width="150"/>
+          <el-table-column label="适配的总成软件零件号" prop="adaptiveSoftwarePn" width="150"/>
           <el-table-column label="发布日期" align="center" prop="releaseTime" width="120">
             <template slot-scope="scope">
               <span>{{ parseTime(scope.row.releaseDate, '{y}-{m}-{d}') }}</span>

@@ -92,11 +92,11 @@
       </el-table-column>
       <el-table-column label="基础软件零件号" prop="baseSoftwarePn" width="150"/>
       <el-table-column label="基础软件版本" prop="baseSoftwareVer" width="150"/>
-      <el-table-column label="适配级别" prop="packageAdaptionLevel" width="150" align="center">
+      <el-table-column label="适配级别" prop="packageAdaptiveLevel" width="150" align="center">
         <template slot-scope="scope">
-          <span v-if="scope.row.packageAdaptionLevel === 1">基础版本及以下</span>
-          <span v-else-if="scope.row.packageAdaptionLevel === 2">基础版本及以上</span>
-          <span v-else-if="scope.row.packageAdaptionLevel === 3">与基础版本一致</span>
+          <span v-if="scope.row.packageAdaptiveLevel === 1">基础版本及以下</span>
+          <span v-else-if="scope.row.packageAdaptiveLevel === 2">基础版本及以上</span>
+          <span v-else-if="scope.row.packageAdaptiveLevel === 3">与基础版本一致</span>
           <span v-else>未知</span>
         </template>
       </el-table-column>
@@ -258,9 +258,9 @@
         </el-row>
         <el-row>
           <el-col :span="12">
-            <el-form-item label="软件包适配级别" prop="packageAdaptionLevel">
+            <el-form-item label="软件包适配级别" prop="packageAdaptiveLevel">
               <el-select
-                v-model="form.packageAdaptionLevel"
+                v-model="form.packageAdaptiveLevel"
                 placeholder="软件包适配级别"
                 clearable
               >
@@ -271,8 +271,8 @@
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="适配总成软件零件号" prop="adaptedSoftwarePn">
-              <el-input v-model="form.adaptedSoftwarePn" placeholder="请输入适配的总成软件零件号"/>
+            <el-form-item label="适配总成软件零件号" prop="adaptiveSoftwarePn">
+              <el-input v-model="form.adaptiveSoftwarePn" placeholder="请输入适配的总成软件零件号"/>
             </el-form-item>
           </el-col>
         </el-row>
@@ -397,10 +397,10 @@ export default {
         baseSoftwareVer: [
           {required: true, message: "基础软件版本不能为空", trigger: "blur"}
         ],
-        packageAdaptionLevel: [
+        packageAdaptiveLevel: [
           {required: true, message: "软件包适配级别不能为空", trigger: "blur"}
         ],
-        adaptedSoftwarePn: [
+        adaptiveSoftwarePn: [
           {required: true, message: "适配的总成软件零件号不能为空", trigger: "blur"}
         ],
         publishDate: [
@@ -473,8 +473,8 @@ export default {
         packageSource: undefined,
         baseSoftwarePn: undefined,
         baseSoftwareVer: undefined,
-        packageAdaptionLevel: undefined,
-        adaptedSoftwarePn: undefined,
+        packageAdaptiveLevel: undefined,
+        adaptiveSoftwarePn: undefined,
         publishDate: undefined,
         estimatedInstallTime: undefined,
         ota: undefined

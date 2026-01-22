@@ -107,8 +107,8 @@
           <span>{{ scope.row.softwareSource === 1 ? 'BOM' : 'OTA' }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="适配的总成硬件零件号" prop="adaptedHardwarePn" width="150"/>
-      <el-table-column label="适配的总成软件零件号" prop="adaptedSoftwarePn" width="150"/>
+      <el-table-column label="适配的总成硬件零件号" prop="adaptiveHardwarePn" width="150"/>
+      <el-table-column label="适配的总成软件零件号" prop="adaptiveSoftwarePn" width="150"/>
       <el-table-column label="发布日期" align="center" prop="releaseDate" width="120">
         <template slot-scope="scope">
           <span>{{ parseTime(scope.row.releaseDate, '{y}-{m}-{d}') }}</span>
@@ -248,11 +248,11 @@
             <el-option key="2" label="OTA" :value="2"/>
           </el-select>
         </el-form-item>
-        <el-form-item label="适配的总成硬件零件号" prop="adaptedHardwarePn">
-          <el-input v-model="form.adaptedHardwarePn" placeholder="请输入适配的总成硬件零件号"/>
+        <el-form-item label="适配的总成硬件零件号" prop="adaptiveHardwarePn">
+          <el-input v-model="form.adaptiveHardwarePn" placeholder="请输入适配的总成硬件零件号"/>
         </el-form-item>
-        <el-form-item label="适配的总成软件零件号" prop="adaptedSoftwarePn">
-          <el-input v-model="form.adaptedSoftwarePn" placeholder="请输入适配的总成软件零件号"/>
+        <el-form-item label="适配的总成软件零件号" prop="adaptiveSoftwarePn">
+          <el-input v-model="form.adaptiveSoftwarePn" placeholder="请输入适配的总成软件零件号"/>
         </el-form-item>
         <el-form-item label="发布日期" prop="releaseDate">
           <el-date-picker
@@ -340,7 +340,7 @@ export default {
         softwareSource: [
           {required: true, message: "软件来源不能为空", trigger: "blur"}
         ],
-        adaptedHardwarePn: [
+        adaptiveHardwarePn: [
           {required: true, message: "适配的总成硬件零件号不能为空", trigger: "blur"}
         ],
         releaseDate: [
@@ -414,8 +414,8 @@ export default {
         softwareReport: undefined,
         softwareDesc: undefined,
         softwareSource: undefined,
-        adaptedHardwarePn: undefined,
-        adaptedSoftwarePn: undefined,
+        adaptiveHardwarePn: undefined,
+        adaptiveSoftwarePn: undefined,
         releaseDate: undefined,
         description: undefined
       };

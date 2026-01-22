@@ -48,11 +48,11 @@
       </el-table-column>
       <el-table-column label="基础软件零件号" prop="baseSoftwarePn" width="150"/>
       <el-table-column label="基础软件版本" prop="baseSoftwareVer" width="150"/>
-      <el-table-column label="适配级别" prop="packageAdaptionLevel" width="150" align="center">
+      <el-table-column label="适配级别" prop="packageAdaptiveLevel" width="150" align="center">
         <template slot-scope="scope">
-          <span v-if="scope.row.packageAdaptionLevel === 1">基础版本及以下</span>
-          <span v-else-if="scope.row.packageAdaptionLevel === 2">基础版本及以上</span>
-          <span v-else-if="scope.row.packageAdaptionLevel === 3">与基础版本一致</span>
+          <span v-if="scope.row.packageAdaptiveLevel === 1">基础版本及以下</span>
+          <span v-else-if="scope.row.packageAdaptiveLevel === 2">基础版本及以上</span>
+          <span v-else-if="scope.row.packageAdaptiveLevel === 3">与基础版本一致</span>
           <span v-else>未知</span>
         </template>
       </el-table-column>
@@ -130,11 +130,11 @@
           </el-table-column>
           <el-table-column label="基础软件零件号" prop="baseSoftwarePn" width="150"/>
           <el-table-column label="基础软件版本" prop="baseSoftwareVer" width="150"/>
-          <el-table-column label="适配级别" prop="packageAdaptionLevel" width="150" align="center">
+          <el-table-column label="适配级别" prop="packageAdaptiveLevel" width="150" align="center">
             <template slot-scope="scope">
-              <span v-if="scope.row.packageAdaptionLevel === 1">基础版本及以下</span>
-              <span v-else-if="scope.row.packageAdaptionLevel === 2">基础版本及以上</span>
-              <span v-else-if="scope.row.packageAdaptionLevel === 3">与基础版本一致</span>
+              <span v-if="scope.row.packageAdaptiveLevel === 1">基础版本及以下</span>
+              <span v-else-if="scope.row.packageAdaptiveLevel === 2">基础版本及以上</span>
+              <span v-else-if="scope.row.packageAdaptiveLevel === 3">与基础版本一致</span>
               <span v-else>未知</span>
             </template>
           </el-table-column>
