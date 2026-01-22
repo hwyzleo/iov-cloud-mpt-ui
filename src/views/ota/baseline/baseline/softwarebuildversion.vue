@@ -88,6 +88,19 @@
           </el-select>
         </template>
       </el-table-column>
+      <el-table-column label="是否支持OTA" prop="ota" width="110" align="center">
+        <template slot-scope="scope">
+          <el-select
+            v-model="scope.row.ota"
+            placeholder="请选择"
+            size="mini"
+            @change="handleOtaChange(scope.row)"
+          >
+            <el-option label="支持" :value="true"></el-option>
+            <el-option label="不支持" :value="false"></el-option>
+          </el-select>
+        </template>
+      </el-table-column>
       <el-table-column label="软件零件名称" prop="softwarePartName"/>
       <el-table-column label="测试报告" prop="softwareReport" width="80" align="center">
         <template slot-scope="scope">
@@ -181,7 +194,8 @@
             >关联
             </el-button>
           </el-col>
-          <right-toolbar :showSearch.sync="showSearchSoftwareBuildVersion" @queryTable="getListSoftwareBuildVersion"></right-toolbar>
+          <right-toolbar :showSearch.sync="showSearchSoftwareBuildVersion"
+                         @queryTable="getListSoftwareBuildVersion"></right-toolbar>
         </el-row>
 
         <el-table ref="SoftwareBuildVersionTable" v-loading="loadingSoftwareBuildVersion"
@@ -245,10 +259,11 @@
 <script>
 import {
   addBaselineSoftwareBuildVersion,
-  updateBaselineSoftwareBuildVersion,
   delBaselineSoftwareBuildVersion,
   listBaselineSoftwareBuildVersion,
-  resortBaselineSoftwareBuildVersion
+  resortBaselineSoftwareBuildVersion,
+  updateBaselineSoftwareBuildVersionCritical,
+  updateBaselineSoftwareBuildVersionOta
 } from "@/api/ota/baseline/baseline";
 import {listSoftwareBuildVersion} from "@/api/ota/baseline/softwarebuildversion"
 import {listAllEcu} from "@/api/ota/baseline/ecu";
@@ -526,7 +541,13 @@ export default {
     },
     handleCriticalChange(row) {
       const softwareBuildVersionIds = row.softwareBuildVersionId || this.ids;
-      updateBaselineSoftwareBuildVersion(this.baselineId, softwareBuildVersionIds, row.critical).then(response => {
+      updateBaselineSoftwareBuildVersionCritical(this.baselineId, softwareBuildVersionIds, row.critical).then(response => {
+        console.log(response);
+      })
+    },
+    handleOtaChange(row) {
+      const softwareBuildVersionIds = row.softwareBuildVersionId || this.ids;
+      updateBaselineSoftwareBuildVersionOta(this.baselineId, softwareBuildVersionIds, row.ota).then(response => {
         console.log(response);
       })
     }
@@ -567,6 +588,7 @@ export default {
 .drawer-row {
   margin-bottom: 15px;
 }
+
 .sortable-ghost {
   opacity: 0.4;
   background: #f0f9ff;

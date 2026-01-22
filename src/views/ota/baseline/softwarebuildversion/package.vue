@@ -174,8 +174,8 @@
 
 <script>
 import {
-  addSoftwarePackage,
-  delSoftwarePackage,
+  addSoftwareBuildVersionPackage,
+  delSoftwareBuildVersionPackage,
   getSoftwareBuildVersion,
   listSoftwareBuildVersionPackage,
 } from "@/api/ota/baseline/softwarebuildversion";
@@ -320,7 +320,7 @@ export default {
     handleAddSoftwareBuildVersionPackage(row) {
       const softwarePackageIds = row.id || this.idsSoftwarePackage;
       this.$modal.confirm('是否确认将软件包ID为"' + softwarePackageIds + '"的数据项关联到软件内部版本ID' + this.softwareBuildVersionId + '？').then(() => {
-        return addSoftwarePackage(this.softwareBuildVersionId, softwarePackageIds);
+        return addSoftwareBuildVersionPackage(this.softwareBuildVersionId, softwarePackageIds);
       }).then(() => {
         this.$modal.msgSuccess("关联成功");
         this.onClose();
@@ -332,7 +332,7 @@ export default {
       const softwareBuildVersionId = this.softwareBuildVersionId;
       const softwarePackageIds = row.id || this.ids;
       this.$modal.confirm('是否确认删除软件内部版本' + softwareBuildVersionId + '下关联软件包ID为"' + softwarePackageIds + '"的数据项？').then(() => {
-        return delSoftwarePackage(softwareBuildVersionId, softwarePackageIds);
+        return delSoftwareBuildVersionPackage(softwareBuildVersionId, softwarePackageIds);
       }).then(() => {
         this.$modal.msgSuccess("删除成功");
         this.getList();

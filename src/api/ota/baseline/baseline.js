@@ -52,10 +52,18 @@ export function updateBaseline(data) {
   })
 }
 
-// 修改关联的软件内部版本
-export function updateBaselineSoftwareBuildVersion(baselineId, softwareBuildVersionIds, critical) {
+// 修改关联的软件内部版本是否关键
+export function updateBaselineSoftwareBuildVersionCritical(baselineId, softwareBuildVersionIds, critical) {
   return request({
     url: '/ota-baseline/mpt/baseline/' + baselineId + '/action/editSoftwareBuildVersion/' + softwareBuildVersionIds + '?critical=' + critical,
+    method: 'post'
+  })
+}
+
+// 修改关联的软件内部版本是否支持OTA
+export function updateBaselineSoftwareBuildVersionOta(baselineId, softwareBuildVersionIds, ota) {
+  return request({
+    url: '/ota-baseline/mpt/baseline/' + baselineId + '/action/editSoftwareBuildVersion/' + softwareBuildVersionIds + '?ota=' + ota,
     method: 'post'
   })
 }

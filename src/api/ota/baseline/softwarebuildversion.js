@@ -27,10 +27,27 @@ export function listSoftwareBuildVersionDependency(softwareBuildVersionId, query
   })
 }
 
+// 查询软件内部版本下配置字
+export function listSoftwareBuildVersionConfigWord(softwareBuildVersionId, query) {
+  return request({
+    url: '/ota-baseline/mpt/softwareBuildVersion/' + softwareBuildVersionId + '/listConfigWord',
+    method: 'get',
+    params: query
+  })
+}
+
 // 查询软件内部版本信息详细
 export function getSoftwareBuildVersion(softwareBuildVersionId) {
   return request({
     url: '/ota-baseline/mpt/softwareBuildVersion/' + softwareBuildVersionId,
+    method: 'get'
+  })
+}
+
+// 查询软件内部版本配置字
+export function getSoftwareBuildVersionConfigWord(softwareBuildVersionId, configWordId) {
+  return request({
+    url: '/ota-baseline/mpt/softwareBuildVersion/' + softwareBuildVersionId + '/configWord/' + configWordId,
     method: 'get'
   })
 }
@@ -45,7 +62,7 @@ export function addSoftwareBuildVersion(data) {
 }
 
 // 新增关联的软件包
-export function addSoftwarePackage(softwareBuildVersionId, softwarePackageIds) {
+export function addSoftwareBuildVersionPackage(softwareBuildVersionId, softwarePackageIds) {
   return request({
     url: '/ota-baseline/mpt/softwareBuildVersion/' + softwareBuildVersionId + '/action/addSoftwarePackage/' + softwarePackageIds,
     method: 'post'
@@ -53,10 +70,19 @@ export function addSoftwarePackage(softwareBuildVersionId, softwarePackageIds) {
 }
 
 // 新增依赖的软件内部版本
-export function addDependency(softwareBuildVersionId, softwareBuildVersionIds, adaptionLevel) {
+export function addSoftwareBuildVersionDependency(softwareBuildVersionId, softwareBuildVersionIds, adaptionLevel) {
   return request({
     url: '/ota-baseline/mpt/softwareBuildVersion/' + softwareBuildVersionId + '/action/addDependency/' + softwareBuildVersionIds + '?adaptionLevel=' + adaptionLevel,
     method: 'post'
+  })
+}
+
+// 新增软件内部版本配置字
+export function addSoftwareBuildVersionConfigWord(softwareBuildVersionId, data) {
+  return request({
+    url: '/ota-baseline/mpt/softwareBuildVersion/' + softwareBuildVersionId + '/action/addConfigWord',
+    method: 'post',
+    data: data
   })
 }
 
@@ -70,10 +96,19 @@ export function updateSoftwareBuildVersion(data) {
 }
 
 // 修改依赖的软件内部版本
-export function updateDependency(softwareBuildVersionId, softwareBuildVersionIds, adaptionLevel) {
+export function updateSoftwareBuildVersionDependency(softwareBuildVersionId, softwareBuildVersionIds, adaptionLevel) {
   return request({
     url: '/ota-baseline/mpt/softwareBuildVersion/' + softwareBuildVersionId + '/action/editDependency/' + softwareBuildVersionIds + '?adaptionLevel=' + adaptionLevel,
     method: 'post'
+  })
+}
+
+// 修改依赖的软件内部版本
+export function updateSoftwareBuildVersionConfigWord(softwareBuildVersionId, data) {
+  return request({
+    url: '/ota-baseline/mpt/softwareBuildVersion/' + softwareBuildVersionId + '/action/editConfigWord',
+    method: 'post',
+    data: data
   })
 }
 
@@ -86,7 +121,7 @@ export function delSoftwareBuildVersion(softwareBuildVersionIds) {
 }
 
 // 删除关联的软件包
-export function delSoftwarePackage(softwareBuildVersionId, softwarePackageIds) {
+export function delSoftwareBuildVersionPackage(softwareBuildVersionId, softwarePackageIds) {
   return request({
     url: '/ota-baseline/mpt/softwareBuildVersion/' + softwareBuildVersionId + '/action/removeSoftwarePackage/' + softwarePackageIds,
     method: 'post'
@@ -94,9 +129,17 @@ export function delSoftwarePackage(softwareBuildVersionId, softwarePackageIds) {
 }
 
 // 删除依赖的软件内部版本
-export function delDependency(softwareBuildVersionId, softwarePartVersionIds) {
+export function delSoftwareBuildVersionDependency(softwareBuildVersionId, softwarePartVersionIds) {
   return request({
     url: '/ota-baseline/mpt/softwareBuildVersion/' + softwareBuildVersionId + '/action/removeDependency/' + softwarePartVersionIds,
+    method: 'post'
+  })
+}
+
+// 删除软件内部版本配置字
+export function delSoftwareBuildVersionConfigWord(softwareBuildVersionId, configWordIds) {
+  return request({
+    url: '/ota-baseline/mpt/softwareBuildVersion/' + softwareBuildVersionId + '/action/removeConfigWord/' + configWordIds,
     method: 'post'
   })
 }

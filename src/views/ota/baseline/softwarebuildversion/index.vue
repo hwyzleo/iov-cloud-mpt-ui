@@ -121,7 +121,7 @@
           <span>{{ parseTime(scope.row.createTime) }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="操作" align="center" width="200" class-name="small-padding fixed-width">
+      <el-table-column label="操作" align="center" width="260" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
             size="mini"
@@ -146,6 +146,14 @@
             @click="handleSoftwareBuildVersionDependency(scope.row)"
             v-hasPermi="['ota:baseline:softwareBuildVersion:query']"
           >依赖
+          </el-button>
+          <el-button
+            size="mini"
+            type="text"
+            icon="el-icon-edit"
+            @click="handleSoftwareBuildVersionConfigWord(scope.row)"
+            v-hasPermi="['ota:baseline:softwareBuildVersion:query']"
+          >配置字
           </el-button>
           <el-button
             size="mini"
@@ -513,6 +521,12 @@ export default {
     handleSoftwareBuildVersionDependency(row) {
       this.$router.push({
         path: "/ota/baseline/softwareBuildVersionDependency",
+        query: { id: row.id }
+      });
+    },
+    handleSoftwareBuildVersionConfigWord(row) {
+      this.$router.push({
+        path: "/ota/baseline/softwareBuildVersionConfigWord",
         query: { id: row.id }
       });
     },

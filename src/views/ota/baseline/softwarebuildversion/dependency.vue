@@ -174,11 +174,11 @@
 
 <script>
 import {
-  addDependency,
-  updateDependency,
-  delDependency,
+  addSoftwareBuildVersionDependency,
+  delSoftwareBuildVersionDependency,
   listSoftwareBuildVersion,
-  listSoftwareBuildVersionDependency
+  listSoftwareBuildVersionDependency,
+  updateSoftwareBuildVersionDependency
 } from "@/api/ota/baseline/softwarebuildversion";
 
 export default {
@@ -325,7 +325,7 @@ export default {
     handleAddSoftwareBuildVersionDependency(row) {
       const dependencyIds = row.id || this.idsDependency;
       this.$modal.confirm('是否确认将软件内部版本ID为"' + dependencyIds + '"的数据项依赖到软件内部版本ID' + this.softwareBuildVersionId + '？').then(() => {
-        return addDependency(this.softwareBuildVersionId, dependencyIds, 1);
+        return addSoftwareBuildVersionDependency(this.softwareBuildVersionId, dependencyIds, 1);
       }).then(() => {
         this.$modal.msgSuccess("添加依赖成功");
         this.onClose();
@@ -336,7 +336,7 @@ export default {
     handleRemoveSoftwareBuildVersionDependency(row) {
       const softwareBuildVersionIds = row.id || this.ids;
       this.$modal.confirm('是否确认删除软件内部版本' + this.softwareBuildVersionId + '下依赖软件内部版本ID为"' + softwareBuildVersionIds + '"的数据项？').then(() => {
-        return delDependency(this.softwareBuildVersionId, softwareBuildVersionIds);
+        return delSoftwareBuildVersionDependency(this.softwareBuildVersionId, softwareBuildVersionIds);
       }).then(() => {
         this.$modal.msgSuccess("删除成功");
         this.getList();
@@ -352,7 +352,7 @@ export default {
     },
     handleAdaptionLevelChange(row) {
       const dependencyIds = row.id || this.idsDependency;
-      updateDependency(this.softwareBuildVersionId, dependencyIds, row.adaptionLevel).then(response => {
+      updateSoftwareBuildVersionDependency(this.softwareBuildVersionId, dependencyIds, row.adaptionLevel).then(response => {
         console.log(response);
       })
     }
