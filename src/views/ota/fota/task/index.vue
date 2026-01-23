@@ -230,8 +230,8 @@
     />
 
     <!-- 添加或修改升级任务对话框 -->
-    <el-dialog :title="title" :visible.sync="open" width="800px" append-to-body>
-      <el-form ref="form" :model="form" :rules="rules" label-width="140px">
+    <el-dialog :title="title" :visible.sync="open" width="900px" append-to-body>
+      <el-form ref="form" :model="form" :rules="rules" label-width="120px">
         <el-form-item label="任务名称" prop="name">
           <el-input v-model="form.name" placeholder="请输入任务名称" :disabled="form.state === 2"/>
         </el-form-item>
@@ -243,6 +243,7 @@
                 placeholder="任务类型"
                 clearable
                 :disabled="form.state === 2"
+                style="width: 100%;"
               >
                 <el-option :key="1" label="普通" :value="1"/>
                 <el-option :key="2" label="快速" :value="2"/>
@@ -256,6 +257,7 @@
                 placeholder="任务阶段"
                 clearable
                 :disabled="form.state === 2"
+                style="width: 100%;"
               >
                 <el-option :key="1" label="验证" :value="1"/>
                 <el-option :key="2" label="灰度" :value="2"/>
@@ -278,12 +280,18 @@
               clearable
               @select="handleActivitySelect"
               :disabled="form.state === 2"
+              style="width: 100%;"
             >
               <template #default="{ item }">
                 <div>{{ item.name }}[{{ item.version }}]</div>
               </template>
             </el-autocomplete>
           </div>
+        </el-form-item>
+        <el-form-item label="基线拉齐" prop="baselineUnification">
+          <el-checkbox v-model="form.baselineUnification" :disabled="form.state === 2">
+            未对齐基线的车辆拉齐基线
+          </el-checkbox>
         </el-form-item>
         <el-row>
           <el-col :span="12">
@@ -294,6 +302,7 @@
                 placeholder="请选择任务开始时间"
                 value-format="timestamp"
                 :disabled="form.state === 2"
+                style="width: 100%;"
               >
               </el-date-picker>
             </el-form-item>
@@ -306,24 +315,111 @@
                 placeholder="请选择任务结束时间"
                 value-format="timestamp"
                 :disabled="form.state === 2"
+                style="width: 100%;"
               >
               </el-date-picker>
             </el-form-item>
           </el-col>
         </el-row>
-        <el-form-item label="升级模式" prop="upgradeMode">
-          <el-select
-            v-model="form.upgradeMode"
-            placeholder="升级模式"
-            clearable
-            :disabled="form.state === 2"
-          >
-            <el-option :key="1" label="普通" :value="1"/>
-            <el-option :key="2" label="强制" :value="2"/>
-            <el-option :key="3" label="预约静默" :value="3"/>
-            <el-option :key="4" label="远程静默" :value="4"/>
-            <el-option :key="5" label="工厂" :value="5"/>
-          </el-select>
+        <el-form-item label="升级前置条件">
+          <el-checkbox v-model="form.keepInPark" :disabled="form.state === 2">
+            保持驻车(P档)
+          </el-checkbox>
+          <el-checkbox v-model="form.notCharging" :disabled="form.state === 2">
+            不在充电
+          </el-checkbox>
+          <el-checkbox v-model="form.noExternalPower" :disabled="form.state === 2">
+            不对外供电
+          </el-checkbox>
+          <el-checkbox v-model="form.allClosed" :disabled="form.state === 2">
+            车窗、天窗、车门及尾门关闭
+          </el-checkbox>
+        </el-form-item>
+        <el-row>
+          <el-col :span="12">
+            <el-form-item label="高压电量" prop="hvSoc">
+              <div style="display: flex; align-items: center;">
+                <span style="margin-right: 8px;">最低</span>
+                <el-input-number v-model="form.hvSoc" controls-position="right" :min="10" :max="90"/>
+                <span style="margin-left: 8px;">%</span>
+              </div>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="低压电量" prop="lvSoc">
+              <div style="display: flex; align-items: center;">
+                <span style="margin-right: 8px;">最低</span>
+                <el-input-number v-model="form.lvSoc" controls-position="right" :min="50" :max="90"/>
+                <span style="margin-left: 8px;">%</span>
+              </div>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="12">
+            <el-form-item label="升级模式" prop="upgradeMode">
+              <el-select
+                v-model="form.upgradeMode"
+                placeholder="升级模式"
+                clearable
+                :disabled="form.state === 2"
+                style="width: 100%;"
+              >
+                <el-option :key="1" label="普通" :value="1"/>
+                <el-option :key="2" label="强制" :value="2"/>
+                <el-option :key="3" label="预约静默" :value="3"/>
+                <el-option :key="4" label="远程静默" :value="4"/>
+                <el-option :key="5" label="工厂" :value="5"/>
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="用车影响" prop="impactVehicleOperation">
+              <el-checkbox v-model="form.impactVehicleOperation" :disabled="form.state === 2">
+                升级时是否影响用车
+              </el-checkbox>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="12">
+            <el-form-item label="刷写次数" prop="flashCount">
+              <el-input-number v-model="form.flashCount" controls-position="right" :min="0" :max="3"/>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="是否回滚" prop="rollback">
+              <el-checkbox v-model="form.rollback" :disabled="form.state === 2"/>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="12">
+            <el-form-item label="适配主体" prop="adaptationSubject">
+              <el-select
+                v-model="form.adaptationSubject"
+                placeholder="适配主体"
+                clearable
+                :disabled="form.state === 2"
+                style="width: 100%;"
+              >
+                <el-option :key="1" label="基础软件零件号" :value="1"/>
+                <el-option :key="2" label="基础软件内部版本" :value="2"/>
+                <el-option :key="3" label="两者均要适配" :value="3"/>
+                <el-option :key="4" label="两者均不适配" :value="4"/>
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="比对基准" prop="comparisonCriteria">
+              <el-checkbox v-model="form.comparisonCriteria" :disabled="form.state === 2">
+                包含兼容零件号
+              </el-checkbox>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-form-item label="排除基线" prop="excludedBaseline">
+          <el-input v-model="form.excludedBaseline" placeholder="请输入排除基线" :disabled="form.state === 2"/>
         </el-form-item>
         <el-form-item label="审核结果" prop="audit" v-if="title === '审核升级任务'">
           <el-radio-group v-model="form.audit">
@@ -427,6 +523,15 @@ export default {
         ],
         upgradeMode: [
           {required: true, message: "升级模式不能为空", trigger: "blur"}
+        ],
+        adaptationSubject: [
+          {required: true, message: "适配主体不能为空", trigger: "blur"}
+        ],
+        hvSoc: [
+          {required: true, message: "高压电量不能为空", trigger: "blur"}
+        ],
+        lvSoc: [
+          {required: true, message: "低压电量不能为空", trigger: "blur"}
         ],
         audit: [{
           validator: (rule, value, callback) => {
@@ -534,7 +639,9 @@ export default {
       this.reset();
       this.open = true;
       this.title = "添加升级任务";
-      this.form = {};
+      this.form = {
+        flashCount: 3
+      };
     },
     /** 修改按钮操作 */
     handleUpdate(row) {
