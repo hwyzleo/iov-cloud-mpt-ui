@@ -212,7 +212,7 @@
           <el-col :span="12">
             <el-form-item label="ECU类型" prop="ecuType">
               <el-select v-model="form.ecuType" placeholder="ECU类型" style="width: 100%" clearable>
-                <el-option key="CGW" label="中央网关" value="CGW"/>
+                <el-option key="CCP" label="中央计算平台" value="CCP"/>
                 <el-option key="IBCM" label="集成式车身控制器" value="IBCM"/>
                 <el-option key="AVAS" label="行车发声器" value="AVAS"/>
                 <el-option key="WCM" label="无线充电模块" value="WCM"/>
