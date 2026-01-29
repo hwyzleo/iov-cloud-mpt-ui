@@ -10,18 +10,18 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="ECU" prop="ecuCode">
+      <el-form-item label="设备" prop="deviceCode">
         <el-select
-          v-model="queryParams.ecuCode"
-          placeholder="ECU"
+          v-model="queryParams.deviceCode"
+          placeholder="设备"
           clearable
-          style="width: 140px"
+          style="width: 200px"
         >
           <el-option
-            v-for="ecu in ecuList"
-            :key="ecu.code"
-            :label="ecu.code + '(' + ecu.label + ')'"
-            :value="ecu.code"
+            v-for="device in deviceList"
+            :key="device.code"
+            :label="device.code + '(' + device.label + ')'"
+            :value="device.code"
           />
         </el-select>
       </el-form-item>
@@ -94,7 +94,7 @@
 
     <el-table v-loading="loading" :data="list" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center"/>
-      <el-table-column label="ECU" prop="ecuCode" width="100"/>
+      <el-table-column label="设备" prop="deviceCode" width="100"/>
       <el-table-column label="软件零件号" prop="softwarePn"/>
       <el-table-column label="软件零件版本" prop="softwarePartVer" width="120"/>
       <el-table-column label="测试报告" prop="softwareReport" width="80" align="center">
@@ -178,19 +178,19 @@
     <!-- 添加或修改信息对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="600px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="180px">
-        <el-form-item label="ECU" prop="ecuCode">
+        <el-form-item label="设备" prop="deviceCode">
           <el-select
-            v-model="form.ecuCode"
-            placeholder="ECU"
+            v-model="form.deviceCode"
+            placeholder="设备"
             clearable
-            @change="handleEcuChange"
+            @change="handleDeviceChange"
             style="width: 100%"
           >
             <el-option
-              v-for="ecu in ecuList"
-              :key="ecu.code"
-              :label="ecu.code + '(' + ecu.label + ')'"
-              :value="ecu.code"
+              v-for="device in deviceList"
+              :key="device.code"
+              :label="device.code + '(' + device.label + ')'"
+              :value="device.code"
             />
           </el-select>
         </el-form-item>
@@ -200,7 +200,7 @@
               v-model="form.softwarePn"
               :fetch-suggestions="querySoftwarePart"
               placeholder="请输入软件零件号"
-              :disabled="form.ecuCode === undefined || form.ecuCode === ''"
+              :disabled="form.deviceCode === undefined || form.deviceCode === ''"
               :readonly="softwarePnSelected"
               :trigger-on-focus="false"
               clearable
@@ -216,7 +216,7 @@
               :key="selectKey"
               v-model="form.softwarePartVer"
               placeholder="版本"
-              :disabled="form.ecuCode === undefined || form.ecuCode === ''"
+              :disabled="form.deviceCode === undefined || form.deviceCode === ''"
               clearable
               style="width: 80px;"
             >
@@ -283,7 +283,7 @@ import {
   listSoftwareBuildVersion,
   updateSoftwareBuildVersion
 } from "@/api/ota/baseline/softwarebuildversion";
-import {listAllEcu,} from "@/api/ota/baseline/ecu";
+import {listAllDevice,} from "@/api/completevehicle/vehicle/device";
 import {listAllSoftwarePart} from "@/api/ota/baseline/softwarepart";
 
 export default {
@@ -306,8 +306,8 @@ export default {
       // 软件零件表格数据
       list: [],
       softwarePartVerRange: [],
-      ecuList: [],
-      selectEcu: "",
+      deviceList: [],
+      selectDevice: "",
       selectSoftwarePn: "",
       selectKey: 0,
       // 弹出层标题
@@ -325,8 +325,8 @@ export default {
       form: {},
       // 表单校验
       rules: {
-        ecuCode: [
-          {required: true, message: "ECU不能为空", trigger: "blur"}
+        deviceCode: [
+          {required: true, message: "设备不能为空", trigger: "blur"}
         ],
         softwarePn: [
           {required: true, message: "软件零件号不能为空", trigger: "blur"}
@@ -351,11 +351,11 @@ export default {
     };
   },
   created() {
-    this.getEcuList();
+    this.getDeviceList();
     this.getList();
   },
   activated() {
-    this.getEcuList();
+    this.getDeviceList();
     this.getList();
   },
   methods: {
@@ -368,20 +368,20 @@ export default {
         }
       );
     },
-    getEcuList() {
-      listAllEcu().then(response => {
-          this.ecuList = response.data;
+    getDeviceList() {
+      listAllDevice().then(response => {
+          this.deviceList = response.data;
         }
       );
     },
     querySoftwarePart(queryString, cb) {
-      if (!this.selectEcu || !queryString) {
+      if (!this.selectDevice || !queryString) {
         cb([]);
         return;
       }
       this.softwarePartVerRange = [];
       listAllSoftwarePart({
-        ecuCode: this.selectEcu,
+        deviceCode: this.selectDevice,
         softwarePn: queryString
       }).then(response => {
         if (response.data && response.data.length > 0) {
@@ -407,7 +407,7 @@ export default {
     /** 表单重置 */
     reset() {
       this.form = {
-        ecuCode: undefined,
+        deviceCode: undefined,
         softwarePn: undefined,
         softwarePartVer: undefined,
         softwareBuildVer: undefined,
@@ -457,14 +457,14 @@ export default {
       });
       this.title = "修改软件内部版本信息";
     },
-    handleEcuChange(value) {
+    handleDeviceChange(value) {
       if (value) {
-        const selectedEcu = this.ecuList.find(ecu => ecu.code === value);
-        if (selectedEcu) {
-          this.selectEcu = selectedEcu.code
+        const selectedDevice = this.deviceList.find(device => device.code === value);
+        if (selectedDevice) {
+          this.selectDevice = selectedDevice.code
         }
       } else {
-        this.selectEcu = '';
+        this.selectDevice = '';
       }
     },
     handleSoftwarePartSelect(item) {

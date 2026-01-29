@@ -237,7 +237,6 @@ export default {
       // 总条数
       total: 0,
       list: [],
-      ecuList: [],
       // 弹出层标题
       title: "",
       // 是否显示弹出层

@@ -11,18 +11,18 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="ECU" prop="ecuCode">
+      <el-form-item label="设备" prop="deviceCode">
         <el-select
-          v-model="queryParams.ecuCode"
-          placeholder="ECU"
+          v-model="queryParams.deviceCode"
+          placeholder="设备"
           clearable
           style="width: 200px"
         >
           <el-option
-            v-for="ecu in ecuList"
-            :key="ecu.code"
-            :label="ecu.code + '(' + ecu.label + ')'"
-            :value="ecu.code"
+            v-for="device in deviceList"
+            :key="device.code"
+            :label="device.code + '(' + device.label + ')'"
+            :value="device.code"
           />
         </el-select>
       </el-form-item>
@@ -74,7 +74,7 @@
         </template>
       </el-table-column>
       <el-table-column label="软件内部版本" prop="softwareBuildVer" width="120"/>
-      <el-table-column label="ECU" prop="ecuCode" width="80"/>
+      <el-table-column label="设备" prop="deviceCode" width="80"/>
       <el-table-column label="是否关键" prop="critical" width="100" align="center">
         <template slot-scope="scope">
           <el-select
@@ -159,18 +159,18 @@
               @keyup.enter.native="handleQuerySoftwareBuildVersion"
             />
           </el-form-item>
-          <el-form-item label="ECU" prop="ecuCode">
+          <el-form-item label="设备" prop="deviceCode">
             <el-select
-              v-model="queryParamsSoftwareBuildVersion.ecuCode"
-              placeholder="ECU"
+              v-model="queryParamsSoftwareBuildVersion.deviceCode"
+              placeholder="设备"
               clearable
               style="width: 140px"
             >
               <el-option
-                v-for="ecu in ecuList"
-                :key="ecu.code"
-                :label="ecu.code + '(' + ecu.label + ')'"
-                :value="ecu.code"
+                v-for="device in deviceList"
+                :key="device.code"
+                :label="device.code + '(' + device.label + ')'"
+                :value="device.code"
               />
             </el-select>
           </el-form-item>
@@ -202,7 +202,7 @@
                   :data="SoftwareBuildVersionList"
                   @selection-change="handleSelectionChangeSoftwareBuildVersion">
           <el-table-column type="selection" width="55" align="center"/>
-          <el-table-column label="ECU" prop="ecuCode" width="100"/>
+          <el-table-column label="设备" prop="deviceCode" width="100"/>
           <el-table-column label="软件零件号" prop="softwarePn"/>
           <el-table-column label="软件零件版本" prop="softwarePartVer" width="120"/>
           <el-table-column label="测试报告" prop="softwareReport" width="80" align="center">
@@ -266,7 +266,7 @@ import {
   updateBaselineSoftwareBuildVersionOta
 } from "@/api/ota/baseline/baseline";
 import {listSoftwareBuildVersion} from "@/api/ota/baseline/softwarebuildversion"
-import {listAllEcu} from "@/api/ota/baseline/ecu";
+import {listAllDevice} from "@/api/completevehicle/vehicle/device";
 import Sortable from 'sortablejs'
 
 export default {
@@ -294,7 +294,7 @@ export default {
       totalSoftwareBuildVersion: 0,
       list: [],
       SoftwareBuildVersionList: [],
-      ecuList: [],
+      deviceList: [],
       // 弹出层标题
       title: "",
       // 是否显示弹出层
@@ -326,7 +326,7 @@ export default {
   },
   created() {
     this.baselineId = this.$route.query.id;
-    this.getEcuList();
+    this.getDeviceList();
     this.getList();
   },
   beforeDestroy() {
@@ -351,9 +351,9 @@ export default {
         }
       );
     },
-    getEcuList() {
-      listAllEcu().then(response => {
-          this.ecuList = response.data;
+    getDeviceList() {
+      listAllDevice().then(response => {
+          this.deviceList = response.data;
         }
       );
     },

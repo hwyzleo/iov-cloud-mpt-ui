@@ -52,9 +52,9 @@
 
     <el-table v-loading="loading" :data="list" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center"/>
-      <el-table-column label="ECU设备" prop="ecu" width="150">
+      <el-table-column label="设备" prop="deviceCode" width="150">
         <template slot-scope="scope">
-          <span>{{ ecu }}</span>
+          <span>{{ deviceCode }}</span>
         </template>
       </el-table-column>
       <el-table-column label="软件零件号" prop="softwarePn" width="150">
@@ -98,8 +98,8 @@
     <!-- 添加或修改升级任务对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="800px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="140px">
-        <el-form-item label="ECU设备" prop="ecu">
-          <el-input v-model="form.ecu" placeholder="请输入任务名称" readonly/>
+        <el-form-item label="设备" prop="deviceCode">
+          <el-input v-model="form.deviceCode" placeholder="请输入设备" readonly/>
         </el-form-item>
         <el-form-item label="软件零件号" prop="softwarePn">
           <el-input v-model="form.softwarePn" placeholder="请输入软件零件号" readonly/>
@@ -116,10 +116,10 @@
         <el-form-item label="配置字值" prop="configWordValue">
           <el-input v-model="form.configWordValue" placeholder="请输入配置字值"/>
         </el-form-item>
-        <el-form-item label="依赖零部件ECU" prop="dependEcu">
+        <el-form-item label="依赖零部件设备" prop="dependDevice">
           <el-select
-            v-model="form.dependEcu"
-            placeholder="依赖零部件ECU"
+            v-model="form.dependDevice"
+            placeholder="依赖零部件设备"
             clearable
           >
           </el-select>
@@ -194,7 +194,7 @@ export default {
         ]
       },
       fixedConfigWordId: undefined,
-      ecu: undefined,
+      deviceCode: undefined,
       softwarePn: undefined,
     };
   },
@@ -207,7 +207,7 @@ export default {
     getList() {
       this.loading = true;
       getFixedConfigWord(this.fixedConfigWordId).then(response => {
-        this.ecu = response.data.ecu;
+        this.deviceCode = response.data.deviceCode;
         this.softwarePn = response.data.softwarePn;
         listConfigWord(this.fixedConfigWordId).then(response => {
           this.list = response.data;
@@ -251,7 +251,7 @@ export default {
       this.title = "添加配置字";
       this.form = {
         fixedConfigWordId: this.fixedConfigWordId,
-        ecu: this.ecu,
+        deviceCode: this.deviceCode,
         softwarePn: this.softwarePn
       };
     },
@@ -262,7 +262,7 @@ export default {
       getConfigWord(this.fixedConfigWordId, configWordId).then(response => {
         this.form = response.data;
         this.form.fixedConfigWordId = this.fixedConfigWordId;
-        this.form.ecu = this.ecu;
+        this.form.deviceCode = this.deviceCode;
         this.form.softwarePn = this.softwarePn;
         this.open = true;
       });

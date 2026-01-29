@@ -119,7 +119,7 @@
           <span v-if="scope.row.type==='ACTUATOR'">执行器</span>
         </template>
       </el-table-column>
-      <el-table-column label="ECU类型" prop="ecuType" align="center" width="80"/>
+      <el-table-column label="设备项" prop="deviceItem" align="center" width="80"/>
       <el-table-column label="核心设备" prop="core" align="center" width="80">
         <template slot-scope="scope">
           <span>{{ scope.row.core ? '是' : '否' }}</span>
@@ -188,8 +188,8 @@
             </el-form-item>
           </el-col>
           <el-col :span="8">
-            <el-form-item label="车载设备类型" prop="type">
-              <el-select v-model="form.type" placeholder="车载设备类型" style="width: 100%" clearable>
+            <el-form-item label="设备类型" prop="type">
+              <el-select v-model="form.type" placeholder="设备类型" style="width: 100%" clearable>
                 <el-option key="DOMAIN" label="域控" value="DOMAIN"/>
                 <el-option key="ECU" label="电控单元" value="ECU"/>
                 <el-option key="SENSOR" label="传感器" value="SENSOR"/>
@@ -210,42 +210,14 @@
         </el-row>
         <el-row>
           <el-col :span="12">
-            <el-form-item label="ECU类型" prop="ecuType">
-              <el-select v-model="form.ecuType" placeholder="ECU类型" style="width: 100%" clearable>
-                <el-option key="CCP" label="中央计算平台" value="CCP"/>
-                <el-option key="IBCM" label="集成式车身控制器" value="IBCM"/>
-                <el-option key="AVAS" label="行车发声器" value="AVAS"/>
-                <el-option key="WCM" label="无线充电模块" value="WCM"/>
-                <el-option key="HCM" label="前大灯控制器" value="HCM"/>
-                <el-option key="TLCM" label="后尾灯控制器" value="TLCM"/>
-                <el-option key="WCU" label="车窗控制单元" value="WCU"/>
-                <el-option key="SCM" label="座椅控制器" value="SCM"/>
-                <el-option key="ASCM" label="航空座椅控制器" value="ASCM"/>
-                <el-option key="EPS" label="电子助力转向" value="EPS"/>
-                <el-option key="ESC" label="电子稳定控制" value="ESC"/>
-                <el-option key="IB" label="电动机械助力器" value="IB"/>
-                <el-option key="CDC" label="连续减震控制系统" value="CDC"/>
-                <el-option key="ACU" label="安全气囊控制器" value="ACU"/>
-                <el-option key="MDCU" label="动力域控制器" value="MDCU"/>
-                <el-option key="PMS" label="高压能量管理系统" value="PMS"/>
-                <el-option key="EMS" label="发动机管理系统" value="EMS"/>
-                <el-option key="GCU" label="发电机控制器" value="GCU"/>
-                <el-option key="BMS" label="高压电池管理系统" value="BMS"/>
-                <el-option key="IBS" label="智能蓄电池管理系统" value="IBS"/>
-                <el-option key="ATC" label="自动温度控制器" value="ATC"/>
-                <el-option key="SCU" label="挡位控制单元" value="SCU"/>
-                <el-option key="RMC" label="后电机控制器" value="RMC"/>
-                <el-option key="FMC" label="前电机控制器" value="FMC"/>
-                <el-option key="IDCU" label="座舱域控制器" value="IDCU"/>
-                <el-option key="HUD" label="抬头显示" value="HUD"/>
-                <el-option key="AMP" label="功放" value="AMP"/>
-                <el-option key="TBOX" label="车联网模块" value="TBOX"/>
-                <el-option key="BTM" label="蓝牙模块" value="BTM"/>
-                <el-option key="SRR" label="短距毫米波雷达" value="SRR"/>
-                <el-option key="MRR" label="中距毫米波雷达" value="MRR"/>
-                <el-option key="PBOX" label="高精定位模块" value="PBOX"/>
-                <el-option key="ADCU" label="自动驾驶域控制器" value="ADCU"/>
-                <el-option key="LIDAR" label="激光雷达" value="LIDAR"/>
+            <el-form-item label="设备项" prop="deviceItem">
+              <el-select v-model="form.deviceItem" placeholder="设备项" style="width: 100%" clearable>
+                <el-option
+                  v-for="deviceItem in this.deviceItemList"
+                  :key="deviceItem.code"
+                  :label="deviceItem.code + '(' + deviceItem.label + ')'"
+                  :value="deviceItem.code"
+                />
               </el-select>
             </el-form-item>
           </el-col>
@@ -347,7 +319,7 @@
 </template>
 
 <script>
-import {addDevice, delDevice, getDevice, listDevice, updateDevice} from "@/api/completevehicle/vehicle/device";
+import {addDevice, delDevice, getDevice, listDevice, listAllDeviceItem, updateDevice} from "@/api/completevehicle/vehicle/device";
 
 export default {
   name: "Device",
@@ -368,6 +340,7 @@ export default {
       total: 0,
       // 表格数据
       list: [],
+      deviceItemList: [],
       // 弹出层标题
       title: "",
       // 是否显示弹出层
@@ -392,8 +365,8 @@ export default {
         type: [
           {required: true, message: "设备类型不能为空", trigger: "blur"}
         ],
-        ecuType: [
-          {required: true, message: "ECU类型不能为空", trigger: "blur"}
+        deviceItem: [
+          {required: true, message: "设备项不能为空", trigger: "blur"}
         ],
         funcDomain: [
           {required: true, message: "功能域不能为空", trigger: "blur"}
@@ -408,6 +381,7 @@ export default {
     };
   },
   created() {
+    this.getDeviceItemList();
     this.getList();
   },
   methods: {
@@ -420,6 +394,11 @@ export default {
           this.loading = false;
         }
       );
+    },
+    getDeviceItemList() {
+      listAllDeviceItem().then(response => {
+        this.deviceItemList = response.data;
+      })
     },
     /** 取消按钮 */
     cancel() {

@@ -9,6 +9,22 @@ export function listDevice(query) {
   })
 }
 
+// 查询所有设备项
+export function listAllDeviceItem() {
+  return request({
+    url: '/tsp-vmd/mpt/device/listAllDeviceItem',
+    method: 'get'
+  })
+}
+
+// 查询所有设备
+export function listAllDevice() {
+  return request({
+    url: '/tsp-vmd/mpt/device/listAllDevice',
+    method: 'get'
+  })
+}
+
 // 查询设备信息详细
 export function getDevice(deviceId) {
   return request({
