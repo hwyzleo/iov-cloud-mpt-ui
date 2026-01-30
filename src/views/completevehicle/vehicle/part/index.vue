@@ -35,6 +35,21 @@
           <el-option label="专用工具" value="P12"/>
         </el-select>
       </el-form-item>
+      <el-form-item label="设备" prop="deviceCode">
+        <el-select
+          v-model="queryParams.deviceCode"
+          placeholder="设备"
+          clearable
+          style="width: 250px"
+        >
+          <el-option
+            v-for="device in this.deviceList"
+            :key="device.code"
+            :label="device.code + '(' + device.label + ')'"
+            :value="device.code"
+          />
+        </el-select>
+      </el-form-item>
       <el-form-item label="创建时间">
         <el-date-picker
           v-model="dateRange"
@@ -124,6 +139,7 @@
         </template>
       </el-table-column>
       <el-table-column label="零件分类" prop="ffa" width="100" align="center"/>
+      <el-table-column label="设备代码" prop="deviceCode" width="100" align="center"/>
       <el-table-column label="操作" align="center" width="150" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
@@ -206,6 +222,21 @@
             </el-form-item>
           </el-col>
         </el-row>
+        <el-form-item label="设备" prop="deviceCode">
+          <el-select
+            v-model="form.deviceCode"
+            placeholder="设备"
+            clearable
+            style="width: 250px"
+          >
+            <el-option
+              v-for="device in this.deviceList"
+              :key="device.code"
+              :label="device.code + '(' + device.label + ')'"
+              :value="device.code"
+            />
+          </el-select>
+        </el-form-item>
         <el-form-item label="备注">
           <el-input v-model="form.description" type="textarea" placeholder="请输入内容"></el-input>
         </el-form-item>
@@ -220,6 +251,7 @@
 
 <script>
 import {addPart, delPart, getPart, listPart, updatePart} from "@/api/completevehicle/vehicle/part";
+import {listAllDevice} from "@/api/completevehicle/vehicle/device";
 
 export default {
   name: "Part",
@@ -240,6 +272,7 @@ export default {
       total: 0,
       // 表格数据
       list: [],
+      deviceList: [],
       // 弹出层标题
       title: "",
       // 是否显示弹出层
@@ -265,6 +298,7 @@ export default {
     };
   },
   created() {
+    this.getDeviceList();
     this.getList();
   },
   methods: {
@@ -275,6 +309,12 @@ export default {
           this.list = response.rows;
           this.total = response.total;
           this.loading = false;
+        }
+      );
+    },
+    getDeviceList() {
+      listAllDevice().then(response => {
+          this.deviceList = response.data;
         }
       );
     },
@@ -313,8 +353,7 @@ export default {
       this.reset();
       this.open = true;
       this.title = "添加零件信息";
-      this.form = {
-      };
+      this.form = {};
     },
     /** 修改按钮操作 */
     handleUpdate(row) {
