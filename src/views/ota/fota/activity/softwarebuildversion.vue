@@ -58,7 +58,7 @@
           <span>{{ scope.row.softwarePn + scope.row.softwarePartVer }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="ECU" prop="ecuCode" width="100"/>
+      <el-table-column label="设备" prop="deviceCode" width="100"/>
       <el-table-column label="软件内部版本" prop="softwareBuildVer" width="120"/>
       <el-table-column label="软件零件名称" prop="softwarePartName"/>
       <el-table-column label="软件来源" prop="softwareSource" width="120" align="center">
@@ -106,18 +106,18 @@
               @keyup.enter.native="handleQuerySoftwareBuildVersion"
             />
           </el-form-item>
-          <el-form-item label="ECU" prop="ecuCode">
+          <el-form-item label="设备" prop="deviceCode">
             <el-select
-              v-model="queryParamsSoftwareBuildVersion.ecuCode"
-              placeholder="ECU"
+              v-model="queryParamsSoftwareBuildVersion.deviceCode"
+              placeholder="设备"
               clearable
               style="width: 140px"
             >
               <el-option
-                v-for="ecu in ecuList"
-                :key="ecu.code"
-                :label="ecu.code + '(' + ecu.label + ')'"
-                :value="ecu.code"
+                v-for="device in deviceList"
+                :key="device.code"
+                :label="device.code + '(' + device.label + ')'"
+                :value="device.code"
               />
             </el-select>
           </el-form-item>
@@ -148,7 +148,7 @@
                   :data="softwareBuildVersionList"
                   @selection-change="handleSelectionChangeSoftwareBuildVersion">
           <el-table-column type="selection" width="55" align="center"/>
-          <el-table-column label="ECU" prop="ecuCode" width="100"/>
+          <el-table-column label="设备" prop="deviceCode" width="100"/>
           <el-table-column label="软件零件号" prop="softwarePn"/>
           <el-table-column label="软件零件版本" prop="softwarePartVer" width="120"/>
           <el-table-column label="测试报告" prop="softwareReport" width="80" align="center">
@@ -252,7 +252,7 @@ export default {
       total: 0,
       totalSoftwareBuildVersion: 0,
       list: [],
-      ecuList: [],
+      deviceList: [],
       groupList: [],
       activityStateList: [],
       softwareBuildVersionList: [],

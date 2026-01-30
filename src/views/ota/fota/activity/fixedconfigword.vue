@@ -18,7 +18,7 @@
               @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center"/>
       <el-table-column label="分类" prop="type" width="100" align="center"/>
-      <el-table-column label="ECU" prop="ecu" width="100" align="center"/>
+      <el-table-column label="设备" prop="deviceCode" width="100" align="center"/>
       <el-table-column label="软件零件号" prop="softwarePn" width="120"/>
       <el-table-column label="描述" prop="description"/>
       <el-table-column label="操作" align="center" width="200" class-name="small-padding fixed-width">
@@ -52,18 +52,18 @@
               @keyup.enter.native="handleQueryFixedConfigWord"
             />
           </el-form-item>
-          <el-form-item label="ECU" prop="ecu">
+          <el-form-item label="设备" prop="deviceCode">
             <el-select
-              v-model="queryParamsFixedConfigWord.ecu"
-              placeholder="ECU"
+              v-model="queryParamsFixedConfigWord.deviceCode"
+              placeholder="设备"
               clearable
               style="width: 200px"
             >
               <el-option
-                v-for="ecu in ecuList"
-                :key="ecu.code"
-                :label="ecu.code + '(' + ecu.label + ')'"
-                :value="ecu.code"
+                v-for="device in deviceList"
+                :key="device.code"
+                :label="device.code + '(' + device.label + ')'"
+                :value="device.code"
               />
             </el-select>
           </el-form-item>
@@ -96,7 +96,7 @@
                   @selection-change="handleSelectionChangeFixedConfigWord">
           <el-table-column type="selection" width="55" align="center"/>
           <el-table-column label="类型" prop="type" width="100"/>
-          <el-table-column label="ECU" prop="ecu" width="100"/>
+          <el-table-column label="设备" prop="deviceCode" width="100"/>
           <el-table-column label="软件零件号" prop="softwarePn" width="120"/>
           <el-table-column label="描述" prop="description"/>
           <el-table-column label="创建时间" align="center" prop="createTime" width="180">
@@ -140,7 +140,7 @@ import {
   listActivityFixedConfigWord,
 } from "@/api/ota/fota/activity";
 import {listFixedConfigWord} from "@/api/ota/baseline/fixedconfigword";
-import {listAllEcu} from "@/api/ota/baseline/ecu";
+import {listAllDevice} from "@/api/completevehicle/vehicle/device";
 
 export default {
   name: "ActivityFixedConfigWord",
@@ -166,7 +166,7 @@ export default {
       total: 0,
       totalFixedConfigWord: 0,
       list: [],
-      ecuList: [],
+      deviceList: [],
       fixedConfigWordList: [],
       // 弹出层标题
       title: "",
@@ -192,7 +192,7 @@ export default {
   },
   created() {
     this.activityId = this.$route.query.id;
-    this.getEcuList();
+    this.getDeviceList();
     this.getList();
   },
   methods: {
@@ -203,9 +203,9 @@ export default {
         this.loading = false;
       });
     },
-    getEcuList() {
-      listAllEcu().then(response => {
-          this.ecuList = response.data;
+    getDeviceList() {
+      listAllDevice().then(response => {
+          this.deviceList = response.data;
         }
       );
     },

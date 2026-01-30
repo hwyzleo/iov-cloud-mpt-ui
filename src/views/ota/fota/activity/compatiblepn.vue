@@ -22,7 +22,7 @@
           <span>{{ scope.row.type === 1 ? '软件零件号' : '硬件零件号' }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="ECU" prop="ecu" width="100" align="center"/>
+      <el-table-column label="设备" prop="deviceCode" width="100" align="center"/>
       <el-table-column label="零件号" prop="pn" width="120"/>
       <el-table-column label="兼容零件号" prop="compatiblePn"/>
       <el-table-column label="描述" prop="description" width="120"/>
@@ -57,18 +57,18 @@
               @keyup.enter.native="handleQueryCompatiblePn"
             />
           </el-form-item>
-          <el-form-item label="ECU" prop="ecu">
+          <el-form-item label="设备" prop="deviceCode">
             <el-select
-              v-model="queryParamsCompatiblePn.ecu"
-              placeholder="ECU"
+              v-model="queryParamsCompatiblePn.deviceCode"
+              placeholder="设备"
               clearable
               style="width: 200px"
             >
               <el-option
-                v-for="ecu in ecuList"
-                :key="ecu.code"
-                :label="ecu.code + '(' + ecu.label + ')'"
-                :value="ecu.code"
+                v-for="device in deviceList"
+                :key="device.code"
+                :label="device.code + '(' + device.label + ')'"
+                :value="device.code"
               />
             </el-select>
           </el-form-item>
@@ -100,7 +100,7 @@
                   @selection-change="handleSelectionChangeCompatiblePn">
           <el-table-column type="selection" width="55" align="center"/>
           <el-table-column label="类型" prop="type" width="100"/>
-          <el-table-column label="ECU" prop="ecu" width="100"/>
+          <el-table-column label="设备" prop="deviceCode" width="100"/>
           <el-table-column label="零件号" prop="pn" width="120"/>
           <el-table-column label="兼容零件号" prop="compatiblePn"/>
           <el-table-column label="描述" prop="description" width="150"/>
@@ -146,7 +146,7 @@ import {
   regroupSoftwareBuildVersion,
 } from "@/api/ota/fota/activity";
 import {listCompatiblePn} from "@/api/ota/baseline/compatiblepn";
-import {listAllEcu} from "@/api/ota/baseline/ecu";
+import {listAllDevice} from "@/api/completevehicle/vehicle/device";
 
 export default {
   name: "ActivityCompatiblePn",
@@ -172,7 +172,7 @@ export default {
       total: 0,
       totalCompatiblePn: 0,
       list: [],
-      ecuList: [],
+      deviceList: [],
       compatiblePnList: [],
       // 弹出层标题
       title: "",
@@ -198,7 +198,7 @@ export default {
   },
   created() {
     this.activityId = this.$route.query.id;
-    this.getEcuList();
+    this.getDeviceList();
     this.getList();
   },
   methods: {
@@ -209,9 +209,9 @@ export default {
         this.loading = false;
       });
     },
-    getEcuList() {
-      listAllEcu().then(response => {
-          this.ecuList = response.data;
+    getDeviceList() {
+      listAllDevice().then(response => {
+          this.deviceList = response.data;
         }
       );
     },

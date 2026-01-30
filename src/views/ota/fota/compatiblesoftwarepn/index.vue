@@ -10,18 +10,18 @@
         >
         </el-select>
       </el-form-item>
-      <el-form-item label="ECU设备" prop="ecu">
+      <el-form-item label="设备" prop="deviceCode">
         <el-select
-          v-model="queryParams.ecu"
-          placeholder="ECU设备"
+          v-model="queryParams.deviceCode"
+          placeholder="设备"
           clearable
           style="width: 250px"
         >
           <el-option
-            v-for="ecu in this.ecuList"
-            :key="ecu.code"
-            :label="ecu.code + '(' + ecu.label + ')'"
-            :value="ecu.code"
+            v-for="device in this.deviceList"
+            :key="device.code"
+            :label="device.code + '(' + device.label + ')'"
+            :value="device.code"
           />
         </el-select>
       </el-form-item>
@@ -94,7 +94,7 @@
 
     <el-table v-loading="loading" :data="list" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center"/>
-      <el-table-column label="ECU设备" prop="ecu" width="200"/>
+      <el-table-column label="设备" prop="deviceCode" width="200"/>
       <el-table-column label="软件零件号" prop="softwarePn" width="150"/>
       <el-table-column label="兼容软件零件号" prop="compatibleSoftwarePn" />
       <el-table-column label="分类" prop="type" width="150" align="center">
@@ -138,18 +138,18 @@
     <!-- 添加或修改对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="800px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="140px">
-        <el-form-item label="ECU设备" prop="ecu">
+        <el-form-item label="设备" prop="deviceCode">
           <el-select
-            v-model="form.ecu"
-            placeholder="ECU设备"
+            v-model="form.deviceCode"
+            placeholder="设备"
             style="width: 250px"
             clearable
           >
             <el-option
-              v-for="ecu in this.ecuList"
-              :key="ecu.code"
-              :label="ecu.code + '(' + ecu.label + ')'"
-              :value="ecu.code"
+              v-for="device in this.deviceList"
+              :key="device.code"
+              :label="device.code + '(' + device.label + ')'"
+              :value="device.code"
             />
           </el-select>
         </el-form-item>
@@ -188,8 +188,8 @@ import {
   updateCompatibleSoftwarePn,
 } from "@/api/ota/fota/compatiblesoftwarepn";
 import {
-  listAllEcu
-} from "@/api/ota/baseline/ecu";
+  listAllDevice
+} from "@/api/completevehicle/vehicle/device";
 
 export default {
   name: "CompatibleSoftwarePn",
@@ -225,8 +225,8 @@ export default {
       form: {},
       // 表单校验
       rules: {
-        ecu: [
-          {required: true, message: "ECU设备不能为空", trigger: "blur"}
+        deviceCode: [
+          {required: true, message: "设备不能为空", trigger: "blur"}
         ],
         softwarePn: [
           {required: true, message: "软件零件号不能为空", trigger: "blur"}
@@ -235,11 +235,11 @@ export default {
           {required: true, message: "兼容软件零件号不能为空", trigger: "blur"}
         ]
       },
-      ecuList: [],
+      deviceList: [],
     };
   },
   created() {
-    this.getAllEcuList();
+    this.getAllDeviceList();
     this.getList();
   },
   methods: {
@@ -253,9 +253,9 @@ export default {
         }
       );
     },
-    getAllEcuList() {
-      listAllEcu().then(response => {
-          this.ecuList = response.data;
+    getAllDeviceList() {
+      listAllDevice().then(response => {
+          this.deviceList = response.data;
         }
       );
     },

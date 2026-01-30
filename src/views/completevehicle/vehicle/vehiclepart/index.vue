@@ -92,7 +92,7 @@
       <el-table-column label="车架号" prop="vin" width="170"/>
       <el-table-column label="序列号" prop="sn" />
       <el-table-column label="设备代码" prop="deviceCode" width="100" align="center" />
-      <el-table-column label="ECU类型" prop="ecuType" width="100" align="center" />
+      <el-table-column label="设备" prop="deviceCode" width="100" align="center" />
       <el-table-column label="软件版本" prop="softwareVer" width="150" align="center" />
       <el-table-column label="绑定时间" prop="bindTime" width="160" align="center">
         <template slot-scope="scope">

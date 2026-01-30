@@ -220,7 +220,7 @@ export default {
       queryParamsSoftwarePackage: {
         pageNum: 1,
         pageSize: 10,
-        ecuCode: undefined,
+        deviceCode: undefined,
         softwarePn: undefined
       },
       // 表单参数
@@ -233,7 +233,7 @@ export default {
   created() {
     this.softwareBuildVersionId = this.$route.query.id;
     getSoftwareBuildVersion(this.softwareBuildVersionId).then(response => {
-      this.queryParamsSoftwarePackage.ecuCode = response.data.ecuCode;
+      this.queryParamsSoftwarePackage.deviceCode = response.data.deviceCode;
       this.queryParamsSoftwarePackage.softwarePn = response.data.softwarePn;
     });
     this.getList();

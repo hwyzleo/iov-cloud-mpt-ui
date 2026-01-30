@@ -37,7 +37,7 @@
     <el-table v-loading="loading" :data="list"
               @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center"/>
-      <el-table-column label="ECU" prop="ecuCode" width="100"/>
+      <el-table-column label="设备" prop="deviceCode" width="100"/>
       <el-table-column label="软件零件号" prop="softwarePn" width="150">
         <template slot-scope="scope">
           <span>{{ scope.row.softwarePn + scope.row.softwarePartVer }}</span>
@@ -122,7 +122,7 @@
         <el-table ref="dependencyTable" v-loading="loadingDependency" :data="dependencyList"
                   @selection-change="handleSelectionChangeDependency">
           <el-table-column type="selection" width="55" align="center" :selectable="checkSelectable"/>
-          <el-table-column label="ECU" prop="ecuCode" width="100"/>
+          <el-table-column label="设备" prop="deviceCode" width="100"/>
           <el-table-column label="软件零件号" prop="softwarePn"/>
           <el-table-column label="软件零件版本" prop="softwarePartVer" width="120"/>
           <el-table-column label="测试报告" prop="softwareReport" width="80" align="center">
