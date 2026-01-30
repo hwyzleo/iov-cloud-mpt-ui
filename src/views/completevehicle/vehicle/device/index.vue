@@ -175,7 +175,7 @@
           <el-input v-model="form.nameEn" placeholder="请输入设备英文名称"/>
         </el-form-item>
         <el-row>
-          <el-col :span="8">
+          <el-col :span="12">
             <el-form-item label="功能域" prop="funcDomain">
               <el-select v-model="form.funcDomain" placeholder="功能域" style="width: 100%" clearable>
                 <el-option key="CONNECT" label="网联域" value="CONNECT"/>
@@ -187,7 +187,7 @@
               </el-select>
             </el-form-item>
           </el-col>
-          <el-col :span="8">
+          <el-col :span="12">
             <el-form-item label="设备类型" prop="type">
               <el-select v-model="form.type" placeholder="设备类型" style="width: 100%" clearable>
                 <el-option key="DOMAIN" label="域控" value="DOMAIN"/>
@@ -197,13 +197,37 @@
               </el-select>
             </el-form-item>
           </el-col>
+        </el-row>
+        <el-row>
           <el-col :span="8">
             <el-form-item label="OTA支持类型" prop="otaSupport">
-              <el-select v-model="form.otaSupport" placeholder="OTA支持类型" style="width: 100%" clearable>
+              <el-select v-model="form.otaSupport" placeholder="OTA支持类型" style="width: 100%" clearable @change="handleOtaSupportChange">
                 <el-option key="NO_OTA" label="不支持" value="NO_OTA"/>
                 <el-option key="FOTA" label="固件升级" value="FOTA"/>
                 <el-option key="SOTA" label="软件升级" value="SOTA"/>
                 <el-option key="FOTA_SOTA" label="固件+软件升级" value="FOTA_SOTA"/>
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="8" v-if="form.otaSupport && form.otaSupport !== 'NO_OTA'">
+            <el-form-item label="分区类型" prop="partitionType">
+              <el-select v-model="form.partitionType" placeholder="分区类型" style="width: 100%" clearable>
+                <el-option key="SINGLE" label="单分区" value="SINGLE"/>
+                <el-option key="AB" label="AB分区" value="AB"/>
+                <el-option key="MULTI" label="多分区" value="MULTI"/>
+                <el-option key="DIFF" label="差分分区" value="DIFF"/>
+                <el-option key="VIRTUAL" label="虚拟分区" value="VIRTUAL"/>
+                <el-option key="BOOT_APP" label="引导应用分离分区" value="BOOT_APP"/>
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="8" v-if="form.otaSupport && form.otaSupport !== 'NO_OTA'">
+            <el-form-item label="解闭锁安全件" prop="lockUnlockSecurityComponent">
+              <el-select v-model="form.lockUnlockSecurityComponent" placeholder="解闭锁安全件" style="width: 100%" clearable>
+                <el-option :key="0" label="无" :value="0"/>
+                <el-option :key="1" label="包含解锁安全件" :value="1"/>
+                <el-option :key="2" label="包含闭锁安全件" :value="2"/>
+                <el-option :key="3" label="包含解/闭锁安全件" :value="3"/>
               </el-select>
             </el-form-item>
           </el-col>
@@ -486,6 +510,12 @@ export default {
       this.download('tsp-vmd/device/export', {
         ...this.queryParams
       }, `device_${new Date().getTime()}.xlsx`)
+    },
+    handleOtaSupportChange(val) {
+      if(val === 'NO_OTA') {
+        this.form.partitionType = undefined;
+        this.form.lockUnlockSecurityComponent = undefined;
+      }
     }
   }
 };

@@ -139,7 +139,7 @@ import {
   delActivityFixedConfigWord,
   listActivityFixedConfigWord,
 } from "@/api/ota/fota/activity";
-import {listFixedConfigWord} from "@/api/ota/baseline/fixedconfigword";
+import {listFixedConfigWord} from "@/api/ota/pota/fixedconfigword";
 import {listAllDevice} from "@/api/completevehicle/vehicle/device";
 
 export default {

@@ -38,11 +38,7 @@
               @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center"/>
       <el-table-column label="设备" prop="deviceCode" width="100"/>
-      <el-table-column label="软件零件号" prop="softwarePn" width="150">
-        <template slot-scope="scope">
-          <span>{{ scope.row.softwarePn + scope.row.softwarePartVer }}</span>
-        </template>
-      </el-table-column>
+      <el-table-column label="软件零件号" prop="softwarePn" width="150"/>
       <el-table-column label="软件内部版本" prop="softwareBuildVer" width="120"/>
       <el-table-column label="适配级别" prop="adaptiveLevel" width="150" align="center">
         <template slot-scope="scope">
@@ -58,8 +54,8 @@
           </el-select>
         </template>
       </el-table-column>
-      <el-table-column label="适配的总成硬件零件号" prop="adaptiveHardwarePn" width="200"/>
-      <el-table-column label="适配的总成软件零件号" prop="adaptiveSoftwarePn"/>
+      <el-table-column label="适配的总成零件号" prop="adaptiveAssemblyPn" width="200"/>
+      <el-table-column label="适配的软件零件号" prop="adaptiveSoftwarePn"/>
       <el-table-column label="发布日期" align="center" prop="releaseDate" width="120">
         <template slot-scope="scope">
           <span>{{ parseTime(scope.row.releaseDate, '{y}-{m}-{d}') }}</span>
@@ -124,7 +120,7 @@
           <el-table-column type="selection" width="55" align="center" :selectable="checkSelectable"/>
           <el-table-column label="设备" prop="deviceCode" width="100"/>
           <el-table-column label="软件零件号" prop="softwarePn"/>
-          <el-table-column label="软件零件版本" prop="softwarePartVer" width="120"/>
+          <el-table-column label="软件内部版本" prop="softwareBuildVer" width="120"/>
           <el-table-column label="测试报告" prop="softwareReport" width="80" align="center">
             <template slot-scope="scope">
               <span>{{ scope.row.softwareReport && scope.row.softwareReport.trim() ? '已上传' : '未上传' }}</span>
@@ -135,8 +131,8 @@
               <span>{{ scope.row.softwareSource === 1 ? 'BOM' : 'OTA' }}</span>
             </template>
           </el-table-column>
-          <el-table-column label="适配的总成硬件零件号" prop="adaptiveHardwarePn" width="150"/>
-          <el-table-column label="适配的总成软件零件号" prop="adaptiveSoftwarePn" width="150"/>
+          <el-table-column label="适配的总成零件号" prop="adaptiveAssemblyPn" width="150"/>
+          <el-table-column label="适配的软件零件号" prop="adaptiveSoftwarePn" width="150"/>
           <el-table-column label="发布日期" align="center" prop="releaseDate" width="120">
             <template slot-scope="scope">
               <span>{{ parseTime(scope.row.releaseDate, '{y}-{m}-{d}') }}</span>
@@ -149,8 +145,8 @@
                 type="text"
                 icon="el-icon-edit"
                 @click="handleAddSoftwareBuildVersionDependency(scope.row)"
-                v-hasPermi="['ota:baseline:softwareBuildVersion:edit']"
-                v-show="!checkSelectable"
+                v-hasPermi="['ota:pota:softwareBuildVersion:edit']"
+                v-show="checkSelectable(scope.row)"
               >添加依赖
               </el-button>
             </template>
@@ -179,7 +175,7 @@ import {
   listSoftwareBuildVersion,
   listSoftwareBuildVersionDependency,
   updateSoftwareBuildVersionDependency
-} from "@/api/ota/baseline/softwarebuildversion";
+} from "@/api/ota/pota/softwarebuildversion";
 
 export default {
   name: "SoftwareBuildVersionDependency",

@@ -38,14 +38,11 @@
       <el-table-column label="软件包名称" prop="packageName"/>
       <el-table-column label="软件包类型" prop="packageType" width="100" align="center">
         <template slot-scope="scope">
-          <span>{{ scope.row.packageType === 1 ? '全量' : '差分' }}</span>
+          <span v-if="scope.row.packageType==='FULL'">全量</span>
+          <span v-if="scope.row.packageType==='DIFF'">差分</span>
         </template>
       </el-table-column>
-      <el-table-column label="软件包来源" prop="packageSource" width="100" align="center">
-        <template slot-scope="scope">
-          <span>{{ scope.row.packageSource === 1 ? 'BOM' : 'OTA' }}</span>
-        </template>
-      </el-table-column>
+      <el-table-column label="软件包来源" prop="packageSource" width="100" align="center" />
       <el-table-column label="基础软件零件号" prop="baseSoftwarePn" width="150"/>
       <el-table-column label="基础软件版本" prop="baseSoftwareVer" width="150"/>
       <el-table-column label="适配级别" prop="packageAdaptiveLevel" width="150" align="center">
@@ -56,7 +53,7 @@
           <span v-else>未知</span>
         </template>
       </el-table-column>
-      <el-table-column label="是否是OTA包" prop="ota" width="120" align="center">
+      <el-table-column label="是否OTA包" prop="ota" width="120" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.ota ? '是' : '否' }}</span>
         </template>
@@ -120,16 +117,12 @@
           <el-table-column label="软件包名称" prop="packageName"/>
           <el-table-column label="软件包类型" prop="packageType" width="100" align="center">
             <template slot-scope="scope">
-              <span>{{ scope.row.packageType === 1 ? '全量' : '差分' }}</span>
+              <span v-if="scope.row.packageType==='FULL'">全量</span>
+              <span v-if="scope.row.packageType==='DIFF'">差分</span>
             </template>
           </el-table-column>
-          <el-table-column label="软件包来源" prop="packageSource" width="100" align="center">
-            <template slot-scope="scope">
-              <span>{{ scope.row.packageSource === 1 ? 'BOM' : 'OTA' }}</span>
-            </template>
-          </el-table-column>
+          <el-table-column label="软件包来源" prop="packageSource" width="100" align="center" />
           <el-table-column label="基础软件零件号" prop="baseSoftwarePn" width="150"/>
-          <el-table-column label="基础软件版本" prop="baseSoftwareVer" width="150"/>
           <el-table-column label="适配级别" prop="packageAdaptiveLevel" width="150" align="center">
             <template slot-scope="scope">
               <span v-if="scope.row.packageAdaptiveLevel === 1">基础版本及以下</span>
@@ -138,7 +131,7 @@
               <span v-else>未知</span>
             </template>
           </el-table-column>
-          <el-table-column label="是否是OTA包" prop="ota" width="120" align="center">
+          <el-table-column label="是否OTA包" prop="ota" width="120" align="center">
             <template slot-scope="scope">
               <span>{{ scope.row.ota ? '是' : '否' }}</span>
             </template>
@@ -150,7 +143,7 @@
                 type="text"
                 icon="el-icon-edit"
                 @click="handleAddSoftwareBuildVersionPackage(scope.row)"
-                v-hasPermi="['ota:baseline:softwareBuildVersion:edit']"
+                v-hasPermi="['ota:pota:softwareBuildVersion:edit']"
               >关联
               </el-button>
             </template>
@@ -178,8 +171,8 @@ import {
   delSoftwareBuildVersionPackage,
   getSoftwareBuildVersion,
   listSoftwareBuildVersionPackage,
-} from "@/api/ota/baseline/softwarebuildversion";
-import {listSoftwarePackage} from "@/api/ota/baseline/softwarepackage";
+} from "@/api/ota/pota/softwarebuildversion";
+import {listSoftwarePackage} from "@/api/ota/pota/softwarepackage";
 
 export default {
   name: "SoftwareBuildVersionPackage",

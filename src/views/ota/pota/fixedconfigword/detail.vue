@@ -143,8 +143,8 @@ import {
   getConfigWord,
   listConfigWord,
   updateConfigWord,
-} from "@/api/ota/baseline/fixedconfigword";
-import {getFixedConfigWord,} from "@/api/ota/baseline/fixedconfigword";
+} from "@/api/ota/pota/fixedconfigword";
+import {getFixedConfigWord,} from "@/api/ota/pota/fixedconfigword";
 
 export default {
   name: "FixedConfigWordDetail",

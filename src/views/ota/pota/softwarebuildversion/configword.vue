@@ -132,7 +132,7 @@ import {
   getSoftwareBuildVersion, getSoftwareBuildVersionConfigWord,
   listSoftwareBuildVersionConfigWord,
   updateSoftwareBuildVersionConfigWord,
-} from "@/api/ota/baseline/softwarebuildversion";
+} from "@/api/ota/pota/softwarebuildversion";
 
 export default {
   name: "SoftwareBuildVersionConfigWord",

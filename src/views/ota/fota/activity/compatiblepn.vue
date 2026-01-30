@@ -145,7 +145,7 @@ import {
   listActivityCompatiblePn,
   regroupSoftwareBuildVersion,
 } from "@/api/ota/fota/activity";
-import {listCompatiblePn} from "@/api/ota/baseline/compatiblepn";
+import {listCompatiblePn} from "@/api/ota/pota/compatiblepn";
 import {listAllDevice} from "@/api/completevehicle/vehicle/device";
 
 export default {

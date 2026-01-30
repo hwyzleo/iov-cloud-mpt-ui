@@ -225,7 +225,7 @@ import {
   regroupSoftwareBuildVersion,
   resortSoftwareBuildVersion
 } from "@/api/ota/fota/activity";
-import {listSoftwareBuildVersion} from "@/api/ota/baseline/softwarebuildversion";
+import {listSoftwareBuildVersion} from "@/api/ota/pota/softwarebuildversion";
 import Sortable from 'sortablejs'
 
 export default {

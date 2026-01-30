@@ -3,7 +3,7 @@ import request from '@/utils/request'
 // 查询软件包信息列表
 export function listSoftwarePackage(query) {
   return request({
-    url: '/ota-baseline/mpt/softwarePackage/list',
+    url: '/ota-pota/mpt/softwarePackage/list',
     method: 'get',
     params: query
   })
@@ -12,7 +12,7 @@ export function listSoftwarePackage(query) {
 // 查询软件包信息详细
 export function getSoftwarePackage(softwarePackageId) {
   return request({
-    url: '/ota-baseline/mpt/softwarePackage/' + softwarePackageId,
+    url: '/ota-pota/mpt/softwarePackage/' + softwarePackageId,
     method: 'get'
   })
 }
@@ -20,7 +20,7 @@ export function getSoftwarePackage(softwarePackageId) {
 // 新增软件包信息
 export function addSoftwarePackage(data) {
   return request({
-    url: '/ota-baseline/mpt/softwarePackage',
+    url: '/ota-pota/mpt/softwarePackage',
     method: 'post',
     data: data
   })
@@ -29,7 +29,7 @@ export function addSoftwarePackage(data) {
 // 修改软件包信息
 export function updateSoftwarePackage(data) {
   return request({
-    url: '/ota-baseline/mpt/softwarePackage',
+    url: '/ota-pota/mpt/softwarePackage',
     method: 'put',
     data: data
   })
@@ -38,7 +38,7 @@ export function updateSoftwarePackage(data) {
 // 删除软件包信息
 export function delSoftwarePackage(softwarePackageIds) {
   return request({
-    url: '/ota-baseline/mpt/softwarePackage/' + softwarePackageIds,
+    url: '/ota-pota/mpt/softwarePackage/' + softwarePackageIds,
     method: 'delete'
   })
 }

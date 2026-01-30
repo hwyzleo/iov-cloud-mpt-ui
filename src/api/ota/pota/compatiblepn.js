@@ -3,7 +3,7 @@ import request from '@/utils/request'
 // 查询兼容零件号列表
 export function listCompatiblePn(query) {
   return request({
-    url: '/ota-baseline/mpt/compatiblePn/list',
+    url: '/ota-pota/mpt/compatiblePn/list',
     method: 'get',
     params: query
   })
@@ -12,7 +12,7 @@ export function listCompatiblePn(query) {
 // 查询兼容零件号详细
 export function getCompatiblePn(compatiblePnId) {
   return request({
-    url: '/ota-baseline/mpt/compatiblePn/' + compatiblePnId,
+    url: '/ota-pota/mpt/compatiblePn/' + compatiblePnId,
     method: 'get'
   })
 }
@@ -20,7 +20,7 @@ export function getCompatiblePn(compatiblePnId) {
 // 新增兼容零件号
 export function addCompatiblePn(data) {
   return request({
-    url: '/ota-baseline/mpt/compatiblePn',
+    url: '/ota-pota/mpt/compatiblePn',
     method: 'post',
     data: data
   })
@@ -29,7 +29,7 @@ export function addCompatiblePn(data) {
 // 修改兼容零件号
 export function updateCompatiblePn(data) {
   return request({
-    url: '/ota-baseline/mpt/compatiblePn',
+    url: '/ota-pota/mpt/compatiblePn',
     method: 'put',
     data: data
   })
@@ -38,7 +38,7 @@ export function updateCompatiblePn(data) {
 // 删除兼容零件号
 export function delCompatiblePn(compatiblePnIds) {
   return request({
-    url: '/ota-baseline/mpt/compatiblePn/' + compatiblePnIds,
+    url: '/ota-pota/mpt/compatiblePn/' + compatiblePnIds,
     method: 'delete'
   })
 }
