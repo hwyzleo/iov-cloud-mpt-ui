@@ -83,7 +83,7 @@
       <el-table-column label="软件包类型" prop="packageType" width="100" align="center">
         <template slot-scope="scope">
           <span v-if="scope.row.packageType==='FULL'">全量</span>
-          <span v-if="scope.row.packageType==='DIFF'">差分</span>
+          <span v-if="scope.row.packageType==='DELTA'">差分</span>
         </template>
       </el-table-column>
       <el-table-column label="软件包来源" prop="packageSource" width="100" align="center"/>
@@ -204,7 +204,7 @@
                 style="width: 100%"
               >
                 <el-option key="FULL" label="全量" value="FULL" />
-                <el-option key="DIFF" label="差分" value="DIFF" />
+                <el-option key="DELTA" label="差分" value="DELTA" />
               </el-select>
             </el-form-item>
           </el-col>

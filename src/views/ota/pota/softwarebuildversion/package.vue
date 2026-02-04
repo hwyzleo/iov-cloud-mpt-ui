@@ -39,7 +39,7 @@
       <el-table-column label="软件包类型" prop="packageType" width="100" align="center">
         <template slot-scope="scope">
           <span v-if="scope.row.packageType==='FULL'">全量</span>
-          <span v-if="scope.row.packageType==='DIFF'">差分</span>
+          <span v-if="scope.row.packageType==='DELTA'">差分</span>
         </template>
       </el-table-column>
       <el-table-column label="软件包来源" prop="packageSource" width="100" align="center" />
@@ -118,7 +118,7 @@
           <el-table-column label="软件包类型" prop="packageType" width="100" align="center">
             <template slot-scope="scope">
               <span v-if="scope.row.packageType==='FULL'">全量</span>
-              <span v-if="scope.row.packageType==='DIFF'">差分</span>
+              <span v-if="scope.row.packageType==='DELTA'">差分</span>
             </template>
           </el-table-column>
           <el-table-column label="软件包来源" prop="packageSource" width="100" align="center" />

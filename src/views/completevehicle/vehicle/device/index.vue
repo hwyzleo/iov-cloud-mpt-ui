@@ -215,7 +215,7 @@
                 <el-option key="SINGLE" label="单分区" value="SINGLE"/>
                 <el-option key="AB" label="AB分区" value="AB"/>
                 <el-option key="MULTI" label="多分区" value="MULTI"/>
-                <el-option key="DIFF" label="差分分区" value="DIFF"/>
+                <el-option key="DELTA" label="差分分区" value="DELTA"/>
                 <el-option key="VIRTUAL" label="虚拟分区" value="VIRTUAL"/>
                 <el-option key="BOOT_APP" label="引导应用分离分区" value="BOOT_APP"/>
               </el-select>
