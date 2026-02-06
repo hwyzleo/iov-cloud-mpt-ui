@@ -115,12 +115,12 @@
 
     <el-table v-loading="loading" :data="basicModelList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center"/>
-      <el-table-column label="平台代码" prop="platformCode" width="80"/>
-      <el-table-column label="车系代码" prop="seriesCode" width="80"/>
-      <el-table-column label="车型代码" prop="modelCode" width="80"/>
-      <el-table-column label="基础车型代码" prop="code" width="100"/>
-      <el-table-column label="基础车型名称" prop="name" />
-      <el-table-column label="基础车型英文名称" prop="nameEn" width="170"/>
+      <el-table-column label="平台代码" prop="platformCode" width="80" align="center"/>
+      <el-table-column label="车系代码" prop="seriesCode" width="80" align="center"/>
+      <el-table-column label="车型代码" prop="modelCode" width="80" align="center"/>
+      <el-table-column label="基础车型代码" prop="code" width="120" align="center"/>
+      <el-table-column label="基础车型名称" prop="name" width="200" />
+      <el-table-column label="基础车型英文名称" prop="nameEn"/>
       <el-table-column label="是否启用" align="center" width="100">
         <template slot-scope="scope">
           <el-switch
