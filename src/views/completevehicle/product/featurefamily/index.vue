@@ -19,6 +19,18 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
+      <el-form-item label="特征族分类" prop="type">
+        <el-select v-model="queryParams.type" placeholder="特征族分类" clearable>
+          <el-option key="BASIC" label="基础平台" value="BASIC"/>
+          <el-option key="POWERTRAIN" label="三电&动力" value="POWERTRAIN"/>
+          <el-option key="CHASSIS" label="底盘&制动&转向" value="CHASSIS"/>
+          <el-option key="ADAS" label="智驾" value="ADAS"/>
+          <el-option key="EE" label="车机&网联&EE" value="EE"/>
+          <el-option key="COCKPIT" label="座舱&舒适" value="COCKPIT"/>
+          <el-option key="EXTERIOR" label="外饰&功能" value="EXTERIOR"/>
+          <el-option key="SAFE" label="法规&安全" value="SAFE"/>
+        </el-select>
+      </el-form-item>
       <el-form-item label="创建时间">
         <el-date-picker
           v-model="dateRange"
@@ -89,9 +101,10 @@
     <el-table v-loading="loading" :data="list" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center"/>
       <el-table-column label="特征族代码" prop="code" width="100" align="center"/>
-      <el-table-column label="特征族名称" prop="name"/>
+      <el-table-column label="特征族名称" prop="name" width="180"/>
       <el-table-column label="特征族英文名称" prop="nameEn"/>
-      <el-table-column label="是否启用" align="center" width="100">
+      <el-table-column label="特征族分类" prop="type" width="120" align="center"/>
+      <el-table-column label="是否启用" align="center" width="80">
         <template slot-scope="scope">
           <el-switch
             v-model="scope.row.enable"
@@ -101,9 +114,9 @@
         </template>
       </el-table-column>
       <el-table-column label="排序" prop="sort" align="center" width="60"/>
-      <el-table-column label="创建时间" align="center" prop="createTime" width="160">
+      <el-table-column label="创建时间" align="center" prop="createTime" width="140">
         <template slot-scope="scope">
-          <span>{{ parseTime(scope.row.createTime) }}</span>
+          <span>{{ parseTime(scope.row.createTime, '{y}-{m}-{d} {h}:{i}') }}</span>
         </template>
       </el-table-column>
       <el-table-column label="操作" align="center" width="180" class-name="small-padding fixed-width">
@@ -154,6 +167,18 @@
         </el-form-item>
         <el-form-item label="特征族英文名称" prop="nameEn">
           <el-input v-model="form.nameEn" placeholder="请输入特征族英文名称"/>
+        </el-form-item>
+        <el-form-item label="特征族分类" prop="type">
+          <el-select v-model="form.type" placeholder="特征族分类" clearable>
+            <el-option key="BASIC" label="基础平台" value="BASIC"/>
+            <el-option key="POWERTRAIN" label="三电&动力" value="POWERTRAIN"/>
+            <el-option key="CHASSIS" label="底盘&制动&转向" value="CHASSIS"/>
+            <el-option key="ADAS" label="智驾" value="ADAS"/>
+            <el-option key="EE" label="车机&网联&EE" value="EE"/>
+            <el-option key="COCKPIT" label="座舱&舒适" value="COCKPIT"/>
+            <el-option key="EXTERIOR" label="外饰&功能" value="EXTERIOR"/>
+            <el-option key="SAFE" label="法规&安全" value="SAFE"/>
+          </el-select>
         </el-form-item>
         <el-form-item label="状态">
           <el-radio-group v-model="form.enable">

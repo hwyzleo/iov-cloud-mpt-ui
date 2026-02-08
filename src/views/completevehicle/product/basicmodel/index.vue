@@ -119,7 +119,7 @@
       <el-table-column label="车系代码" prop="seriesCode" width="80" align="center"/>
       <el-table-column label="车型代码" prop="modelCode" width="80" align="center"/>
       <el-table-column label="基础车型代码" prop="code" width="120" align="center"/>
-      <el-table-column label="基础车型名称" prop="name" width="200" />
+      <el-table-column label="基础车型名称" prop="name" />
       <el-table-column label="基础车型英文名称" prop="nameEn"/>
       <el-table-column label="是否启用" align="center" width="100">
         <template slot-scope="scope">
@@ -136,7 +136,7 @@
           <span>{{ parseTime(scope.row.createTime) }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="操作" align="center" width="150" class-name="small-padding fixed-width">
+      <el-table-column label="操作" align="center" width="160" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
             size="mini"
@@ -145,6 +145,14 @@
             @click="handleUpdate(scope.row)"
             v-hasPermi="['completeVehicle:product:basicModel:edit']"
           >修改
+          </el-button>
+          <el-button
+            size="mini"
+            type="text"
+            icon="el-icon-edit"
+            @click="handleCode(scope.row)"
+            v-hasPermi="['completeVehicle:product:basicModel:edit']"
+          >特征值
           </el-button>
           <el-button
             size="mini"
@@ -479,7 +487,13 @@ export default {
       this.download('tsp-vmd/mpt/basicModel/export', {
         ...this.queryParams
       }, `basic_model_${new Date().getTime()}.xlsx`)
-    }
+    },
+    handleCode(row) {
+      this.$router.push({
+        path: "/completeVehicle/product/basicModelFeatureCode",
+        query: { code: row.code }
+      });
+    },
   }
 };
 </script>

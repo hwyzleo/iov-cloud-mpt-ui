@@ -88,20 +88,17 @@
 
     <el-table v-loading="loading" :data="list" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center"/>
-      <el-table-column label="特征值代码" prop="code" width="100" align="center"/>
-      <el-table-column label="特征值名称" prop="name"/>
-      <el-table-column label="特征值英文名称" prop="nameEn"/>
-      <el-table-column label="特征值代表值" prop="val" width="100"/>
-      <el-table-column label="是否启用" align="center" width="100">
+      <el-table-column label="特征族" prop="familyCode">
         <template slot-scope="scope">
-          <el-switch
-            v-model="scope.row.enable"
-            :active-value="true"
-            :inactive-value="false"
-          ></el-switch>
+          <span>{{ scope.row.familyName + '(' + scope.row.familyCode + ')' }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="排序" prop="sort" align="center" width="60"/>
+      <el-table-column label="特征值" prop="featureCode">
+        <template slot-scope="scope">
+          <span>{{ scope.row.featureName + '(' + scope.row.featureCode + ')' }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="特征值代表值" prop="featureValue"/>
       <el-table-column label="创建时间" align="center" prop="createTime" width="160">
         <template slot-scope="scope">
           <span>{{ parseTime(scope.row.createTime) }}</span>
@@ -139,41 +136,35 @@
 
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="120px">
-        <el-row>
-          <el-col :span="8">
-            <el-form-item label="特征值前缀">
-              <span>{{ this.familyCode}}</span>
-            </el-form-item>
-          </el-col>
-          <el-col :span="16">
-            <el-form-item label="特征值代码" prop="codeSuffix">
-              <el-input v-model="form.codeSuffix" :readonly="form.id !== undefined" placeholder="请输入特征值代码"/>
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <el-form-item label="特征值名称" prop="name">
-          <el-input v-model="form.name" placeholder="请输入特征值名称"/>
+        <el-form-item label="特征族" prop="familyCode">
+          <el-select
+            v-model="form.familyCode"
+            placeholder="特征族"
+            clearable
+            :disabled="form.id !== undefined"
+            @change="getAllFeatureCode(form.familyCode)"
+          >
+            <el-option
+              v-for="featureFamily in featureFamilyList"
+              :key="featureFamily.code"
+              :label="featureFamily.name"
+              :value="featureFamily.code"
+            />
+          </el-select>
         </el-form-item>
-        <el-form-item label="特征值英文名称" prop="nameEn">
-          <el-input v-model="form.nameEn" placeholder="请输入特征值英文名称"/>
-        </el-form-item>
-        <el-form-item label="特征值代表值" prop="val">
-          <el-input v-model="form.val" placeholder="请输入特征值代表值"/>
-        </el-form-item>
-        <el-form-item label="状态">
-          <el-radio-group v-model="form.enable">
-            <el-radio
-              :label="true"
-            >启用
-            </el-radio>
-            <el-radio
-              :label="false"
-            >停用
-            </el-radio>
-          </el-radio-group>
-        </el-form-item>
-        <el-form-item label="排序" prop="sort">
-          <el-input-number v-model="form.sort" controls-position="right" :min="0"/>
+        <el-form-item label="特征值" prop="featureCode">
+          <el-select
+            v-model="form.featureCode"
+            placeholder="特征值"
+            clearable
+          >
+            <el-option
+              v-for="featureCode in featureCodeList"
+              :key="featureCode.code"
+              :label="featureCode.name"
+              :value="featureCode.code"
+            />
+          </el-select>
         </el-form-item>
         <el-form-item label="备注">
           <el-input v-model="form.description" type="textarea" placeholder="请输入内容"></el-input>
@@ -189,16 +180,19 @@
 
 <script>
 import {
-  listFeatureCode,
-  getFeatureFamily,
-  getFeatureCode,
-  addFeatureCode,
-  updateFeatureCode,
-  delFeatureCode
+  listBasicModelFeatureCode,
+  getBasicModelFeatureCode,
+  addBasicModelFeatureCode,
+  updateBasicModelFeatureCode,
+  delBasicModelFeatureCode
+} from "@/api/completevehicle/product/basicmodel";
+import {
+  listAllFeatureFamily,
+  listAllFeatureCode
 } from "@/api/completevehicle/product/featurefamily";
 
 export default {
-  name: "FeatureCode",
+  name: "BasicModelFeatureCode",
   dicts: [],
   data() {
     return {
@@ -216,6 +210,8 @@ export default {
       total: 0,
       // 表格数据
       list: [],
+      featureFamilyList: [],
+      featureCodeList: [],
       // 弹出层标题
       title: "",
       // 是否显示弹出层
@@ -243,25 +239,30 @@ export default {
     };
   },
   created() {
-    this.familyId = this.$route.query.id;
-    this.getFamily();
+    this.basicModelCode = this.$route.query.code;
+    this.getAllFeatureFamily();
     this.getList();
   },
   methods: {
     /** 查询列表 */
     getList() {
       this.loading = true;
-      listFeatureCode(this.familyId, this.addDateRange(this.queryParams, this.dateRange)).then(response => {
+      listBasicModelFeatureCode(this.basicModelCode, this.addDateRange(this.queryParams, this.dateRange)).then(response => {
           this.list = response.rows;
           this.total = response.total;
           this.loading = false;
         }
       );
     },
-    getFamily() {
-      getFeatureFamily(this.familyId).then(response => {
-        this.familyCode = response.data.code;
-      })
+    getAllFeatureFamily() {
+      listAllFeatureFamily().then(response => {
+        this.featureFamilyList = response.data;
+      });
+    },
+    getAllFeatureCode(familyCode) {
+      listAllFeatureCode(familyCode).then(response => {
+        this.featureCodeList = response.data;
+      });
     },
     /** 取消按钮 */
     cancel() {
@@ -271,11 +272,9 @@ export default {
     /** 表单重置 */
     reset() {
       this.form = {
-        code: undefined,
-        name: undefined,
-        nameEn: undefined,
-        enable: true,
-        sort: 99
+        basicModelCode: undefined,
+        familyCode: undefined,
+        featureCode: undefined
       };
       this.resetForm("form");
     },
@@ -300,23 +299,21 @@ export default {
     handleAdd() {
       this.reset();
       this.open = true;
-      this.title = "添加车辆特征值";
+      this.title = "添加基础车型特征值";
       this.form = {
-        codePrefix: this.familyCode,
-        enable: true,
-        sort: 99
+        basicModelCode: this.basicModelCode
       };
     },
     /** 修改按钮操作 */
     handleUpdate(row) {
       this.reset();
       const id = row.id || this.ids
-      getFeatureCode(this.familyId, id).then(response => {
+      getBasicModelFeatureCode(this.basicModelCode, id).then(response => {
         this.form = response.data;
-        this.form.codeSuffix = this.form.code.substring(this.form.code.length - 2);
+        this.getAllFeatureCode(this.form.familyCode);
         this.open = true;
       });
-      this.title = "修改车辆特征值";
+      this.title = "修改基础车型特征值";
     },
     /** 提交按钮 */
     submitForm: function () {
@@ -324,13 +321,13 @@ export default {
         if (valid) {
           this.form.code = this.familyCode + this.form.codeSuffix;
           if (this.form.id !== undefined) {
-            updateFeatureCode(this.familyId, this.form).then(response => {
+            updateBasicModelFeatureCode(this.basicModelCode, this.form).then(response => {
               this.$modal.msgSuccess("修改成功");
               this.open = false;
               this.getList();
             });
           } else {
-            addFeatureCode(this.familyId, this.form).then(response => {
+            addBasicModelFeatureCode(this.basicModelCode, this.form).then(response => {
               this.$modal.msgSuccess("新增成功");
               this.open = false;
               this.getList();
@@ -342,9 +339,9 @@ export default {
     /** 删除按钮操作 */
     handleDelete(row) {
       const ids = row.id || this.ids;
-      const familyId = this.familyId;
+      const basicModelCode = this.basicModelCode;
       this.$modal.confirm('是否确认删除特征族ID为"' + ids + '"的数据项？').then(function () {
-        return delFeatureCode(familyId, ids);
+        return delBasicModelFeatureCode(basicModelCode, ids);
       }).then(() => {
         this.getList();
         this.$modal.msgSuccess("删除成功");

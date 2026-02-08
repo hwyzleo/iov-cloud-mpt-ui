@@ -9,6 +9,22 @@ export function listFeatureFamily(query) {
   })
 }
 
+// 查询所有车辆特征族列表
+export function listAllFeatureFamily() {
+  return request({
+    url: '/tsp-vmd/mpt/featureFamily/listAllFeatureFamily',
+    method: 'get'
+  })
+}
+
+// 查询所有车辆特征族列表
+export function listAllFeatureCode(familyCode) {
+  return request({
+    url: '/tsp-vmd/mpt/featureFamily/listAllFeatureCode?familyCode=' + familyCode,
+    method: 'get'
+  })
+}
+
 // 查询车辆特征值列表
 export function listFeatureCode(familyId, query) {
   return request({
