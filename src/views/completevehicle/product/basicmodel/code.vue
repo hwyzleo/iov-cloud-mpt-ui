@@ -90,12 +90,12 @@
       <el-table-column type="selection" width="55" align="center"/>
       <el-table-column label="特征族" prop="familyCode">
         <template slot-scope="scope">
-          <span>{{ scope.row.familyName + '(' + scope.row.familyCode + ')' }}</span>
+          <span>{{ scope.row.familyCode + '：' + scope.row.familyName }}</span>
         </template>
       </el-table-column>
       <el-table-column label="特征值" prop="featureCode">
         <template slot-scope="scope">
-          <span>{{ scope.row.featureName + '(' + scope.row.featureCode + ')' }}</span>
+          <span>{{ scope.row.featureCode + '：' + scope.row.featureName }}</span>
         </template>
       </el-table-column>
       <el-table-column label="特征值代表值" prop="featureValue"/>
@@ -125,14 +125,6 @@
         </template>
       </el-table-column>
     </el-table>
-
-    <pagination
-      v-show="total>0"
-      :total="total"
-      :page.sync="queryParams.pageNum"
-      :limit.sync="queryParams.pageSize"
-      @pagination="getList"
-    />
 
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="120px">
@@ -240,7 +232,6 @@ export default {
   },
   created() {
     this.basicModelCode = this.$route.query.code;
-    this.getAllFeatureFamily();
     this.getList();
   },
   methods: {
@@ -248,16 +239,10 @@ export default {
     getList() {
       this.loading = true;
       listBasicModelFeatureCode(this.basicModelCode, this.addDateRange(this.queryParams, this.dateRange)).then(response => {
-          this.list = response.rows;
-          this.total = response.total;
+          this.list = response.data;
           this.loading = false;
         }
       );
-    },
-    getAllFeatureFamily() {
-      listAllFeatureFamily().then(response => {
-        this.featureFamilyList = response.data;
-      });
     },
     getAllFeatureCode(familyCode) {
       listAllFeatureCode(familyCode).then(response => {
@@ -298,22 +283,40 @@ export default {
     /** 新增按钮操作 */
     handleAdd() {
       this.reset();
-      this.open = true;
-      this.title = "添加基础车型特征值";
-      this.form = {
-        basicModelCode: this.basicModelCode
-      };
+      this.featureFamilyList = [];
+      listAllFeatureFamily().then(response => {
+        response.data.forEach(featureFamily => {
+          let flag = true;
+          this.list.forEach(featureCode => {
+            if (featureFamily.code === featureCode.familyCode) {
+              flag = false;
+            }
+          })
+          if (flag) {
+            this.featureFamilyList.push(featureFamily);
+          }
+        });
+        this.open = true;
+        this.title = "添加基础车型特征值";
+        this.form = {
+          basicModelCode: this.basicModelCode
+        };
+      });
     },
     /** 修改按钮操作 */
     handleUpdate(row) {
       this.reset();
       const id = row.id || this.ids
-      getBasicModelFeatureCode(this.basicModelCode, id).then(response => {
-        this.form = response.data;
-        this.getAllFeatureCode(this.form.familyCode);
-        this.open = true;
+      this.featureFamilyList = [];
+      listAllFeatureFamily().then(response => {
+        this.featureFamilyList = response.data;
+        getBasicModelFeatureCode(this.basicModelCode, id).then(response => {
+          this.form = response.data;
+          this.getAllFeatureCode(this.form.familyCode);
+          this.open = true;
+        });
+        this.title = "修改基础车型特征值";
       });
-      this.title = "修改基础车型特征值";
     },
     /** 提交按钮 */
     submitForm: function () {

@@ -106,11 +106,11 @@
 
     <el-table v-loading="loading" :data="modelList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center"/>
-      <el-table-column label="平台代码" prop="platformCode" width="100" align="center"/>
-      <el-table-column label="车系代码" prop="seriesCode" width="100" align="center"/>
-      <el-table-column label="车型代码" prop="code" width="100" align="center"/>
-      <el-table-column label="车型名称" prop="name" width="150" />
-      <el-table-column label="车型英文名称" prop="nameEn" width="200"/>
+      <el-table-column label="平台代码" prop="platformCode" width="80" align="center"/>
+      <el-table-column label="车系代码" prop="seriesCode" width="80" align="center"/>
+      <el-table-column label="车型代码" prop="code" width="80" align="center"/>
+      <el-table-column label="车型名称" prop="name" width="120" />
+      <el-table-column label="车型英文名称" prop="nameEn"/>
       <el-table-column label="描述" prop="description"/>
       <el-table-column label="是否启用" align="center" width="100">
         <template slot-scope="scope">
