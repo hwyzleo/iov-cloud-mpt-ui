@@ -98,7 +98,7 @@
           <span>{{ scope.row.featureCode + '：' + scope.row.featureName }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="特征值代表值" prop="featureValue"/>
+      <el-table-column label="特征值类型" prop="featureType"/>
       <el-table-column label="创建时间" align="center" prop="createTime" width="160">
         <template slot-scope="scope">
           <span>{{ parseTime(scope.row.createTime) }}</span>
@@ -126,28 +126,44 @@
       </el-table-column>
     </el-table>
 
-    <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
+    <el-dialog :title="title" :visible.sync="open" width="700px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="120px">
-        <el-form-item label="特征族" prop="familyCode">
-          <el-select
-            v-model="form.familyCode"
-            placeholder="特征族"
-            clearable
-            :disabled="form.id !== undefined"
-            @change="getAllFeatureCode(form.familyCode)"
-          >
-            <el-option
-              v-for="featureFamily in featureFamilyList"
-              :key="featureFamily.code"
-              :label="featureFamily.name"
-              :value="featureFamily.code"
-            />
-          </el-select>
-        </el-form-item>
+        <el-row>
+          <el-col :span="12">
+            <el-form-item label="特征族" prop="familyCode">
+              <el-select
+                v-model="form.familyCode"
+                placeholder="特征族"
+                style="width: 100%"
+                clearable
+                :disabled="form.id !== undefined"
+                @change="getAllFeatureCode(form.familyCode)"
+              >
+                <el-option
+                  v-for="featureFamily in featureFamilyList"
+                  :key="featureFamily.code"
+                  :label="featureFamily.name"
+                  :value="featureFamily.code"
+                />
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="特征值类型" prop="featureType">
+              <el-select v-model="form.featureType" placeholder="特征值类型" style="width: 100%" clearable>
+                <el-option key="S" label="S" value="S" />
+                <el-option key="O" label="O" value="O" />
+                <el-option key="-" label="-" value="-" />
+              </el-select>
+            </el-form-item>
+          </el-col>
+        </el-row>
         <el-form-item label="特征值" prop="featureCode">
           <el-select
             v-model="form.featureCode"
             placeholder="特征值"
+            style="width: 100%;"
+            multiple
             clearable
           >
             <el-option
@@ -158,6 +174,7 @@
             />
           </el-select>
         </el-form-item>
+
         <el-form-item label="备注">
           <el-input v-model="form.description" type="textarea" placeholder="请输入内容"></el-input>
         </el-form-item>
