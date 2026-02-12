@@ -119,7 +119,7 @@
           <span>{{ parseTime(scope.row.createTime, '{y}-{m}-{d} {h}:{i}') }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="操作" align="center" width="200" class-name="small-padding fixed-width">
+      <el-table-column label="操作" align="center" width="220" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
             size="mini"
@@ -137,6 +137,14 @@
             v-if="scope.row.type==='ENUM'"
             v-hasPermi="['iov:configCenter:configItem:edit']"
           >枚举值
+          </el-button>
+          <el-button
+            size="mini"
+            type="text"
+            icon="el-icon-c-scale-to-original"
+            @click="handleMapping(scope.row)"
+            v-hasPermi="['iov:configCenter:configItem:edit']"
+          >映射
           </el-button>
           <el-button
             size="mini"
@@ -378,6 +386,12 @@ export default {
       this.$router.push({
         path: "/iov/configCenter/configItemOption",
         query: { code: row.code }
+      });
+    },
+    handleMapping(row) {
+      this.$router.push({
+        path: "/iov/configCenter/configItemMapping",
+        query: { code: row.code, type: row.type }
       });
     },
   }

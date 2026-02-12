@@ -18,6 +18,15 @@ export function listConfigItemOption(configItemCode, query) {
   })
 }
 
+// 查询配置项映射列表
+export function listConfigItemMapping(configItemCode, query) {
+  return request({
+    url: '/tsp-vmd/mpt/configItem/' + configItemCode + '/mapping/list',
+    method: 'get',
+    params: query
+  })
+}
+
 // 查询配置项详细
 export function getConfigItem(id) {
   return request({
@@ -30,6 +39,14 @@ export function getConfigItem(id) {
 export function getConfigItemOption(configItemCode, id) {
   return request({
     url: '/tsp-vmd/mpt/configItem/' + configItemCode + '/option/' + id,
+    method: 'get'
+  })
+}
+
+// 查询配置项枚举值详细
+export function getConfigItemMapping(configItemCode, id) {
+  return request({
+    url: '/tsp-vmd/mpt/configItem/' + configItemCode + '/mapping/' + id,
     method: 'get'
   })
 }
@@ -52,6 +69,15 @@ export function addConfigItemOption(configItemCode, data) {
   })
 }
 
+// 新增配置项映射
+export function addConfigItemMapping(configItemCode, data) {
+  return request({
+    url: '/tsp-vmd/mpt/configItem/' + configItemCode + '/mapping',
+    method: 'post',
+    data: data
+  })
+}
+
 // 修改配置项
 export function updateConfigItem(data) {
   return request({
@@ -61,10 +87,19 @@ export function updateConfigItem(data) {
   })
 }
 
-// 修改配置项
+// 修改配置项枚举值
 export function updateConfigItemOption(configItemCode, data) {
   return request({
     url: '/tsp-vmd/mpt/configItem/' + configItemCode + '/option',
+    method: 'put',
+    data: data
+  })
+}
+
+// 修改配置项映射
+export function updateConfigItemMapping(configItemCode, data) {
+  return request({
+    url: '/tsp-vmd/mpt/configItem/' + configItemCode + '/mapping',
     method: 'put',
     data: data
   })
@@ -78,10 +113,18 @@ export function delConfigItem(ids) {
   })
 }
 
-// 删除配置项
+// 删除配置项枚举值
 export function delConfigItemOption(configItemCode, ids) {
   return request({
     url: '/tsp-vmd/mpt/configItem/' + configItemCode + '/option/' + ids,
+    method: 'delete'
+  })
+}
+
+// 删除配置项映射
+export function delConfigItemMapping(configItemCode, ids) {
+  return request({
+    url: '/tsp-vmd/mpt/configItem/' + configItemCode + '/mapping/' + ids,
     method: 'delete'
   })
 }
