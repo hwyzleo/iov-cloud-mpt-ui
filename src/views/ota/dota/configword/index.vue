@@ -1,15 +1,6 @@
 <template>
   <div class="app-container">
     <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch">
-      <el-form-item label="分类" prop="type">
-        <el-select
-          v-model="queryParams.type"
-          placeholder="分类"
-          clearable
-          style="width: 140px"
-        >
-        </el-select>
-      </el-form-item>
       <el-form-item label="设备" prop="deviceCode">
         <el-select
           v-model="queryParams.deviceCode"
@@ -50,7 +41,7 @@
           icon="el-icon-plus"
           size="mini"
           @click="handleAdd"
-          v-hasPermi="['ota:baseline:fixedConfigWord:add']"
+          v-hasPermi="['ota:dota:configWord:add']"
         >新增
         </el-button>
       </el-col>
@@ -62,7 +53,7 @@
           size="mini"
           :disabled="single"
           @click="handleUpdate"
-          v-hasPermi="['ota:baseline:fixedConfigWord:edit']"
+          v-hasPermi="['ota:dota:configWord:edit']"
         >修改
         </el-button>
       </el-col>
@@ -74,7 +65,7 @@
           size="mini"
           :disabled="multiple"
           @click="handleDelete"
-          v-hasPermi="['ota:baseline:fixedConfigWord:remove']"
+          v-hasPermi="['ota:dota:configWord:remove']"
         >删除
         </el-button>
       </el-col>
@@ -85,49 +76,59 @@
           icon="el-icon-download"
           size="mini"
           @click="handleExport"
-          v-hasPermi="['ota:baseline:fixedConfigWord:export']"
+          v-hasPermi="['ota:dota:configWord:export']"
         >导出
         </el-button>
       </el-col>
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
-    <el-table v-loading="loading" :data="fixedConfigWordList" @selection-change="handleSelectionChange">
+    <el-table v-loading="loading" :data="list" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center"/>
-      <el-table-column label="设备" prop="deviceCode" width="200"/>
-      <el-table-column label="软件零件号" prop="softwarePn" width="150"/>
-      <el-table-column label="分类" prop="type" width="150" align="center">
-      </el-table-column>
-      <el-table-column label="描述" prop="description"/>
-      <el-table-column label="创建时间" align="center" prop="createTime" width="180">
+      <el-table-column label="配置字代码" prop="code" />
+      <el-table-column label="配置字名称" prop="name" />
+      <el-table-column label="设备" prop="deviceCode" width="100" align="center"/>
+      <el-table-column label="数据格式" prop="dataFormat" width="100" align="center">
         <template slot-scope="scope">
-          <span>{{ parseTime(scope.row.createTime) }}</span>
+          <span v-if="scope.row.dataFormat === 'HEX'">HEX</span>
         </template>
       </el-table-column>
-      <el-table-column label="操作" align="center" width="200" class-name="small-padding fixed-width">
+      <el-table-column label="数据长度" prop="byteLength" width="100" align="center"/>
+      <el-table-column label="读写能力" prop="rwCapability" width="100" align="center">
+        <template slot-scope="scope">
+          <span v-if="scope.row.rwCapability === 'READ'">只读</span>
+          <span v-if="scope.row.rwCapability === 'WRITE'">读写</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="创建时间" align="center" prop="createTime" width="160">
+        <template slot-scope="scope">
+          <span>{{ parseTime(scope.row.createTime, '{y}-{m}-{d} {h}:{i}') }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="操作" align="center" width="180" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
             size="mini"
             type="text"
             icon="el-icon-edit"
             @click="handleUpdate(scope.row)"
-            v-hasPermi="['ota:baseline:fixedConfigWord:edit']"
+            v-hasPermi="['ota:dota:configWord:edit']"
           >修改
           </el-button>
           <el-button
             size="mini"
             type="text"
             icon="el-icon-edit"
-            @click="handleDetail(scope.row)"
-            v-hasPermi="['ota:baseline:fixedConfigWord:query']"
-          >查看明细列表
+            @click="handleProfile(scope.row)"
+            v-hasPermi="['ota:dota:configWord:query']"
+          >配置文件
           </el-button>
           <el-button
             size="mini"
             type="text"
             icon="el-icon-delete"
             @click="handleDelete(scope.row)"
-            v-hasPermi="['ota:baseline:fixedConfigWord:remove']"
+            v-hasPermi="['ota:dota:configWord:remove']"
           >删除
           </el-button>
         </template>
@@ -144,33 +145,64 @@
 
     <!-- 添加或修改升级任务对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="800px" append-to-body>
-      <el-form ref="form" :model="form" :rules="rules" label-width="140px">
-        <el-form-item label="设备" prop="deviceCode">
-          <el-select
-            v-model="form.deviceCode"
-            placeholder="设备"
-            style="width: 250px"
-            clearable
-          >
-            <el-option
-              v-for="device in this.deviceList"
-              :key="device.code"
-              :label="device.code + '(' + device.label + ')'"
-              :value="device.code"
-            />
-          </el-select>
+      <el-form ref="form" :model="form" :rules="rules" label-width="100px">
+        <el-form-item label="配置字代码" prop="code">
+          <el-input v-model="form.code" :readonly="form.id !== undefined" placeholder="请输入配置字代码"/>
         </el-form-item>
-        <el-form-item label="软件零件号" prop="softwarePn">
-          <el-input v-model="form.softwarePn" placeholder="请输入软件零件号"/>
-        </el-form-item>
-        <el-form-item label="分类" prop="type">
-          <el-select
-            v-model="form.type"
-            placeholder="分类"
-            clearable
-          >
-          </el-select>
-        </el-form-item>
+        <el-row>
+          <el-col :span="12">
+            <el-form-item label="配置字名称" prop="name">
+              <el-input v-model="form.name" placeholder="请输入配置字名称"/>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="设备" prop="deviceCode">
+              <el-select
+                v-model="form.deviceCode"
+                placeholder="设备"
+                style="width: 100%"
+                clearable
+              >
+                <el-option
+                  v-for="device in this.deviceList"
+                  :key="device.code"
+                  :label="device.code + '(' + device.label + ')'"
+                  :value="device.code"
+                />
+              </el-select>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="8">
+            <el-form-item label="数据格式" prop="dataFormat">
+              <el-select
+                v-model="form.dataFormat"
+                placeholder="数据格式"
+                clearable
+              >
+                <el-option key="HEX" label="HEX" value="HEX"/>
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="8">
+            <el-form-item label="数据长度" prop="byteLength">
+              <el-input v-model="form.byteLength" placeholder="请输入数据长度"/>
+            </el-form-item>
+          </el-col>
+          <el-col :span="8">
+            <el-form-item label="读写能力" prop="rwCapability">
+              <el-select
+                v-model="form.rwCapability"
+                placeholder="读写能力"
+                clearable
+              >
+                <el-option key="READ" label="只读" value="READ"/>
+                <el-option key="WRITE" label="读写" value="WRITE"/>
+              </el-select>
+            </el-form-item>
+          </el-col>
+        </el-row>
         <el-form-item label="描述">
           <el-input v-model="form.description" type="textarea" placeholder="请输入描述内容"></el-input>
         </el-form-item>
@@ -185,18 +217,18 @@
 
 <script>
 import {
-  addFixedConfigWord,
-  delFixedConfigWord,
-  getFixedConfigWord,
-  listFixedConfigWord,
-  updateFixedConfigWord,
-} from "@/api/ota/pota/fixedconfigword";
+  addConfigWord,
+  delConfigWord,
+  getConfigWord,
+  listConfigWord,
+  updateConfigWord,
+} from "@/api/ota/dota/configword";
 import {
   listAllDevice
 } from "@/api/completevehicle/vehicle/device";
 
 export default {
-  name: "FixedConfigWord",
+  name: "ConfigWord",
   dicts: [],
   data() {
     return {
@@ -212,8 +244,8 @@ export default {
       showSearch: true,
       // 总条数
       total: 0,
-      // 升级任务表格数据
-      fixedConfigWordList: [],
+      // 表格数据
+      list: [],
       deviceList: [],
       // 弹出层标题
       title: "",
@@ -230,11 +262,20 @@ export default {
       form: {},
       // 表单校验
       rules: {
+        code: [
+          {required: true, message: "配置字代码不能为空", trigger: "blur"}
+        ],
+        name: [
+          {required: true, message: "配置字名称不能为空", trigger: "blur"}
+        ],
         deviceCode: [
           {required: true, message: "设备不能为空", trigger: "blur"}
         ],
-        softwarePn: [
-          {required: true, message: "软件零件号不能为空", trigger: "blur"}
+        dataFormat: [
+          {required: true, message: "数据格式不能为空", trigger: "blur"}
+        ],
+        rwCapability: [
+          {required: true, message: "读写能力不能为空", trigger: "blur"}
         ]
       },
     };
@@ -244,11 +285,11 @@ export default {
     this.getList();
   },
   methods: {
-    /** 查询固定配置字列表 */
+    /** 查询列表 */
     getList() {
       this.loading = true;
-      listFixedConfigWord(this.addDateRange(this.queryParams, this.dateRange)).then(response => {
-          this.fixedConfigWordList = response.rows;
+      listConfigWord(this.addDateRange(this.queryParams, this.dateRange)).then(response => {
+          this.list = response.rows;
           this.total = response.total;
           this.loading = false;
         }
@@ -293,38 +334,31 @@ export default {
     handleAdd() {
       this.reset();
       this.open = true;
-      this.title = "添加固定配置字";
+      this.title = "添加配置字";
       this.form = {};
     },
     /** 修改按钮操作 */
     handleUpdate(row) {
       this.reset();
-      const fixedConfigWordId = row.id || this.ids
-      getFixedConfigWord(fixedConfigWordId).then(response => {
+      const id = row.id || this.ids
+      getConfigWord(id).then(response => {
         this.form = response.data;
         this.open = true;
       });
-      this.title = "修改固定配置字";
-    },
-    /** 明细列表按钮操作 */
-    handleDetail(row) {
-      this.$router.push({
-        path: "/ota/pota/fixedConfigWordDetail",
-        query: { id: row.id }
-      });
+      this.title = "修改配置字";
     },
     /** 提交按钮 */
     submitForm: function () {
       this.$refs["form"].validate(valid => {
         if (valid) {
           if (this.form.id !== undefined) {
-            updateFixedConfigWord(this.form).then(response => {
+            updateConfigWord(this.form).then(response => {
               this.$modal.msgSuccess("修改成功");
               this.open = false;
               this.getList();
             });
           } else {
-            addFixedConfigWord(this.form).then(response => {
+            addConfigWord(this.form).then(response => {
               this.$modal.msgSuccess("新增成功");
               this.open = false;
               this.getList();
@@ -335,9 +369,9 @@ export default {
     },
     /** 删除按钮操作 */
     handleDelete(row) {
-      const fixedConfigWordIds = row.id || this.ids;
-      this.$modal.confirm('是否确认删除固定配置字ID为"' + fixedConfigWordIds + '"的数据项？').then(function () {
-        return delFixedConfigWord(fixedConfigWordIds);
+      const ids = row.id || this.ids;
+      this.$modal.confirm('是否确认删除配置字ID为"' + ids + '"的数据项？').then(function () {
+        return delConfigWord(ids);
       }).then(() => {
         this.getList();
         this.$modal.msgSuccess("删除成功");
@@ -346,9 +380,15 @@ export default {
     },
     /** 导出按钮操作 */
     handleExport() {
-      this.download('ota-baseline/fixedConfigWord/export', {
+      this.download('ota-dota/mpt/configWord/export', {
         ...this.queryParams
-      }, `fixed_config_word_${new Date().getTime()}.xlsx`)
+      }, `config_word_${new Date().getTime()}.xlsx`)
+    },
+    handleProfile(row) {
+      this.$router.push({
+        path: "/ota/dota/configWordProfile",
+        query: { code: row.code }
+      });
     },
   }
 };
