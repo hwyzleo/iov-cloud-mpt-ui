@@ -189,19 +189,19 @@
 
 <script>
 import {
-  listBasicModelFeatureCode,
-  getBasicModelFeatureCode,
-  addBasicModelFeatureCode,
-  updateBasicModelFeatureCode,
-  delBasicModelFeatureCode
-} from "@/api/completevehicle/product/basicmodel";
+  listBaseModelFeatureCode,
+  getBaseModelFeatureCode,
+  addBaseModelFeatureCode,
+  updateBaseModelFeatureCode,
+  delBaseModelFeatureCode
+} from "@/api/completevehicle/product/basemodel";
 import {
   listAllFeatureFamily,
   listAllFeatureCode
 } from "@/api/completevehicle/product/featurefamily";
 
 export default {
-  name: "BasicModelFeatureCode",
+  name: "BaseModelFeatureCode",
   dicts: [],
   data() {
     return {
@@ -248,14 +248,14 @@ export default {
     };
   },
   created() {
-    this.basicModelCode = this.$route.query.code;
+    this.baseModelCode = this.$route.query.code;
     this.getList();
   },
   methods: {
     /** 查询列表 */
     getList() {
       this.loading = true;
-      listBasicModelFeatureCode(this.basicModelCode, this.addDateRange(this.queryParams, this.dateRange)).then(response => {
+      listBaseModelFeatureCode(this.baseModelCode, this.addDateRange(this.queryParams, this.dateRange)).then(response => {
           this.list = response.data;
           this.loading = false;
         }
@@ -316,7 +316,7 @@ export default {
         this.open = true;
         this.title = "添加基础车型特征值";
         this.form = {
-          basicModelCode: this.basicModelCode
+          baseModelCode: this.baseModelCode
         };
       });
     },
@@ -327,7 +327,7 @@ export default {
       this.featureFamilyList = [];
       listAllFeatureFamily().then(response => {
         this.featureFamilyList = response.data;
-        getBasicModelFeatureCode(this.basicModelCode, id).then(response => {
+        getBaseModelFeatureCode(this.baseModelCode, id).then(response => {
           this.form = response.data;
           this.getAllFeatureCode(this.form.familyCode);
           this.open = true;
@@ -341,13 +341,13 @@ export default {
         if (valid) {
           this.form.code = this.familyCode + this.form.codeSuffix;
           if (this.form.id !== undefined) {
-            updateBasicModelFeatureCode(this.basicModelCode, this.form).then(response => {
+            updateBaseModelFeatureCode(this.baseModelCode, this.form).then(response => {
               this.$modal.msgSuccess("修改成功");
               this.open = false;
               this.getList();
             });
           } else {
-            addBasicModelFeatureCode(this.basicModelCode, this.form).then(response => {
+            addBaseModelFeatureCode(this.baseModelCode, this.form).then(response => {
               this.$modal.msgSuccess("新增成功");
               this.open = false;
               this.getList();
@@ -359,9 +359,9 @@ export default {
     /** 删除按钮操作 */
     handleDelete(row) {
       const ids = row.id || this.ids;
-      const basicModelCode = this.basicModelCode;
+      const baseModelCode = this.baseModelCode;
       this.$modal.confirm('是否确认删除特征族ID为"' + ids + '"的数据项？').then(function () {
-        return delBasicModelFeatureCode(basicModelCode, ids);
+        return delBaseModelFeatureCode(baseModelCode, ids);
       }).then(() => {
         this.getList();
         this.$modal.msgSuccess("删除成功");

@@ -37,19 +37,19 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="车型配置代码" prop="code">
+      <el-form-item label="生产配置代码" prop="code">
         <el-input
           v-model="queryParams.code"
-          placeholder="请输入车型配置代码"
+          placeholder="请输入生产配置代码"
           clearable
           style="width: 170px"
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="车型配置名称" prop="name">
+      <el-form-item label="生产配置名称" prop="name">
         <el-input
           v-model="queryParams.name"
-          placeholder="请输入车型配置名称"
+          placeholder="请输入生产配置名称"
           clearable
           style="width: 220px"
           @keyup.enter.native="handleQuery"
@@ -80,7 +80,7 @@
           icon="el-icon-plus"
           size="mini"
           @click="handleAdd"
-          v-hasPermi="['completeVehicle:product:modelConfig:add']"
+          v-hasPermi="['completeVehicle:product:buildConfig:add']"
         >新增
         </el-button>
       </el-col>
@@ -92,7 +92,7 @@
           size="mini"
           :disabled="single"
           @click="handleUpdate"
-          v-hasPermi="['completeVehicle:product:modelConfig:edit']"
+          v-hasPermi="['completeVehicle:product:buildConfig:edit']"
         >修改
         </el-button>
       </el-col>
@@ -104,7 +104,7 @@
           size="mini"
           :disabled="multiple"
           @click="handleDelete"
-          v-hasPermi="['completeVehicle:product:modelConfig:remove']"
+          v-hasPermi="['completeVehicle:product:buildConfig:remove']"
         >删除
         </el-button>
       </el-col>
@@ -115,21 +115,21 @@
           icon="el-icon-download"
           size="mini"
           @click="handleExport"
-          v-hasPermi="['completeVehicle:product:modelConfig:export']"
+          v-hasPermi="['completeVehicle:product:buildConfig:export']"
         >导出
         </el-button>
       </el-col>
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
-    <el-table v-loading="loading" :data="modelConfigList" @selection-change="handleSelectionChange">
+    <el-table v-loading="loading" :data="list" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center"/>
       <el-table-column label="平台代码" prop="platformCode" width="80"/>
       <el-table-column label="车系代码" prop="seriesCode" width="80"/>
       <el-table-column label="车型代码" prop="modelCode" width="80"/>
       <el-table-column label="基础车型代码" prop="basicModelCode" width="100"/>
-      <el-table-column label="车型配置代码" prop="code" width="150"/>
-      <el-table-column label="车型配置名称" prop="name"/>
+      <el-table-column label="生产配置代码" prop="code" width="150"/>
+      <el-table-column label="生产配置名称" prop="name"/>
       <el-table-column label="是否启用" align="center" width="100">
         <template slot-scope="scope">
           <el-switch
@@ -152,7 +152,7 @@
             type="text"
             icon="el-icon-edit"
             @click="handleUpdate(scope.row)"
-            v-hasPermi="['completeVehicle:product:modelConfig:edit']"
+            v-hasPermi="['completeVehicle:product:buildConfig:edit']"
           >修改
           </el-button>
           <el-button
@@ -160,7 +160,7 @@
             type="text"
             icon="el-icon-delete"
             @click="handleDelete(scope.row)"
-            v-hasPermi="['completeVehicle:product:modelConfig:remove']"
+            v-hasPermi="['completeVehicle:product:buildConfig:remove']"
           >删除
           </el-button>
         </template>
@@ -256,20 +256,20 @@
         </el-row>
         <el-row>
           <el-col :span="24">
-            <el-form-item label="车型配置代码" prop="code">
-              <el-input v-model="form.code" :readonly="form.id !== undefined" placeholder="请输入车型配置代码"/>
+            <el-form-item label="生产配置代码" prop="code">
+              <el-input v-model="form.code" :readonly="form.id !== undefined" placeholder="请输入生产配置代码"/>
             </el-form-item>
           </el-col>
         </el-row>
         <el-row>
           <el-col :span="24">
-            <el-form-item label="车型配置名称" prop="name">
-              <el-input v-model="form.name" placeholder="请输入车型配置名称"/>
+            <el-form-item label="生产配置名称" prop="name">
+              <el-input v-model="form.name" placeholder="请输入生产配置名称"/>
             </el-form-item>
           </el-col>
         </el-row>
-        <el-form-item label="车型配置英文名称" prop="nameEn">
-          <el-input v-model="form.nameEn" placeholder="请输入车型配置英文名称"/>
+        <el-form-item label="生产配置英文名称" prop="nameEn">
+          <el-input v-model="form.nameEn" placeholder="请输入生产配置英文名称"/>
         </el-form-item>
         <el-row>
           <el-col :span="12">
@@ -410,22 +410,22 @@
 
 <script>
 import {
-  addModelConfig,
-  delModelConfig,
-  getModelConfig,
-  listModelConfig,
-  updateModelConfig
-} from "@/api/completevehicle/product/modelconfig";
+  addBuildConfig,
+  delBuildConfig,
+  getBuildConfig,
+  listBuildConfig,
+  updateBuildConfig
+} from "@/api/completevehicle/product/buildconfig";
 import {listAllPlatform} from "@/api/completevehicle/product/platform";
 import {listSeriesByPlatformCode} from "@/api/completevehicle/product/series";
 import {listModelByPlatformCodeAndSeriesCode} from "@/api/completevehicle/product/model";
 import {listExteriorByPlatformCodeAndSeriesCode} from "@/api/completevehicle/product/exterior";
 import {listInteriorByPlatformCodeAndSeriesCode} from "@/api/completevehicle/product/interior";
 import {listWheelByPlatformCodeAndSeriesCode} from "@/api/completevehicle/product/wheel";
-import {listBasicModelByPlatformCodeAndSeriesCodeAndModelCode} from "@/api/completevehicle/product/basicmodel";
+import {listBasicModelByPlatformCodeAndSeriesCodeAndModelCode} from "@/api/completevehicle/product/basemodel";
 
 export default {
-  name: "ModelConfig",
+  name: "BuildConfig",
   dicts: [],
   data() {
     return {
@@ -441,8 +441,8 @@ export default {
       showSearch: true,
       // 总条数
       total: 0,
-      // 车型配置表格数据
-      modelConfigList: [],
+      // 表格数据
+      list: [],
       // 车辆平台列表
       platformList: [],
       // 车系列表
@@ -485,10 +485,10 @@ export default {
           {required: true, message: "基础车型代码不能为空", trigger: "blur"}
         ],
         code: [
-          {required: true, message: "车型配置代码不能为空", trigger: "blur"}
+          {required: true, message: "生产配置代码不能为空", trigger: "blur"}
         ],
         name: [
-          {required: true, message: "车型配置名称不能为空", trigger: "blur"}
+          {required: true, message: "生产配置名称不能为空", trigger: "blur"}
         ],
         exteriorCode: [
           {required: true, message: "车身颜色不能为空", trigger: "blur"}
@@ -522,8 +522,8 @@ export default {
     /** 查询车型配置列表 */
     getList() {
       this.loading = true;
-      listModelConfig(this.addDateRange(this.queryParams, this.dateRange)).then(response => {
-          this.modelConfigList = response.rows;
+      listBuildConfig(this.addDateRange(this.queryParams, this.dateRange)).then(response => {
+          this.list = response.rows;
           this.total = response.total;
           this.loading = false;
         }
@@ -643,7 +643,7 @@ export default {
         this.platformList = response;
         this.open = true;
       });
-      this.title = "添加车型配置";
+      this.title = "添加生产配置";
       this.form = {
         enable: true,
         sort: 99
@@ -652,11 +652,11 @@ export default {
     /** 修改按钮操作 */
     handleUpdate(row) {
       this.reset();
-      const modelConfigId = row.id || this.ids
+      const id = row.id || this.ids
       listAllPlatform().then(response => {
         this.platformList = response;
       });
-      getModelConfig(modelConfigId).then(response => {
+      getBuildConfig(id).then(response => {
         this.form = response.data;
         listSeriesByPlatformCode(this.form.platformCode).then(response => {
           this.seriesList = response;
@@ -678,20 +678,20 @@ export default {
         });
         this.open = true;
       });
-      this.title = "修改车型配置";
+      this.title = "修改生产配置";
     },
     /** 提交按钮 */
     submitForm: function () {
       this.$refs["form"].validate(valid => {
         if (valid) {
           if (this.form.id !== undefined) {
-            updateModelConfig(this.form).then(response => {
+            updateBuildConfig(this.form).then(response => {
               this.$modal.msgSuccess("修改成功");
               this.open = false;
               this.getList();
             });
           } else {
-            addModelConfig(this.form).then(response => {
+            addBuildConfig(this.form).then(response => {
               this.$modal.msgSuccess("新增成功");
               this.open = false;
               this.getList();
@@ -702,9 +702,9 @@ export default {
     },
     /** 删除按钮操作 */
     handleDelete(row) {
-      const modelConfigIds = row.id || this.ids;
-      this.$modal.confirm('是否确认删除车型配置ID为"' + modelConfigIds + '"的数据项？').then(function () {
-        return delModelConfig(modelConfigIds);
+      const ids = row.id || this.ids;
+      this.$modal.confirm('是否确认删除生产配置ID为"' + ids + '"的数据项？').then(function () {
+        return delBuildConfig(ids);
       }).then(() => {
         this.getList();
         this.$modal.msgSuccess("删除成功");
@@ -713,9 +713,9 @@ export default {
     },
     /** 导出按钮操作 */
     handleExport() {
-      this.download('tsp-vmd/mpt/modelConfig/export', {
+      this.download('tsp-vmd/mpt/buildConfig/export', {
         ...this.queryParams
-      }, `model_config_${new Date().getTime()}.xlsx`)
+      }, `build_config_${new Date().getTime()}.xlsx`)
     }
   }
 };

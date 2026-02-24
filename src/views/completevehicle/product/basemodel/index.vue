@@ -71,7 +71,7 @@
           icon="el-icon-plus"
           size="mini"
           @click="handleAdd"
-          v-hasPermi="['completeVehicle:product:basicModel:add']"
+          v-hasPermi="['completeVehicle:product:baseModel:add']"
         >新增
         </el-button>
       </el-col>
@@ -83,7 +83,7 @@
           size="mini"
           :disabled="single"
           @click="handleUpdate"
-          v-hasPermi="['completeVehicle:product:basicModel:edit']"
+          v-hasPermi="['completeVehicle:product:baseModel:edit']"
         >修改
         </el-button>
       </el-col>
@@ -95,7 +95,7 @@
           size="mini"
           :disabled="multiple"
           @click="handleDelete"
-          v-hasPermi="['completeVehicle:product:basicModel:remove']"
+          v-hasPermi="['completeVehicle:product:baseModel:remove']"
         >删除
         </el-button>
       </el-col>
@@ -106,14 +106,14 @@
           icon="el-icon-download"
           size="mini"
           @click="handleExport"
-          v-hasPermi="['completeVehicle:product:basicModel:export']"
+          v-hasPermi="['completeVehicle:product:baseModel:export']"
         >导出
         </el-button>
       </el-col>
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
-    <el-table v-loading="loading" :data="basicModelList" @selection-change="handleSelectionChange">
+    <el-table v-loading="loading" :data="list" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center"/>
       <el-table-column label="平台代码" prop="platformCode" width="80" align="center"/>
       <el-table-column label="车系代码" prop="seriesCode" width="80" align="center"/>
@@ -143,7 +143,7 @@
             type="text"
             icon="el-icon-edit"
             @click="handleUpdate(scope.row)"
-            v-hasPermi="['completeVehicle:product:basicModel:edit']"
+            v-hasPermi="['completeVehicle:product:baseModel:edit']"
           >修改
           </el-button>
           <el-button
@@ -151,7 +151,7 @@
             type="text"
             icon="el-icon-edit"
             @click="handleCode(scope.row)"
-            v-hasPermi="['completeVehicle:product:basicModel:edit']"
+            v-hasPermi="['completeVehicle:product:baseModel:edit']"
           >特征值
           </el-button>
           <el-button
@@ -159,7 +159,7 @@
             type="text"
             icon="el-icon-delete"
             @click="handleDelete(scope.row)"
-            v-hasPermi="['completeVehicle:product:basicModel:remove']"
+            v-hasPermi="['completeVehicle:product:baseModel:remove']"
           >删除
           </el-button>
         </template>
@@ -275,12 +275,12 @@
 
 <script>
 import {
-  listBasicModel,
-  getBasicModel,
-  addBasicModel,
-  updateBasicModel,
-  delBasicModel
-} from "@/api/completevehicle/product/basicmodel";
+  listBaseModel,
+  getBaseModel,
+  addBaseModel,
+  updateBaseModel,
+  delBaseModel
+} from "@/api/completevehicle/product/basemodel";
 import {
   listAllPlatform
 } from "@/api/completevehicle/product/platform";
@@ -291,7 +291,7 @@ import Treeselect from "@riophae/vue-treeselect";
 import {listModelByPlatformCodeAndSeriesCode} from "@/api/completevehicle/product/model";
 
 export default {
-  name: "BasicModel",
+  name: "BaseModel",
   components: {Treeselect},
   dicts: [],
   data() {
@@ -309,7 +309,7 @@ export default {
       // 总条数
       total: 0,
       // 基础车型表格数据
-      basicModelList: [],
+      list: [],
       // 车辆平台列表
       platformList: [],
       // 车系列表
@@ -359,8 +359,8 @@ export default {
     /** 查询基础车型列表 */
     getList() {
       this.loading = true;
-      listBasicModel(this.addDateRange(this.queryParams, this.dateRange)).then(response => {
-          this.basicModelList = response.rows;
+      listBaseModel(this.addDateRange(this.queryParams, this.dateRange)).then(response => {
+          this.list = response.rows;
           this.total = response.total;
           this.loading = false;
         }
@@ -435,11 +435,11 @@ export default {
     /** 修改按钮操作 */
     handleUpdate(row) {
       this.reset();
-      const basicModelId = row.id || this.ids
+      const id = row.id || this.ids
       listAllPlatform().then(response => {
         this.platformList = response;
       });
-      getBasicModel(basicModelId).then(response => {
+      getBaseModel(id).then(response => {
         this.form = response.data;
         listSeriesByPlatformCode(this.form.platformCode).then(response => {
           this.seriesList = response;
@@ -456,13 +456,13 @@ export default {
       this.$refs["form"].validate(valid => {
         if (valid) {
           if (this.form.id !== undefined) {
-            updateBasicModel(this.form).then(response => {
+            updateBaseModel(this.form).then(response => {
               this.$modal.msgSuccess("修改成功");
               this.open = false;
               this.getList();
             });
           } else {
-            addBasicModel(this.form).then(response => {
+            addBaseModel(this.form).then(response => {
               this.$modal.msgSuccess("新增成功");
               this.open = false;
               this.getList();
@@ -473,9 +473,9 @@ export default {
     },
     /** 删除按钮操作 */
     handleDelete(row) {
-      const basicModelIds = row.id || this.ids;
-      this.$modal.confirm('是否确认删除基础车型ID为"' + basicModelIds + '"的数据项？').then(function () {
-        return delBasicModel(basicModelIds);
+      const ids = row.id || this.ids;
+      this.$modal.confirm('是否确认删除基础车型ID为"' + ids + '"的数据项？').then(function () {
+        return delBaseModel(ids);
       }).then(() => {
         this.getList();
         this.$modal.msgSuccess("删除成功");
@@ -484,13 +484,13 @@ export default {
     },
     /** 导出按钮操作 */
     handleExport() {
-      this.download('tsp-vmd/mpt/basicModel/export', {
+      this.download('tsp-vmd/mpt/baseModel/export', {
         ...this.queryParams
-      }, `basic_model_${new Date().getTime()}.xlsx`)
+      }, `base_model_${new Date().getTime()}.xlsx`)
     },
     handleCode(row) {
       this.$router.push({
-        path: "/completeVehicle/product/basicModelFeatureCode",
+        path: "/completeVehicle/product/baseModelFeatureCode",
         query: { code: row.code }
       });
     },
