@@ -27,27 +27,10 @@ export function listSoftwareBuildVersionDependency(softwareBuildVersionId, query
   })
 }
 
-// 查询软件内部版本下配置字
-export function listSoftwareBuildVersionConfigWord(softwareBuildVersionId, query) {
-  return request({
-    url: '/ota-pota/mpt/softwareBuildVersion/' + softwareBuildVersionId + '/listConfigWord',
-    method: 'get',
-    params: query
-  })
-}
-
 // 查询软件内部版本信息详细
 export function getSoftwareBuildVersion(softwareBuildVersionId) {
   return request({
     url: '/ota-pota/mpt/softwareBuildVersion/' + softwareBuildVersionId,
-    method: 'get'
-  })
-}
-
-// 查询软件内部版本配置字
-export function getSoftwareBuildVersionConfigWord(softwareBuildVersionId, configWordId) {
-  return request({
-    url: '/ota-pota/mpt/softwareBuildVersion/' + softwareBuildVersionId + '/configWord/' + configWordId,
     method: 'get'
   })
 }
@@ -77,15 +60,6 @@ export function addSoftwareBuildVersionDependency(softwareBuildVersionId, softwa
   })
 }
 
-// 新增软件内部版本配置字
-export function addSoftwareBuildVersionConfigWord(softwareBuildVersionId, data) {
-  return request({
-    url: '/ota-pota/mpt/softwareBuildVersion/' + softwareBuildVersionId + '/action/addConfigWord',
-    method: 'post',
-    data: data
-  })
-}
-
 // 修改软件内部版本信息
 export function updateSoftwareBuildVersion(data) {
   return request({
@@ -100,15 +74,6 @@ export function updateSoftwareBuildVersionDependency(softwareBuildVersionId, sof
   return request({
     url: '/ota-pota/mpt/softwareBuildVersion/' + softwareBuildVersionId + '/action/editDependency/' + softwareBuildVersionIds + '?adaptiveLevel=' + adaptiveLevel,
     method: 'post'
-  })
-}
-
-// 修改依赖的软件内部版本
-export function updateSoftwareBuildVersionConfigWord(softwareBuildVersionId, data) {
-  return request({
-    url: '/ota-pota/mpt/softwareBuildVersion/' + softwareBuildVersionId + '/action/editConfigWord',
-    method: 'post',
-    data: data
   })
 }
 
@@ -132,14 +97,6 @@ export function delSoftwareBuildVersionPackage(softwareBuildVersionId, softwareP
 export function delSoftwareBuildVersionDependency(softwareBuildVersionId, softwarePartVersionIds) {
   return request({
     url: '/ota-pota/mpt/softwareBuildVersion/' + softwareBuildVersionId + '/action/removeDependency/' + softwarePartVersionIds,
-    method: 'post'
-  })
-}
-
-// 删除软件内部版本配置字
-export function delSoftwareBuildVersionConfigWord(softwareBuildVersionId, configWordIds) {
-  return request({
-    url: '/ota-pota/mpt/softwareBuildVersion/' + softwareBuildVersionId + '/action/removeConfigWord/' + configWordIds,
     method: 'post'
   })
 }

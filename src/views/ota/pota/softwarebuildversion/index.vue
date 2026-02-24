@@ -150,14 +150,6 @@
           <el-button
             size="mini"
             type="text"
-            icon="el-icon-edit"
-            @click="handleSoftwareBuildVersionConfigWord(scope.row)"
-            v-hasPermi="['ota:baseline:softwareBuildVersion:query']"
-          >配置字
-          </el-button>
-          <el-button
-            size="mini"
-            type="text"
             icon="el-icon-delete"
             @click="handleDelete(scope.row)"
             v-hasPermi="['ota:baseline:softwareBuildVersion:remove']"
@@ -460,20 +452,6 @@ export default {
         this.selectDevice = '';
       }
     },
-    handleSoftwarePartSelect(item) {
-      this.softwarePartVerRange = item.softwarePartVerRange.split(',');
-      this.selectSoftwarePn = item.softwarePn;
-    },
-    handleSoftwarePartChange(item) {
-      if (this.form.softwarePn !== this.selectSoftwarePn) {
-        this.softwarePartVerRange = [];
-        this.$set(this.form, 'softwarePartVer', '');
-        this.$nextTick(() => {
-          this.selectKey += 1;
-        });
-        this.selectSoftwarePn = "";
-      }
-    },
     /** 提交按钮 */
     submitForm: function () {
       this.$refs["form"].validate(valid => {
@@ -514,12 +492,6 @@ export default {
     handleSoftwareBuildVersionDependency(row) {
       this.$router.push({
         path: "/ota/pota/softwareBuildVersionDependency",
-        query: { id: row.id }
-      });
-    },
-    handleSoftwareBuildVersionConfigWord(row) {
-      this.$router.push({
-        path: "/ota/pota/softwareBuildVersionConfigWord",
         query: { id: row.id }
       });
     },
