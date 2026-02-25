@@ -28,9 +28,9 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="基础车型代码" prop="basicModelCode">
+      <el-form-item label="基础车型代码" prop="baseModelCode">
         <el-input
-          v-model="queryParams.basicModelCode"
+          v-model="queryParams.baseModelCode"
           placeholder="请输入基础车型代码"
           clearable
           style="width: 140px"
@@ -124,13 +124,13 @@
 
     <el-table v-loading="loading" :data="list" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center"/>
-      <el-table-column label="平台代码" prop="platformCode" width="80"/>
-      <el-table-column label="车系代码" prop="seriesCode" width="80"/>
-      <el-table-column label="车型代码" prop="modelCode" width="80"/>
-      <el-table-column label="基础车型代码" prop="basicModelCode" width="100"/>
-      <el-table-column label="生产配置代码" prop="code" width="150"/>
+      <el-table-column label="平台代码" prop="platformCode" width="80" align="center"/>
+      <el-table-column label="车系代码" prop="seriesCode" width="80" align="center"/>
+      <el-table-column label="车型代码" prop="modelCode" width="80" align="center"/>
+      <el-table-column label="基础车型代码" prop="baseModelCode" width="110" align="center"/>
+      <el-table-column label="生产配置代码" prop="code" width="180"/>
       <el-table-column label="生产配置名称" prop="name"/>
-      <el-table-column label="是否启用" align="center" width="100">
+      <el-table-column label="是否启用" align="center" width="80">
         <template slot-scope="scope">
           <el-switch
             v-model="scope.row.enable"
@@ -139,10 +139,10 @@
           ></el-switch>
         </template>
       </el-table-column>
-      <el-table-column label="排序" prop="sort" align="center" width="100"/>
-      <el-table-column label="创建时间" align="center" prop="createTime" width="180">
+      <el-table-column label="排序" prop="sort" align="center" width="60"/>
+      <el-table-column label="创建时间" align="center" prop="createTime" width="140">
         <template slot-scope="scope">
-          <span>{{ parseTime(scope.row.createTime) }}</span>
+          <span>{{ parseTime(scope.row.createTime, '{y}-{m}-{d} {h}:{i}') }}</span>
         </template>
       </el-table-column>
       <el-table-column label="操作" align="center" width="120" class-name="small-padding fixed-width">
@@ -236,19 +236,19 @@
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="基础车型" prop="basicModelCode">
+            <el-form-item label="基础车型" prop="baseModelCode">
               <el-select
-                v-model="form.basicModelCode"
+                v-model="form.baseModelCode"
                 placeholder="基础车型"
                 clearable
                 :disabled="form.id !== undefined"
-                @change="handleBasicModelChange"
+                @change="handleBaseModelChange"
               >
                 <el-option
-                  v-for="basicModel in basicModelList"
-                  :key="basicModel.code"
-                  :label="basicModel.name"
-                  :value="basicModel.code"
+                  v-for="baseModel in baseModelList"
+                  :key="baseModel.code"
+                  :label="baseModel.name"
+                  :value="baseModel.code"
                 />
               </el-select>
             </el-form-item>
@@ -264,7 +264,7 @@
         <el-row>
           <el-col :span="24">
             <el-form-item label="生产配置名称" prop="name">
-              <el-input v-model="form.name" placeholder="请输入生产配置名称"/>
+              <el-input v-model="form.name" type="textarea" placeholder="请输入生产配置名称"/>
             </el-form-item>
           </el-col>
         </el-row>
@@ -273,37 +273,37 @@
         </el-form-item>
         <el-row>
           <el-col :span="12">
+            <el-form-item label="车辆阶段" prop="vehicleStageCode">
+              <el-select
+                v-model="form.vehicleStageCode"
+                placeholder="车辆阶段"
+                clearable
+                :disabled="form.id !== undefined"
+                @change="handleBuildConfig"
+              >
+                <el-option
+                  v-for="vehicleStage in vehicleStageList"
+                  :key="vehicleStage.val"
+                  :label="vehicleStage.name"
+                  :value="vehicleStage.val"
+                />
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
             <el-form-item label="车身颜色" prop="exteriorCode">
               <el-select
                 v-model="form.exteriorCode"
                 placeholder="车身颜色"
                 clearable
                 :disabled="form.id !== undefined"
-                @change="handleModelConfig"
+                @change="handleBuildConfig"
               >
                 <el-option
                   v-for="exterior in exteriorList"
-                  :key="exterior.code"
+                  :key="exterior.val"
                   :label="exterior.name"
-                  :value="exterior.code"
-                />
-              </el-select>
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="内饰颜色" prop="interiorCode">
-              <el-select
-                v-model="form.interiorCode"
-                placeholder="内饰颜色"
-                clearable
-                :disabled="form.id !== undefined"
-                @change="handleModelConfig"
-              >
-                <el-option
-                  v-for="interior in interiorList"
-                  :key="interior.code"
-                  :label="interior.name"
-                  :value="interior.code"
+                  :value="exterior.val"
                 />
               </el-select>
             </el-form-item>
@@ -311,13 +311,31 @@
         </el-row>
         <el-row>
           <el-col :span="12">
-            <el-form-item label="轮胎轮毂" prop="wheelCode">
+            <el-form-item label="内饰颜色" prop="interiorCode">
               <el-select
-                v-model="form.wheelCode"
-                placeholder="轮胎轮毂"
+                v-model="form.interiorCode"
+                placeholder="内饰颜色"
                 clearable
                 :disabled="form.id !== undefined"
-                @change="handleModelConfig"
+                @change="handleBuildConfig"
+              >
+                <el-option
+                  v-for="interior in interiorList"
+                  :key="interior.val"
+                  :label="interior.name"
+                  :value="interior.val"
+                />
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="轮毂" prop="wheelCode">
+              <el-select
+                v-model="form.wheelCode"
+                placeholder="轮毂"
+                clearable
+                :disabled="form.id !== undefined"
+                @change="handleBuildConfig"
               >
                 <el-option
                   v-for="wheel in wheelList"
@@ -328,50 +346,80 @@
               </el-select>
             </el-form-item>
           </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="12">
+            <el-form-item label="轮胎" prop="tireCode">
+              <el-select
+                v-model="form.tireCode"
+                placeholder="轮胎"
+                clearable
+                :disabled="form.id !== undefined"
+                @change="handleBuildConfig"
+              >
+                <el-option
+                  v-for="tire in tireList"
+                  :key="tire.code"
+                  :label="tire.name"
+                  :value="tire.code"
+                />
+              </el-select>
+            </el-form-item>
+          </el-col>
           <el-col :span="12">
             <el-form-item label="备胎" prop="spareTireCode">
-              <el-radio-group v-model="form.spareTireCode" :disabled="form.id !== undefined">
-                <el-radio
-                  label="XZ01"
-                >有
-                </el-radio>
-                <el-radio
-                  label="XZ00"
-                >无
-                </el-radio>
-              </el-radio-group>
+              <el-select
+                v-model="form.spareTireCode"
+                placeholder="备胎"
+                clearable
+                :disabled="form.id !== undefined"
+                @change="handleBuildConfig"
+              >
+                <el-option
+                  v-for="spareTire in spareTireList"
+                  :key="spareTire.code"
+                  :label="spareTire.name"
+                  :value="spareTire.code"
+                />
+              </el-select>
             </el-form-item>
           </el-col>
         </el-row>
         <el-row>
           <el-col :span="12">
             <el-form-item label="智驾" prop="adasCode">
-              <el-radio-group v-model="form.adasCode" :disabled="form.id !== undefined">
-                <el-radio
-                  label="XZ02"
-                  @click.native="handleAdas('XZ02')"
-                >高阶智驾
-                </el-radio>
-                <el-radio
-                  label="XZ00"
-                  @click.native="handleAdas('XZ00')"
-                >标准智驾
-                </el-radio>
-              </el-radio-group>
+              <el-select
+                v-model="form.adasCode"
+                placeholder="智驾"
+                clearable
+                :disabled="form.id !== undefined"
+                @change="handleBuildConfig"
+              >
+                <el-option
+                  v-for="adas in adasList"
+                  :key="adas.code"
+                  :label="adas.name"
+                  :value="adas.code"
+                />
+              </el-select>
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="座椅" prop="seatCode">
-              <el-radio-group v-model="form.seatCode" :disabled="form.id !== undefined">
-                <el-radio
-                  label="XZ03"
-                >航空座椅
-                </el-radio>
-                <el-radio
-                  label="XZ00"
-                >标准座椅
-                </el-radio>
-              </el-radio-group>
+              <el-select
+                v-model="form.seatCode"
+                placeholder="座椅"
+                clearable
+                :disabled="form.id !== undefined"
+                @change="handleBuildConfig"
+              >
+                <el-option
+                  v-for="seat in seatList"
+                  :key="seat.code"
+                  :label="seat.name"
+                  :value="seat.code"
+                />
+              </el-select>
             </el-form-item>
           </el-col>
         </el-row>
@@ -419,10 +467,8 @@ import {
 import {listAllPlatform} from "@/api/completevehicle/product/platform";
 import {listSeriesByPlatformCode} from "@/api/completevehicle/product/series";
 import {listModelByPlatformCodeAndSeriesCode} from "@/api/completevehicle/product/model";
-import {listExteriorByPlatformCodeAndSeriesCode} from "@/api/completevehicle/product/exterior";
-import {listInteriorByPlatformCodeAndSeriesCode} from "@/api/completevehicle/product/interior";
-import {listWheelByPlatformCodeAndSeriesCode} from "@/api/completevehicle/product/wheel";
-import {listBasicModelByPlatformCodeAndSeriesCodeAndModelCode} from "@/api/completevehicle/product/basemodel";
+import {listBaseModelByPlatformCodeAndSeriesCodeAndModelCode} from "@/api/completevehicle/product/basemodel";
+import {listAllFeatureCode} from "@/api/completevehicle/product/featurefamily";
 
 export default {
   name: "BuildConfig",
@@ -450,13 +496,23 @@ export default {
       // 车型列表
       modelList: [],
       // 基础车型列表
-      basicModelList: [],
+      baseModelList: [],
+      // 车辆阶段列表
+      vehicleStageList: [],
       // 车身颜色列表
       exteriorList: [],
       // 内饰颜色列表
       interiorList: [],
-      // 轮胎轮毂列表
+      // 轮毂列表
       wheelList: [],
+      // 轮胎列表
+      tireList: [],
+      // 备胎列表
+      spareTireList: [],
+      // 智驾列表
+      adasList: [],
+      // 座椅列表
+      seatList: [],
       // 弹出层标题
       title: "",
       // 是否显示弹出层
@@ -490,6 +546,9 @@ export default {
         name: [
           {required: true, message: "生产配置名称不能为空", trigger: "blur"}
         ],
+        vehicleStageCode: [
+          {required: true, message: "车辆阶段不能为空", trigger: "blur"}
+        ],
         exteriorCode: [
           {required: true, message: "车身颜色不能为空", trigger: "blur"}
         ],
@@ -497,7 +556,10 @@ export default {
           {required: true, message: "内饰颜色不能为空", trigger: "blur"}
         ],
         wheelCode: [
-          {required: true, message: "轮胎轮毂不能为空", trigger: "blur"}
+          {required: true, message: "轮毂不能为空", trigger: "blur"}
+        ],
+        tireCode: [
+          {required: true, message: "轮胎不能为空", trigger: "blur"}
         ],
         spareTireCode: [
           {required: true, message: "备胎不能为空", trigger: "blur"}
@@ -517,6 +579,14 @@ export default {
   created() {
     this.queryParams.code = this.$route.query.modelConfigCode;
     this.getList();
+    this.getVehicleStageList();
+    this.getExteriorList();
+    this.getInteriorList();
+    this.getWheelList();
+    this.getTireList();
+    this.getSpireTireList();
+    this.getAdasList();
+    this.getSeatList();
   },
   methods: {
     /** 查询车型配置列表 */
@@ -528,6 +598,46 @@ export default {
           this.loading = false;
         }
       );
+    },
+    getVehicleStageList() {
+      listAllFeatureCode("AN").then(response => {
+        this.vehicleStageList = response.data;
+      })
+    },
+    getExteriorList() {
+      listAllFeatureCode("QA").then(response => {
+        this.exteriorList = response.data;
+      })
+    },
+    getInteriorList() {
+      listAllFeatureCode("NA").then(response => {
+        this.interiorList = response.data;
+      })
+    },
+    getWheelList() {
+      listAllFeatureCode("FA").then(response => {
+        this.wheelList = response.data;
+      })
+    },
+    getTireList() {
+      listAllFeatureCode("FB").then(response => {
+        this.tireList = response.data;
+      })
+    },
+    getSpireTireList() {
+      listAllFeatureCode("RZ").then(response => {
+        this.spareTireList = response.data;
+      })
+    },
+    getAdasList() {
+      listAllFeatureCode("HA").then(response => {
+        this.adasList = response.data;
+      })
+    },
+    getSeatList() {
+      listAllFeatureCode("OT").then(response => {
+        this.seatList = response.data;
+      })
     },
     /** 取消按钮 */
     cancel() {
@@ -579,62 +689,53 @@ export default {
         listModelByPlatformCodeAndSeriesCode(this.form.platformCode, value).then(response => {
           this.modelList = response;
         });
-        listExteriorByPlatformCodeAndSeriesCode(this.form.platformCode, value).then(response => {
-          this.exteriorList = response;
-        });
-        listInteriorByPlatformCodeAndSeriesCode(this.form.platformCode, value).then(response => {
-          this.interiorList = response;
-        });
-        listWheelByPlatformCodeAndSeriesCode(this.form.platformCode, value).then(response => {
-          this.wheelList = response;
-        });
       }
     },
     /** 车型下拉选择操作 */
     handleModelChange(value) {
       if (value !== undefined && value !== null && value !== "") {
-        listBasicModelByPlatformCodeAndSeriesCodeAndModelCode(this.form.platformCode, this.form.seriesCode, value).then(response => {
-          this.basicModelList = response;
+        listBaseModelByPlatformCodeAndSeriesCodeAndModelCode(this.form.platformCode, this.form.seriesCode, value).then(response => {
+          this.baseModelList = response;
         });
       }
     },
     /** 基础车型下拉选择操作 */
-    handleBasicModelChange(value) {
+    handleBaseModelChange(value) {
       if (value !== undefined && value !== null && value !== "") {
-        this.handleModelConfig();
+        this.handleBuildConfig();
       }
     },
-    /** 拼接车型配置代码 */
-    handleModelConfig() {
-      let basicModelCode = this.form.basicModelCode ? this.form.basicModelCode : '';
+    /** 拼接生产配置代码 */
+    handleBuildConfig() {
+      let baseModelCode = this.form.baseModelCode ? this.form.baseModelCode : '';
+      let vehicleStageCode = this.form.vehicleStageCode ? this.form.vehicleStageCode : '';
       let exteriorCode = this.form.exteriorCode ? this.form.exteriorCode : '';
       let interiorCode = this.form.interiorCode ? this.form.interiorCode : '';
       let wheelCode = this.form.wheelCode ? this.form.wheelCode : '';
-      this.form.code = basicModelCode + exteriorCode.replace("WS0", "") +
-        interiorCode.replace("NS0", "") + wheelCode.replace("CL0", "");
-      const basicModelOption = this.basicModelList.find(item => item.code === basicModelCode);
-      let basicModelName = basicModelOption ? basicModelOption.name : '';
-      const exteriorOption = this.exteriorList.find(item => item.code === exteriorCode);
+      let tireCode = this.form.tireCode ? this.form.tireCode : '';
+      let spareTireCode = this.form.spareTireCode ? this.form.spareTireCode : '';
+      let adasCode = this.form.adasCode ? this.form.adasCode : '';
+      let seatCode = this.form.seatCode ? this.form.seatCode : '';
+      this.form.code = baseModelCode + vehicleStageCode + exteriorCode + interiorCode;
+      const baseModelOption = this.baseModelList.find(item => item.code === baseModelCode);
+      let baseModelName = baseModelOption ? baseModelOption.name : '';
+      const vehicleStageOption = this.vehicleStageList.find(item => item.val === vehicleStageCode);
+      let vehicleStageName = vehicleStageOption ? vehicleStageOption.name : '';
+      const exteriorOption = this.exteriorList.find(item => item.val === exteriorCode);
       let exteriorName = exteriorOption ? exteriorOption.name : '';
-      const interiorOption = this.interiorList.find(item => item.code === interiorCode);
+      const interiorOption = this.interiorList.find(item => item.val === interiorCode);
       let interiorName = interiorOption ? interiorOption.name : '';
       const wheelOption = this.wheelList.find(item => item.code === wheelCode);
       let wheelName = wheelOption ? wheelOption.name : '';
-      this.form.name = basicModelName + " " + exteriorName + " " + interiorName + " " + wheelName;
-    },
-    handleAdas(adasCode) {
-      this.handleModelConfig();
-      let adasName = '';
-      if (adasCode === 'XZ02') {
-        adasCode = '1';
-        adasName = '高阶智驾';
-      }
-      if (adasCode === 'XZ00') {
-        adasCode = '0';
-        adasName = '标准智驾';
-      }
-      this.form.code = this.form.code + adasCode;
-      this.form.name = this.form.name + " " + adasName;
+      const tireOption = this.tireList.find(item => item.code === tireCode);
+      let tireName = tireOption ? tireOption.name : '';
+      const spareTireOption = this.spareTireList.find(item => item.code === spareTireCode);
+      let spareTireName = spareTireOption ? spareTireOption.name : '';
+      const adasOption = this.adasList.find(item => item.code === adasCode);
+      let adasName = adasOption ? adasOption.name : '';
+      const seatOption = this.seatList.find(item => item.code === seatCode);
+      let seatName = seatOption ? seatOption.name : '';
+      this.form.name = baseModelName + vehicleStageName + exteriorName + interiorName + wheelName + tireName + spareTireName + adasName + seatName;
     },
     /** 新增按钮操作 */
     handleAdd() {
@@ -664,17 +765,8 @@ export default {
         listModelByPlatformCodeAndSeriesCode(this.form.platformCode, this.form.seriesCode).then(response => {
           this.modelList = response;
         });
-        listBasicModelByPlatformCodeAndSeriesCodeAndModelCode(this.form.platformCode, this.form.seriesCode, this.form.modelCode).then(response => {
-          this.basicModelList = response;
-        });
-        listExteriorByPlatformCodeAndSeriesCode(this.form.platformCode, this.form.seriesCode).then(response => {
-          this.exteriorList = response;
-        });
-        listInteriorByPlatformCodeAndSeriesCode(this.form.platformCode, this.form.seriesCode).then(response => {
-          this.interiorList = response;
-        });
-        listWheelByPlatformCodeAndSeriesCode(this.form.platformCode, this.form.seriesCode).then(response => {
-          this.wheelList = response;
+        listBaseModelByPlatformCodeAndSeriesCodeAndModelCode(this.form.platformCode, this.form.seriesCode, this.form.modelCode).then(response => {
+          this.baseModelList = response;
         });
         this.open = true;
       });
