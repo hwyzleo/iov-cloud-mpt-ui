@@ -6,7 +6,7 @@
           v-model="queryParams.vin"
           placeholder="请输入车架号"
           clearable
-          style="width: 150px"
+          style="width: 200px"
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
@@ -91,9 +91,17 @@
       <el-table-column label="零件号" prop="pn" width="130" />
       <el-table-column label="车架号" prop="vin" width="170"/>
       <el-table-column label="序列号" prop="sn" />
-      <el-table-column label="设备代码" prop="deviceCode" width="100" align="center" />
-      <el-table-column label="设备" prop="deviceCode" width="100" align="center" />
+      <el-table-column label="设备代码" prop="deviceCode" width="120" align="center" />
+      <el-table-column label="设备项" prop="deviceItem" width="100" align="center" />
       <el-table-column label="软件版本" prop="softwareVer" width="150" align="center" />
+      <el-table-column label="状态" prop="partState" width="100" align="center">
+        <template slot-scope="scope">
+          <span v-if="scope.row.partState === 0">待绑定</span>
+          <span v-if="scope.row.partState === 1">在用</span>
+          <span v-if="scope.row.partState === 2">待更换</span>
+          <span v-if="scope.row.partState === 3">已报废</span>
+        </template>
+      </el-table-column>
       <el-table-column label="绑定时间" prop="bindTime" width="160" align="center">
         <template slot-scope="scope">
           <span>{{ parseTime(scope.row.bindTime) }}</span>
