@@ -95,7 +95,7 @@
     <el-table v-loading="loading" :data="inventoryTransferList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center"/>
       <el-table-column label="车架号" prop="vin" width="180"/>
-      <el-table-column label="车型配置代码" prop="modelConfigCode" width="120"/>
+      <el-table-column label="生辰配置代码" prop="buildConfigCode" width="200"/>
       <el-table-column label="仓库名称" prop="warehouseName"/>
       <el-table-column label="原储区代码" prop="oldStorageAreaCode" width="100"/>
       <el-table-column label="原储位代码" prop="oldStorageLocationCode" width="100"/>

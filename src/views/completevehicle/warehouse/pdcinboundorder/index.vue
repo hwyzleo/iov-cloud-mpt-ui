@@ -103,9 +103,9 @@
 
     <el-table v-loading="loading" :data="inboundOrderList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center"/>
-      <el-table-column label="入库单号" prop="orderNum" width="230"/>
+      <el-table-column label="入库单号" prop="orderNum" width="220"/>
       <el-table-column label="车架号" prop="vin" width="180"/>
-      <el-table-column label="车型配置代码" prop="modelConfigCode" width="120"/>
+      <el-table-column label="生产配置代码" prop="buildConfigCode" width="200"/>
       <el-table-column label="仓库名称" prop="warehouseName"/>
       <el-table-column label="储区代码" prop="storageAreaCode" width="100"/>
       <el-table-column label="储位代码" prop="storageLocationCode" width="100"/>

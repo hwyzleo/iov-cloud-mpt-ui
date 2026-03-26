@@ -103,18 +103,18 @@
 
     <el-table v-loading="loading" :data="preInboundOrderList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center"/>
-      <el-table-column label="预入库单号" prop="orderNum" width="230"/>
+      <el-table-column label="预入库单号" prop="orderNum" width="220"/>
       <el-table-column label="车架号" prop="vin" width="180"/>
-      <el-table-column label="车型配置代码" prop="modelConfigCode" width="120"/>
+      <el-table-column label="生产配置代码" prop="buildConfigCode" width="200"/>
       <el-table-column label="仓库名称" prop="warehouseName"/>
       <el-table-column label="预计到达时间" align="center" prop="estimatedArrivalTime" width="180">
         <template slot-scope="scope">
-          <span>{{ parseTime(scope.row.estimatedArrivalTime) }}</span>
+          <span>{{ parseTime(scope.row.estimatedArrivalTime, "{y}-{m}-{d} {h}:{i}") }}</span>
         </template>
       </el-table-column>
       <el-table-column label="预计入库时间" align="center" prop="estimatedInboundTime" width="180">
         <template slot-scope="scope">
-          <span>{{ parseTime(scope.row.estimatedInboundTime) }}</span>
+          <span>{{ parseTime(scope.row.estimatedInboundTime, "{y}-{m}-{d} {h}:{i}") }}</span>
         </template>
       </el-table-column>
       <el-table-column label="创建时间" align="center" prop="createTime" width="180">
