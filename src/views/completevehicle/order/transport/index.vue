@@ -33,7 +33,7 @@
 
     <el-table v-loading="loading" :data="orderList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center"/>
-      <el-table-column label="订单号" prop="orderNum" fixed="left" width="150"/>
+      <el-table-column label="订单号" prop="orderNum" fixed="left" width="160"/>
       <el-table-column label="订单状态" align="center" width="150">
         <template slot-scope="scope">
           <el-tooltip :content="parseTime(scope.row.orderStateTime)" placement="top">

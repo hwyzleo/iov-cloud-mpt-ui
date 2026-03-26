@@ -282,7 +282,7 @@
               <span>{{ getSaleModelConfigTypeLabel(scope.row.type) }}</span>
             </template>
           </el-table-column>
-          <el-table-column label="类型代码" prop="typeCode" width="100"/>
+          <el-table-column label="类型代码" prop="typeCode" width="110"/>
           <el-table-column label="类型名称" prop="typeName"/>
           <el-table-column label="类型价格" prop="typePrice" width="100"/>
           <el-table-column label="图片数量" align="center" width="80">

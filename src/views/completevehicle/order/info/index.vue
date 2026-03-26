@@ -82,7 +82,7 @@
 
     <el-table v-loading="loading" :data="orderList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center"/>
-      <el-table-column label="订单号" prop="orderNum" fixed="left" width="150"/>
+      <el-table-column label="订单号" prop="orderNum" fixed="left" width="160"/>
       <el-table-column label="下单用户" width="120">
         <template slot-scope="scope">
           <el-link
@@ -92,9 +92,9 @@
           </el-link>
         </template>
       </el-table-column>
-      <el-table-column label="下单时间" align="center" prop="orderTime" width="160">
+      <el-table-column label="下单时间" align="center" prop="orderTime" width="140">
         <template slot-scope="scope">
-          <span>{{ parseTime(scope.row.orderTime) }}</span>
+          <span>{{ parseTime(scope.row.orderTime, "{y}-{m}-{d} {h}:{i}") }}</span>
         </template>
       </el-table-column>
       <el-table-column label="订单状态" align="center" width="150">
@@ -104,23 +104,23 @@
           </el-tooltip>
         </template>
       </el-table-column>
-      <el-table-column label="意向金支付时间" align="center" prop="earnestMoneyTime" width="160">
+      <el-table-column label="意向金支付时间" align="center" prop="earnestMoneyTime" width="140">
         <template slot-scope="scope">
           <el-tooltip :content="String(scope.row.earnestMoneyAmount)" placement="top">
-            <span>{{ parseTime(scope.row.earnestMoneyTime) }}</span>
+            <span>{{ parseTime(scope.row.earnestMoneyTime, "{y}-{m}-{d} {h}:{i}") }}</span>
           </el-tooltip>
         </template>
       </el-table-column>
-      <el-table-column label="定金支付时间" align="center" prop="downPaymentTime" width="160">
+      <el-table-column label="定金支付时间" align="center" prop="downPaymentTime" width="140">
         <template slot-scope="scope">
           <el-tooltip :content="String(scope.row.downPaymentAmount)" placement="top">
-            <span>{{ parseTime(scope.row.downPaymentTime) }}</span>
+            <span>{{ parseTime(scope.row.downPaymentTime, "{y}-{m}-{d} {h}:{i}") }}</span>
           </el-tooltip>
         </template>
       </el-table-column>
-      <el-table-column label="锁单时间" align="center" prop="lockTime" width="160">
+      <el-table-column label="锁单时间" align="center" prop="lockTime" width="140">
         <template slot-scope="scope">
-          <span>{{ parseTime(scope.row.lockTime) }}</span>
+          <span>{{ parseTime(scope.row.lockTime, "{y}-{m}-{d} {h}:{i}") }}</span>
         </template>
       </el-table-column>
       <el-table-column label="销售代码" align="center" width="100">
@@ -132,12 +132,12 @@
           </el-link>
         </template>
       </el-table-column>
-      <el-table-column label="车型配置代码" align="center" width="180">
+      <el-table-column label="生产配置代码" align="center" width="180">
         <template slot-scope="scope">
           <el-link
             type="primary"
-            @click="openModelConfigTab(scope.row.modelConfigCode)"
-          >{{ scope.row.modelConfigCode }}
+            @click="openModelConfigTab(scope.row.buildConfigCode)"
+          >{{ scope.row.buildConfigCode }}
           </el-link>
         </template>
       </el-table-column>

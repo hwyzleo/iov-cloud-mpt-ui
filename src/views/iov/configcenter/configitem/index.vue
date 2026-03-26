@@ -174,8 +174,16 @@
         </el-form-item>
         <el-form-item label="配置项大类" prop="family">
           <el-select v-model="form.family" placeholder="配置项大类" clearable>
-            <el-option key="BODY" label="车身" value="BODY"/>
-            <el-option key="EXTERIOR" label="外饰" value="EXTERIOR"/>
+            <el-option key="BODY_COMFORT" label="车身&舒适" value="BODY_COMFORT"/>
+            <el-option key="COCKPIT" label="座舱&车机" value="COCKPIT"/>
+            <el-option key="CONN" label="网联&通信" value="CONN"/>
+            <el-option key="POWERTRAIN_ENERGY" label="动力&能量" value="POWERTRAIN_ENERGY"/>
+            <el-option key="CHASSIS_DRIVING" label="底盘&驾驶" value="CHASSIS_DRIVING"/>
+            <el-option key="ADAS" label="智能驾驶" value="ADAS"/>
+            <el-option key="SAFETY_SECURITY" label="安全&防盗" value="SAFETY_SECURITY"/>
+            <el-option key="DIAGNOSTICS_SERVICE" label="诊断&售后" value="DIAGNOSTICS_SERVICE"/>
+            <el-option key="OTA" label="软件&升级" value="OTA"/>
+            <el-option key="COMPLIANCE_MARKET" label="法规&市场" value="COMPLIANCE_MARKET"/>
           </el-select>
         </el-form-item>
         <el-form-item label="配置项名称" prop="name">
@@ -301,12 +309,14 @@ export default {
     /** 表单重置 */
     reset() {
       this.form = {
+        family: undefined,
         code: undefined,
         name: undefined,
         type: undefined,
         unit: undefined,
-        enum_value: undefined,
-        system: false
+        capability: undefined,
+        display: undefined,
+        cache: undefined
       };
       this.resetForm("form");
     },

@@ -41,7 +41,7 @@
           </el-tooltip>
         </template>
       </el-table-column>
-      <el-table-column label="车型配置代码" align="center" width="180">
+      <el-table-column label="车型配置代码" align="center">
         <template slot-scope="scope">
           {{ scope.row.modelConfigCode }}
         </template>
